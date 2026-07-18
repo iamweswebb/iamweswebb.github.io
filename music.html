@@ -335,11 +335,12 @@ const { useState, useEffect } = React;
 
 // ── STREAMING PLATFORMS — add real links in href ──
 const PLATFORMS = [
-  { name: "Spotify",       href: "#", num: "01" },
-  { name: "Apple Music",   href: "#", num: "02" },
-  { name: "Bandcamp",      href: "#", num: "03" },
-  { name: "SoundCloud",    href: "#", num: "04" },
-  { name: "YouTube Music", href: "#", num: "05" },
+  { name: "Spotify",      href: "https://open.spotify.com/artist/5CaHtlHWsf55Kq8VHXImc9?si=NNENEGftQJyDwzA2e4aSTA", num: "01" },
+  { name: "Apple Music",  href: "https://music.apple.com/us/artist/hazzze/1585023200", num: "02" },
+  { name: "Amazon Music", href: "https://music.amazon.com/artists/B09FR6MK68/hazzze?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_85t6bj8TBSvw5AIq0E6tkTRx6", num: "03" },
+  { name: "Pandora",      href: "https://www.pandora.com/artist/hazzze/ARl67J9lfl64nKw?part=ug-desktop&corr=165653523499854824", num: "04" },
+  { name: "Tidal",        href: "https://tidal.com/artist/28333367/u", num: "05" },
+  { name: "iHeartRadio",  href: "https://www.iheart.com/artist/hazzze-36810343", num: "06" },
 ];
 
 function AnimatedWaveform() {
@@ -402,7 +403,7 @@ function App() {
         <div className="hz-section-label">Stream / Download</div>
         <div className="platforms">
           {PLATFORMS.map(({name,href,num}) => (
-            <a key={name} href={href} className="plat">
+            <a key={name} href={href} className="plat" target="_blank" rel="noreferrer">
               <div className="plat-left">
                 <span className="plat-num">{num}</span>
                 <span className="plat-name">{name}</span>
