@@ -10,6 +10,7 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="assets/projects-data.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -98,6 +99,20 @@
   footer a:hover { color: #e2007a; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
   .fade-in { animation: fadeUp 0.6s ease both; }
+  .lb-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(8,6,8,0.97); overflow-y: auto; animation: fadeUp 0.3s ease both; }
+  .lb-inner { max-width: 880px; margin: 0 auto; padding: 90px 32px 120px; }
+  .lb-close {
+    position: fixed; top: 20px; right: 28px; z-index: 210;
+    width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(232,224,212,0.2);
+    background: rgba(8,6,8,0.8); color: #e8e0d4; font-size: 20px; line-height: 1;
+    cursor: pointer; font-family: 'JetBrains Mono', monospace; transition: all 0.15s;
+  }
+  .lb-close:hover { border-color: #e2007a; color: #e2007a; }
+  .lb-cat { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #e2007a; margin-bottom: 14px; }
+  .lb-title { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(38px, 5vw, 72px); line-height: 0.96; letter-spacing: 0.01em; text-transform: uppercase; color: #e8e0d4; margin-bottom: 30px; }
+  .lb-text { font-family: 'Lora', serif; font-size: 16px; line-height: 1.75; color: rgba(232,224,212,0.62); margin-bottom: 18px; white-space: pre-line; }
+  .lb-imgs { display: flex; flex-direction: column; gap: 14px; margin-top: 38px; }
+  .lb-imgs img { width: 100%; display: block; border: 1px solid rgba(232,224,212,0.08); }
 </style>
 </head>
 <body>
@@ -115,24 +130,50 @@
 </nav>
 <div id="root"></div>
 <script type="text/babel">
+const { useState, useEffect } = React;
 
-// ── PIECES — real work from iamweswebb.com/sculptural ──
+// ── PIECES — slug opens the lightbox with the piece's full story ──
 const PIECES = [
-  { id:'01', name:'Night Mission',   src:'assets/img/qjwq39-blackport.jpg', href:'http://iamweswebb.com/nightmission' },
-  { id:'02', name:'Barley Tusk',     src:'assets/img/jcrk86-barleyport.jpg', href:'http://iamweswebb.com/barleytusk' },
-  { id:'03', name:'A-Frame',         src:'assets/img/9sjzb0-aframeport.jpg', href:'#' },
-  { id:'04', name:'Water Totem',     src:'assets/img/9o0b9w-hollyport.jpg', href:'http://iamweswebb.com/water-totem' },
-  { id:'05', name:'Sun Salutation',  src:'assets/img/u0qvf2-sunport.jpg', href:'http://iamweswebb.com/sunsalutation' },
-  { id:'06', name:'Water Totem II',  src:'assets/img/hu1sct-peachport.jpg', href:'http://iamweswebb.com/water-totem-2' },
-  { id:'07', name:'Water Totem III', src:'assets/img/axf460-redport.jpg', href:'http://iamweswebb.com/water-totem-3' },
-  { id:'08', name:'Water Type',      src:'assets/img/f0tyqm-wtport.jpg', href:'http://iamweswebb.com/watertype' },
-  { id:'09', name:'Water Block',     src:'assets/img/qd91de-blockport.jpg', href:'http://iamweswebb.com/water-block' },
-  { id:'10', name:'Black Crescent',  src:'assets/img/nn4lzk-crescentport.jpg', href:'http://iamweswebb.com/blackcrescent' },
-  { id:'11', name:'Barley Twist',    src:'assets/img/6gyc7q-barleytwistport.jpg', href:'http://iamweswebb.com/barleytwist' },
-  { id:'12', name:'Broken Vessel',   src:'assets/img/ppercg-brokenport.jpg', href:'http://iamweswebb.com/broken-vessel' },
+  { id:'01', name:'Night Mission',   src:'assets/img/qjwq39-blackport.jpg', slug:'nightmission' },
+  { id:'02', name:'Barley Tusk',     src:'assets/img/jcrk86-barleyport.jpg', slug:'barleytusk' },
+  { id:'03', name:'A-Frame',         src:'assets/img/9sjzb0-aframeport.jpg' },
+  { id:'04', name:'Water Totem',     src:'assets/img/9o0b9w-hollyport.jpg', slug:'water-totem' },
+  { id:'05', name:'Sun Salutation',  src:'assets/img/u0qvf2-sunport.jpg', slug:'sunsalutation' },
+  { id:'06', name:'Water Totem II',  src:'assets/img/hu1sct-peachport.jpg', slug:'water-totem-2' },
+  { id:'07', name:'Water Totem III', src:'assets/img/axf460-redport.jpg', slug:'water-totem-3' },
+  { id:'08', name:'Water Type',      src:'assets/img/f0tyqm-wtport.jpg', slug:'watertype' },
+  { id:'09', name:'Water Block',     src:'assets/img/qd91de-blockport.jpg', slug:'water-block' },
+  { id:'10', name:'Black Crescent',  src:'assets/img/nn4lzk-crescentport.jpg', slug:'blackcrescent' },
+  { id:'11', name:'Barley Twist',    src:'assets/img/6gyc7q-barleytwistport.jpg', slug:'barleytwist' },
+  { id:'12', name:'Broken Vessel',   src:'assets/img/ppercg-brokenport.jpg', slug:'broken-vessel' },
 ];
 
+function Lightbox({ piece, onClose }) {
+  useEffect(() => {
+    const onKey = e => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, []);
+  const detail = piece.slug ? window.SCULPTURE_DETAILS[piece.slug] : null;
+  return ReactDOM.createPortal(
+    <div className="lb-backdrop" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <button className="lb-close" onClick={onClose} aria-label="Close">✕</button>
+      <div className="lb-inner">
+        <div className="lb-cat">Sculpture · {piece.id}</div>
+        <div className="lb-title">{piece.name}</div>
+        {detail && detail.text.map((t, i) => <p className="lb-text" key={i}>{t}</p>)}
+        <div className="lb-imgs">
+          {(detail && detail.images.length ? detail.images : [piece.src]).map((src, i) => <img src={src} key={i} loading="lazy" alt="" />)}
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function App() {
+  const [open, setOpen] = useState(null);
   return (
     <div className="fade-in">
       <section className="hero">
@@ -148,13 +189,13 @@ function App() {
         <h2>Twelve pieces, twelve second chances</h2>
         <div className="work-grid">
           {PIECES.map(p => (
-            <a href={p.href} key={p.id} className="work-tile" target="_blank" rel="noreferrer">
+            <div key={p.id} className="work-tile" onClick={() => setOpen(p)} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') setOpen(p); }}>
               <img src={p.src} alt={p.name} loading="lazy" />
               <div className="tile-meta">
                 <div className="tile-num">{p.id}</div>
                 <div className="tile-name">{p.name}</div>
               </div>
-            </a>
+            </div>
           ))}
         </div>
       </section>
@@ -206,6 +247,8 @@ function App() {
         <span>© 2026 WES WEBB · IAMWESWEBB.COM</span>
         <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a> · NASHVILLE, TN</span>
       </footer>
+
+      {open && <Lightbox piece={open} onClose={() => setOpen(null)} />}
     </div>
   );
 }
