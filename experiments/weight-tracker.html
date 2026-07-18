@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEIGHT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --text: #e8e8e8;
+    --muted: #444;
+    --accent: #c8f55a;
+    --danger: #ff4d4d;
+    --up: #ff4d4d;
+    --down: #c8f55a;
+    --flat: #888;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+    gap: 0;
+  }
+
+  header {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+  }
+
+  .title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+  }
+
+  .goal-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .goal-label span {
+    color: var(--accent);
+  }
+
+  /* HERO AVERAGE */
+  .hero {
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 8px;
+  }
+
+  .avg-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .avg-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 22vw, 120px);
+    line-height: 0.9;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    transition: color 0.4s ease;
+  }
+
+  .avg-number.near-goal {
+    color: var(--accent);
+  }
+
+  .avg-sub {
+    display: flex;
+    gap: 24px;
+    margin-top: 12px;
+    margin-bottom: 40px;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+
+  .stat-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .stat-value.positive { color: var(--down); }
+  .stat-value.negative { color: var(--up); }
+  .stat-value.neutral { color: var(--flat); }
+
+  /* TREND LINE */
+  .chart-wrap {
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .chart-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  canvas#trendChart {
+    width: 100%;
+    height: 120px;
+    display: block;
+  }
+
+  /* GOAL PROGRESS */
+  .progress-wrap {
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 40px;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .progress-header span {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  .progress-header .pct {
+    color: var(--accent);
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  /* INPUT */
+  .input-section {
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 40px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  input[type="number"] {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    padding: 16px 20px;
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  input[type="number"]:focus {
+    border-color: var(--accent);
+  }
+
+  input[type="number"]::placeholder {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  button.log-btn {
+    background: var(--accent);
+    color: #0a0a0a;
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.15em;
+    padding: 0 28px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+
+  button.log-btn:hover { opacity: 0.85; }
+  button.log-btn:active { transform: scale(0.97); }
+
+  /* HISTORY */
+  .history-section {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .history-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .history-date {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .history-weight {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .history-delta {
+    font-size: 11px;
+    width: 52px;
+    text-align: right;
+  }
+
+  .delta-down { color: var(--down); }
+  .delta-up { color: var(--up); }
+  .delta-flat { color: var(--flat); }
+
+  .history-delete {
+    background: none;
+    border: none;
+    color: var(--border);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+    transition: color 0.2s;
+    margin-left: 8px;
+  }
+
+  .history-delete:hover { color: var(--up); }
+
+  .empty-state {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    padding: 24px 0;
+    text-align: center;
+  }
+
+  /* MILESTONES */
+  .milestone {
+    width: 100%;
+    max-width: 480px;
+    margin-top: 40px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    display: none;
+  }
+
+  .milestone.visible { display: block; }
+
+  .milestone-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  .milestone-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+  }
+
+  .divider {
+    width: 100%;
+    max-width: 480px;
+    height: 1px;
+    background: var(--border);
+    margin: 40px 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title">WEIGHT / TREND</div>
+  <div class="goal-label">GOAL <span id="goalDisplay">190.0</span> LBS</div>
+</header>
+
+<section class="hero">
+  <div class="avg-label">7-DAY WEIGHTED AVG</div>
+  <div class="avg-number" id="avgDisplay">--.-</div>
+  <div class="avg-sub">
+    <div class="stat">
+      <div class="stat-label">TODAY</div>
+      <div class="stat-value" id="todayDisplay">--.-</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">7D CHANGE</div>
+      <div class="stat-value" id="changeDisplay">--</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">VELOCITY</div>
+      <div class="stat-value" id="velocityDisplay">--</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">TO GOAL</div>
+      <div class="stat-value" id="toGoalDisplay">--</div>
+    </div>
+  </div>
+</section>
+
+<section class="chart-wrap">
+  <div class="chart-label">TREND LINE — LAST 30 DAYS</div>
+  <canvas id="trendChart"></canvas>
+</section>
+
+<section class="progress-wrap">
+  <div class="progress-header">
+    <span>START <span id="startVal">--</span></span>
+    <span class="pct" id="pctDisplay">0%</span>
+    <span>GOAL <span id="goalVal">190</span></span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</section>
+
+<section class="input-section">
+  <div class="input-row">
+    <input type="number" id="weightInput" placeholder="enter weight (lbs)" step="0.1" min="100" max="400">
+    <button class="log-btn" onclick="logWeight()">LOG</button>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="history-section">
+  <div class="history-label">RECENT ENTRIES</div>
+  <div class="history-list" id="historyList">
+    <div class="empty-state">no entries yet</div>
+  </div>
+</section>
+
+<div class="milestone" id="milestone">
+  <div class="milestone-text" id="milestoneText"></div>
+  <div class="milestone-sub" id="milestoneSub"></div>
+</div>
+
+<script>
+const GOAL = 190.0;
+const STORAGE_KEY = 'wt_entries_v2';
+
+function getEntries() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch { return []; }
+}
+
+function saveEntries(entries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+// Weighted moving average: more recent = more weight
+// Uses exponential weighting over last 7 entries
+function weightedAvg(entries) {
+  if (!entries.length) return null;
+  const recent = entries.slice(-7);
+  // weights: oldest = 1, newest = 7
+  let weightSum = 0;
+  let valSum = 0;
+  recent.forEach((e, i) => {
+    const w = i + 1;
+    valSum += e.weight * w;
+    weightSum += w;
+  });
+  return valSum / weightSum;
+}
+
+// Simple linear regression slope (lbs/day) over last N entries
+function trendSlope(entries, n = 14) {
+  const recent = entries.slice(-n);
+  if (recent.length < 2) return null;
+  const xMean = (recent.length - 1) / 2;
+  const yMean = recent.reduce((s, e) => s + e.weight, 0) / recent.length;
+  let num = 0, den = 0;
+  recent.forEach((e, i) => {
+    num += (i - xMean) * (e.weight - yMean);
+    den += (i - xMean) ** 2;
+  });
+  return den === 0 ? 0 : num / den;
+}
+
+function formatDelta(val) {
+  if (val === null || isNaN(val)) return '--';
+  const sign = val > 0 ? '+' : '';
+  return `${sign}${val.toFixed(1)}`;
+}
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function render() {
+  const entries = getEntries();
+  const avg = weightedAvg(entries);
+  const slope = trendSlope(entries);
+
+  // Hero avg
+  const avgEl = document.getElementById('avgDisplay');
+  if (avg !== null) {
+    avgEl.textContent = avg.toFixed(1);
+    avgEl.classList.toggle('near-goal', avg <= GOAL + 1);
+  } else {
+    avgEl.textContent = '--.-';
+  }
+
+  // Today
+  const todayEl = document.getElementById('todayDisplay');
+  if (entries.length) {
+    todayEl.textContent = entries[entries.length - 1].weight.toFixed(1);
+  }
+
+  // 7d change (most recent vs 7 ago)
+  const changeEl = document.getElementById('changeDisplay');
+  if (entries.length >= 2) {
+    const recent7 = entries.slice(-7);
+    const change = recent7[recent7.length - 1].weight - recent7[0].weight;
+    changeEl.textContent = formatDelta(change);
+    changeEl.className = 'stat-value ' + (change < 0 ? 'positive' : change > 0 ? 'negative' : 'neutral');
+  }
+
+  // Velocity (lbs/week from slope)
+  const velEl = document.getElementById('velocityDisplay');
+  if (slope !== null) {
+    const weeklyRate = slope * 7;
+    velEl.textContent = formatDelta(weeklyRate) + '/wk';
+    velEl.className = 'stat-value ' + (weeklyRate < 0 ? 'positive' : weeklyRate > 0 ? 'negative' : 'neutral');
+  }
+
+  // To goal
+  const toGoalEl = document.getElementById('toGoalDisplay');
+  if (avg !== null) {
+    const diff = avg - GOAL;
+    toGoalEl.textContent = diff <= 0 ? 'DONE' : diff.toFixed(1) + ' LBS';
+    toGoalEl.className = 'stat-value ' + (diff <= 0 ? 'positive' : 'neutral');
+  }
+
+  // Progress bar
+  const startWeight = entries.length ? entries[0].weight : 200.6;
+  const totalNeeded = startWeight - GOAL;
+  const achieved = avg !== null ? startWeight - avg : 0;
+  const pct = Math.max(0, Math.min(100, (achieved / totalNeeded) * 100));
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('pctDisplay').textContent = Math.round(pct) + '%';
+  document.getElementById('startVal').textContent = startWeight.toFixed(1);
+
+  // Chart
+  drawChart(entries);
+
+  // History
+  renderHistory(entries);
+
+  // Milestone check
+  checkMilestone(avg);
+}
+
+function drawChart(entries) {
+  const canvas = document.getElementById('trendChart');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = 120 * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '120px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const H = 120;
+  const PAD = { top: 12, right: 16, bottom: 24, left: 8 };
+
+  const recent = entries.slice(-30);
+  if (recent.length < 2) {
+    ctx.fillStyle = '#1e1e1e';
+    ctx.font = '11px DM Mono, monospace';
+    ctx.fillText('log entries to see trend', PAD.left, H / 2);
+    return;
+  }
+
+  const weights = recent.map(e => e.weight);
+  const minW = Math.min(...weights) - 1;
+  const maxW = Math.max(...weights) + 1;
+  const range = maxW - minW;
+
+  const chartW = W - PAD.left - PAD.right;
+  const chartH = H - PAD.top - PAD.bottom;
+
+  function px(i) { return PAD.left + (i / (recent.length - 1)) * chartW; }
+  function py(w) { return PAD.top + chartH - ((w - minW) / range) * chartH; }
+
+  // Goal line
+  if (GOAL >= minW && GOAL <= maxW) {
+    const gy = py(GOAL);
+    ctx.beginPath();
+    ctx.setLineDash([3, 5]);
+    ctx.strokeStyle = '#c8f55a44';
+    ctx.lineWidth = 1;
+    ctx.moveTo(PAD.left, gy);
+    ctx.lineTo(W - PAD.right, gy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#c8f55a66';
+    ctx.font = '10px DM Mono, monospace';
+    ctx.fillText('190', W - PAD.right - 24, gy - 4);
+  }
+
+  // Compute weighted avg series
+  const avgSeries = recent.map((_, i) => {
+    const slice = recent.slice(Math.max(0, i - 6), i + 1);
+    return weightedAvg(slice);
+  });
+
+  // Area fill under avg line
+  const grad = ctx.createLinearGradient(0, PAD.top, 0, H - PAD.bottom);
+  grad.addColorStop(0, '#c8f55a18');
+  grad.addColorStop(1, '#c8f55a00');
+  ctx.beginPath();
+  avgSeries.forEach((w, i) => {
+    const x = px(i), y = py(w);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(px(avgSeries.length - 1), H - PAD.bottom);
+  ctx.lineTo(PAD.left, H - PAD.bottom);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Raw dots
+  recent.forEach((e, i) => {
+    ctx.beginPath();
+    ctx.arc(px(i), py(e.weight), 2, 0, Math.PI * 2);
+    ctx.fillStyle = '#333';
+    ctx.fill();
+  });
+
+  // Avg trend line
+  ctx.beginPath();
+  avgSeries.forEach((w, i) => {
+    const x = px(i), y = py(w);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#c8f55a';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // Latest dot
+  const lastI = avgSeries.length - 1;
+  ctx.beginPath();
+  ctx.arc(px(lastI), py(avgSeries[lastI]), 4, 0, Math.PI * 2);
+  ctx.fillStyle = '#c8f55a';
+  ctx.fill();
+
+  // X axis ticks (first and last date)
+  ctx.fillStyle = '#444';
+  ctx.font = '10px DM Mono, monospace';
+  ctx.fillText(formatDate(recent[0].date), PAD.left, H - 4);
+  const lastLabel = formatDate(recent[recent.length - 1].date);
+  const labelW = ctx.measureText(lastLabel).width;
+  ctx.fillText(lastLabel, W - PAD.right - labelW, H - 4);
+}
+
+function renderHistory(entries) {
+  const list = document.getElementById('historyList');
+  const recent = entries.slice().reverse().slice(0, 14);
+
+  if (!recent.length) {
+    list.innerHTML = '<div class="empty-state">no entries yet</div>';
+    return;
+  }
+
+  list.innerHTML = recent.map((e, i) => {
+    const prev = entries[entries.length - 1 - i - 1];
+    let deltaStr = '--';
+    let deltaClass = 'delta-flat';
+    if (prev) {
+      const d = e.weight - prev.weight;
+      deltaStr = formatDelta(d);
+      deltaClass = d < 0 ? 'delta-down' : d > 0 ? 'delta-up' : 'delta-flat';
+    }
+    return `
+      <div class="history-item">
+        <div class="history-date">${formatDate(e.date)}</div>
+        <div class="history-weight">${e.weight.toFixed(1)}</div>
+        <div class="history-delta ${deltaClass}">${deltaStr}</div>
+        <button class="history-delete" onclick="deleteEntry('${e.date}')" title="delete">×</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function checkMilestone(avg) {
+  const el = document.getElementById('milestone');
+  const text = document.getElementById('milestoneText');
+  const sub = document.getElementById('milestoneSub');
+
+  if (avg === null) return;
+
+  if (avg <= 190) {
+    el.classList.add('visible');
+    text.textContent = 'GOAL: REACHED';
+    sub.textContent = 'techno viking confirmed';
+  } else if (avg <= 192) {
+    el.classList.add('visible');
+    text.textContent = 'ALMOST THERE';
+    sub.textContent = `${(avg - 190).toFixed(1)} lbs from goal`;
+  } else if (avg <= 195) {
+    el.classList.add('visible');
+    text.textContent = 'TRENDING DOWN';
+    sub.textContent = 'keep the foot light on the gas';
+  } else {
+    el.classList.remove('visible');
+  }
+}
+
+function logWeight() {
+  const input = document.getElementById('weightInput');
+  const val = parseFloat(input.value);
+  if (isNaN(val) || val < 100 || val > 400) {
+    input.style.borderColor = 'var(--danger)';
+    setTimeout(() => input.style.borderColor = '', 800);
+    return;
+  }
+
+  const entries = getEntries();
+  const today = new Date().toISOString().split('T')[0];
+
+  // Replace today's entry if exists
+  const idx = entries.findIndex(e => e.date === today);
+  if (idx >= 0) {
+    entries[idx].weight = val;
+  } else {
+    entries.push({ date: today, weight: val });
+  }
+
+  saveEntries(entries);
+  input.value = '';
+  input.style.borderColor = 'var(--accent)';
+  setTimeout(() => input.style.borderColor = '', 1000);
+  render();
+}
+
+function deleteEntry(date) {
+  const entries = getEntries().filter(e => e.date !== date);
+  saveEntries(entries);
+  render();
+}
+
+// Enter key
+document.getElementById('weightInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') logWeight();
+});
+
+// Seed today's scan if no data yet
+function seedIfEmpty() {
+  const entries = getEntries();
+  if (!entries.length) {
+    // Pre-load the April scan and today's scan
+    const seed = [
+      { date: '2026-04-17', weight: 200.6 },
+      { date: '2026-05-31', weight: 195.7 }
+    ];
+    saveEntries(seed);
+  }
+}
+
+seedIfEmpty();
+render();
+window.addEventListener('resize', () => render());
+</script>
+</body>
+</html>

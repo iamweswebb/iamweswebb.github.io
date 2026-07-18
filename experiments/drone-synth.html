@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRÖNE</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #08080b;
+  --panel: #0d0d10;
+  --border: #1a1a22;
+  --text: #a8a8b8;
+  --dim: #3a3a48;
+  --c1: #7eb8d4;
+  --c2: #a8c5a0;
+  --c3: #c4a882;
+  --accent: #7eb8d4;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 14px 60px;
+  overflow-x: hidden;
+}
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:0.016; pointer-events:none; z-index:1000;
+}
+
+/* ── HEADER ── */
+header {
+  width:100%; max-width:980px;
+  display:flex; justify-content:space-between; align-items:flex-end;
+  margin-bottom:20px; padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.logo {
+  font-family:'Share Tech Mono',monospace;
+  font-size:1.7rem; letter-spacing:0.4em;
+  color:var(--c1);
+  text-shadow:0 0 28px rgba(126,184,212,0.22);
+}
+.subtitle { font-size:0.65rem; letter-spacing:0.22em; color:var(--dim); text-transform:uppercase; }
+
+/* ── VISUALIZER ── */
+.vis-wrap { width:100%; max-width:980px; margin-bottom:18px; position:relative; }
+#vis { width:100%; height:90px; background:#060609; border:1px solid var(--border); border-radius:4px; display:block; }
+.vis-label { position:absolute; top:7px; left:11px; font-family:'Share Tech Mono',monospace; font-size:0.5rem; letter-spacing:0.2em; color:var(--dim); }
+
+/* ── KEY SELECTOR ── */
+.key-panel {
+  width:100%; max-width:980px;
+  background:var(--panel); border:1px solid var(--border); border-radius:6px;
+  padding:16px; margin-bottom:12px;
+  display:flex; gap:20px; align-items:center;
+}
+.circle-wrap { position:relative; flex-shrink:0; }
+#cof-canvas { display:block; cursor:pointer; border-radius:50%; }
+.key-info { flex:1; display:flex; flex-direction:column; gap:10px; }
+.key-label {
+  font-family:'Share Tech Mono',monospace; font-size:0.55rem;
+  letter-spacing:0.22em; color:var(--dim); text-transform:uppercase;
+  margin-bottom:3px;
+}
+.key-display {
+  font-family:'Share Tech Mono',monospace; font-size:1.6rem;
+  color:var(--c1); letter-spacing:0.1em;
+  text-shadow:0 0 20px rgba(126,184,212,0.3);
+}
+.mode-grid {
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:4px;
+}
+.mode-btn {
+  padding:5px 4px; border:1px solid var(--border); background:#0a0a0d;
+  border-radius:3px; cursor:pointer;
+  font-family:'Share Tech Mono',monospace; font-size:0.5rem;
+  letter-spacing:0.08em; color:var(--dim);
+  transition:all 0.15s; text-align:center;
+}
+.mode-btn:hover { border-color:var(--c1); color:var(--text); }
+.mode-btn.selected { border-color:var(--c1); color:var(--c1); background:rgba(126,184,212,0.07); }
+
+.scale-notes-row {
+  display:flex; gap:4px; flex-wrap:wrap; margin-top:2px;
+}
+.scale-pill {
+  padding:2px 7px; border-radius:20px; border:1px solid var(--border);
+  font-family:'Share Tech Mono',monospace; font-size:0.5rem;
+  color:var(--dim); background:#0a0a0d;
+  transition:all 0.2s;
+}
+.scale-pill.active { border-color:var(--c1); color:var(--c1); background:rgba(126,184,212,0.06); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  width:100%; max-width:980px;
+  font-family:'Share Tech Mono',monospace; font-size:0.5rem;
+  letter-spacing:0.25em; color:var(--dim); opacity:0.5;
+  margin-bottom:5px; margin-top:4px;
+}
+
+/* ── OSCILLATORS ── */
+.oscillators {
+  width:100%; max-width:980px;
+  display:flex; flex-direction:column; gap:10px;
+  margin-bottom:12px;
+}
+.osc-panel {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:6px; padding:13px;
+  display:grid;
+  grid-template-columns: auto 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  gap:10px 16px;
+  align-items:start;
+  transition:border-color 0.4s;
+}
+.osc-panel .osc-header   { grid-column:1; grid-row:1; align-self:center; }
+.osc-panel .note-section { grid-column:2 / span 3; grid-row:1; }
+.osc-panel .wave-section { grid-column:2; grid-row:2; }
+.osc-panel .vol-section  { grid-column:3; grid-row:2; }
+.osc-panel .atk-section  { grid-column:4; grid-row:2; }
+.osc-panel[data-osc="0"] { --oc:var(--c1); }
+.osc-panel[data-osc="1"] { --oc:var(--c2); }
+.osc-panel[data-osc="2"] { --oc:var(--c3); }
+.osc-panel.active { border-color:color-mix(in srgb,var(--oc) 40%,transparent); }
+
+.osc-header { display:flex; justify-content:space-between; align-items:center; }
+.osc-title {
+  font-family:'Share Tech Mono',monospace; font-size:0.58rem;
+  letter-spacing:0.28em; color:var(--oc); opacity:0.8;
+}
+.power-btn {
+  width:24px; height:24px; border-radius:50%;
+  border:1px solid var(--border); background:#0a0a0d;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s; color:var(--dim); font-size:10px; flex-shrink:0;
+}
+.power-btn:hover { border-color:var(--oc); color:var(--oc); }
+.power-btn.on { border-color:var(--oc); color:var(--oc); box-shadow:0 0 7px color-mix(in srgb,var(--oc) 45%,transparent); }
+
+/* Note + octave selectors */
+.note-picker-label { font-family:'Share Tech Mono',monospace; font-size:0.52rem; letter-spacing:0.1em; color:var(--dim); text-transform:uppercase; margin-bottom:4px; }
+
+.note-grid { display:flex; gap:3px; }
+.note-btn-key {
+  flex:1; padding:6px 2px;
+  border:1px solid var(--border); background:#0a0a0d;
+  border-radius:3px; cursor:pointer;
+  font-family:'Share Tech Mono',monospace; font-size:0.52rem;
+  color:var(--dim); transition:all 0.1s; text-align:center;
+}
+.note-btn-key:hover { border-color:var(--oc); color:var(--text); }
+.note-btn-key.selected {
+  background:color-mix(in srgb,var(--oc) 18%,#0a0a0d);
+  border-color:var(--oc); color:var(--oc);
+}
+
+.oct-grid { display:flex; gap:3px; margin-top:5px; }
+.oct-btn-key {
+  flex:1; padding:4px 2px;
+  border:1px solid var(--border); background:#0a0a0d;
+  border-radius:3px; cursor:pointer;
+  font-family:'Share Tech Mono',monospace; font-size:0.48rem;
+  color:var(--dim); transition:all 0.1s; text-align:center;
+}
+.oct-btn-key:hover { border-color:var(--oc); color:var(--text); }
+.oct-btn-key.selected {
+  background:color-mix(in srgb,var(--oc) 18%,#0a0a0d);
+  border-color:var(--oc); color:var(--oc);
+}
+
+/* Waveform */
+.wave-row { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+.wave-btn {
+  padding:5px 3px; border:1px solid var(--border); background:#0a0a0d;
+  border-radius:2px; cursor:pointer; color:var(--dim); transition:all 0.1s;
+  display:flex; align-items:center; justify-content:center;
+}
+.wave-btn:hover { border-color:var(--oc); color:var(--text); }
+.wave-btn.selected { border-color:var(--oc); color:var(--oc); background:rgba(0,0,0,0.3); }
+.wave-btn svg { width:25px; height:13px; }
+
+/* Sliders */
+.sl-row { display:flex; flex-direction:column; gap:4px; }
+.sl-label { display:flex; justify-content:space-between; font-size:0.58rem; letter-spacing:0.08em; color:var(--dim); text-transform:uppercase; }
+.sl-label span:last-child { font-family:'Share Tech Mono',monospace; color:var(--oc); }
+input[type=range] {
+  -webkit-appearance:none; width:100%; height:2px;
+  border-radius:1px; outline:none; cursor:pointer; background:var(--border);
+}
+input[type=range]::-webkit-slider-runnable-track { background:var(--border); height:2px; border-radius:1px; }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:9px; height:9px; border-radius:50%;
+  background:var(--oc,#7eb8d4); margin-top:-3.5px;
+  box-shadow:0 0 4px color-mix(in srgb,var(--oc,#7eb8d4) 55%,transparent);
+}
+
+/* ── X/Y PADS ── */
+.pads-row {
+  width:100%; max-width:980px;
+  display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  margin-bottom:10px;
+}
+.pad-panel {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:6px; padding:12px;
+  display:flex; flex-direction:column; gap:8px;
+}
+.pad-title { font-family:'Share Tech Mono',monospace; font-size:0.52rem; letter-spacing:0.22em; color:var(--dim); }
+.pad-wrap { position:relative; width:100%; }
+.xy-pad {
+  width:100%; aspect-ratio:2/1;
+  background:#060609; border:1px solid var(--border);
+  border-radius:3px; cursor:crosshair; position:relative;
+  touch-action:none; overflow:hidden;
+}
+.xy-grid-line {
+  position:absolute; background:rgba(126,184,212,0.03);
+}
+.xy-cursor {
+  position:absolute; width:10px; height:10px;
+  border-radius:50%; transform:translate(-50%,-50%);
+  pointer-events:none; transition:box-shadow 0.1s;
+}
+.xy-cursor.active { box-shadow:0 0 10px currentColor; }
+.xy-label-x {
+  position:absolute; bottom:-16px; right:0;
+  font-family:'Share Tech Mono',monospace; font-size:0.45rem;
+  letter-spacing:0.1em; color:var(--dim);
+}
+.xy-label-y {
+  position:absolute; top:50%; left:-14px;
+  font-family:'Share Tech Mono',monospace; font-size:0.45rem;
+  letter-spacing:0.1em; color:var(--dim);
+  transform:translateY(-50%) rotate(-90deg);
+  white-space:nowrap;
+}
+.pad-readout {
+  font-family:'Share Tech Mono',monospace; font-size:0.48rem;
+  color:var(--dim); display:flex; justify-content:space-between;
+}
+.pad-readout span { color:var(--text); }
+
+/* LFO pads per osc */
+.lfo-pads-row {
+  width:100%; max-width:980px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+  margin-bottom:12px;
+}
+.lfo-pad-panel {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:6px; padding:12px;
+  display:flex; flex-direction:column; gap:8px;
+}
+.lfo-pad-panel[data-osc="0"] { --oc:var(--c1); }
+.lfo-pad-panel[data-osc="1"] { --oc:var(--c2); }
+.lfo-pad-panel[data-osc="2"] { --oc:var(--c3); }
+.lfo-pad-title { font-family:'Share Tech Mono',monospace; font-size:0.52rem; letter-spacing:0.22em; color:var(--oc); opacity:0.7; }
+.lfo-mode-row { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.lfo-mode-btn {
+  padding:4px 2px; border:1px solid var(--border); background:#0a0a0d;
+  border-radius:2px; cursor:pointer;
+  font-family:'Share Tech Mono',monospace; font-size:0.46rem;
+  letter-spacing:0.05em; color:var(--dim); transition:all 0.1s; text-align:center;
+}
+.lfo-mode-btn:hover { border-color:var(--oc); color:var(--text); }
+.lfo-mode-btn.selected { border-color:var(--oc); color:var(--oc); background:rgba(0,0,0,0.3); }
+
+/* ── MASTER ── */
+.master-row {
+  width:100%; max-width:980px;
+  display:flex; gap:12px; align-items:center; margin-top:6px;
+}
+.master-vol { flex:1; display:flex; flex-direction:column; gap:5px; }
+.master-lbl { font-family:'Share Tech Mono',monospace; font-size:0.52rem; letter-spacing:0.18em; color:var(--dim); display:flex; justify-content:space-between; }
+.master-lbl span:last-child { color:var(--text); }
+.stop-all {
+  padding:8px 16px; border:1px solid #442828; background:transparent;
+  color:#664444; font-family:'Share Tech Mono',monospace;
+  font-size:0.55rem; letter-spacing:0.16em; border-radius:3px;
+  cursor:pointer; transition:all 0.2s; flex-shrink:0;
+}
+.stop-all:hover { border-color:#aa3333; color:#aa3333; box-shadow:0 0 10px rgba(170,50,50,0.15); }
+
+@media(max-width:680px){
+  .key-panel { flex-direction:column; }
+  .lfo-pads-row,.pads-row { grid-template-columns:1fr; }
+  .osc-panel {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .osc-panel .note-section { grid-column:1 / span 2; grid-row:1; }
+  .osc-panel .osc-header   { grid-column:1; grid-row:2; }
+  .osc-panel .wave-section  { grid-column:2; grid-row:2; }
+  .osc-panel .vol-section   { grid-column:1 / span 2; grid-row:3; }
+  .osc-panel .atk-section   { grid-column:1 / span 2; grid-row:4; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">DRÖNE</div>
+  <div class="subtitle">Ambient Synthesizer</div>
+</header>
+
+<div class="vis-wrap">
+  <canvas id="vis"></canvas>
+  <div class="vis-label">WAVEFORM</div>
+</div>
+
+<!-- KEY SELECTOR -->
+<div class="section-label">— key &amp; scale</div>
+<div class="key-panel">
+  <div class="circle-wrap">
+    <canvas id="cof-canvas" width="160" height="160"></canvas>
+  </div>
+  <div class="key-info">
+    <div>
+      <div class="key-label">Root Note</div>
+      <div class="key-display" id="keyDisplay">A</div>
+    </div>
+    <div>
+      <div class="key-label">Mode</div>
+      <div class="mode-grid" id="modeGrid"></div>
+    </div>
+    <div>
+      <div class="key-label" style="margin-bottom:5px;">Scale Notes</div>
+      <div class="scale-notes-row" id="scaleNotes"></div>
+    </div>
+  </div>
+</div>
+
+<!-- OSCILLATORS -->
+<div class="section-label">— oscillators</div>
+<div class="oscillators" id="oscContainer"></div>
+
+<!-- LFO X/Y PADS -->
+<div class="section-label">— lfo</div>
+<div class="lfo-pads-row" id="lfoPads"></div>
+
+<!-- FX X/Y PADS -->
+<div class="section-label">— effects</div>
+<div class="pads-row">
+  <!-- Reverb pad -->
+  <div class="pad-panel">
+    <div class="pad-title">REVERB</div>
+    <div class="pad-wrap" style="padding-bottom:20px; padding-left:18px;">
+      <div class="xy-pad" id="revPad">
+        <div class="xy-cursor" id="revCursor" style="left:40%;top:35%;background:var(--c1);color:var(--c1);"></div>
+      </div>
+      <div class="xy-label-x">DECAY →</div>
+      <div class="xy-label-y">← MIX</div>
+    </div>
+    <div class="pad-readout">
+      <span>mix <span id="revMixOut">65%</span></span>
+      <span>decay <span id="revDecayOut">5.0s</span></span>
+    </div>
+  </div>
+  <!-- Filter pad -->
+  <div class="pad-panel">
+    <div class="pad-title">FILTER</div>
+    <div class="pad-wrap" style="padding-bottom:20px; padding-left:18px;">
+      <div class="xy-pad" id="filtPad">
+        <div class="xy-cursor" id="filtCursor" style="left:30%;top:85%;background:var(--c2);color:var(--c2);"></div>
+      </div>
+      <div class="xy-label-x">CUTOFF →</div>
+      <div class="xy-label-y">← RESO</div>
+    </div>
+    <div class="pad-readout">
+      <span>cutoff <span id="filtFreqOut">3500Hz</span></span>
+      <span>reso <span id="filtQOut">0.8</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- MASTER -->
+<div class="master-row">
+  <div class="master-vol">
+    <div class="master-lbl"><span>MASTER VOLUME</span><span id="masterVolVal">70%</span></div>
+    <input type="range" id="masterVol" min="0" max="100" value="70" style="--oc:#666;">
+  </div>
+  <button class="stop-all" id="stopAll">■ STOP ALL</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// MUSIC THEORY
+// ═══════════════════════════════════════════════
+const ALL_NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const COF_ORDER = ['C','G','D','A','E','B','F#','C#','G#','D#','A#','F']; // clockwise
+
+const MODES = {
+  'Major':      [0,2,4,5,7,9,11],
+  'Minor':      [0,2,3,5,7,8,10],
+  'Dorian':     [0,2,3,5,7,9,10],
+  'Phrygian':   [0,1,3,5,7,8,10],
+  'Lydian':     [0,2,4,6,7,9,11],
+  'Mixolydian': [0,2,4,5,7,9,10],
+};
+
+let currentRoot = 'A';
+let currentMode = 'Minor';
+
+function getScaleNotes(root, mode) {
+  const rootIdx = ALL_NOTES.indexOf(root);
+  const intervals = MODES[mode];
+  return intervals.map(i => ALL_NOTES[(rootIdx + i) % 12]);
+}
+
+function getNoteOctavePairs(root, mode) {
+  // Return all notes in key across octaves 1–5 with midi-ish label
+  const scale = getScaleNotes(root, mode);
+  const pairs = [];
+  for (let oct = 1; oct <= 5; oct++) {
+    for (const note of ALL_NOTES) {
+      if (scale.includes(note)) {
+        pairs.push({ note, oct, label: note, sublabel: oct });
+      }
+    }
+  }
+  return pairs;
+}
+
+function noteToFreq(note, oct) {
+  const midi = ALL_NOTES.indexOf(note) + (oct + 1) * 12;
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+// ═══════════════════════════════════════════════
+// CIRCLE OF FIFTHS CANVAS
+// ═══════════════════════════════════════════════
+const cofCanvas = document.getElementById('cof-canvas');
+const cofCtx = cofCanvas.getContext('2d');
+
+function drawCOF() {
+  const W = cofCanvas.width, H = cofCanvas.height;
+  const cx = W/2, cy = H/2;
+  const outerR = W/2 - 4, innerR = outerR * 0.42;
+  cofCtx.clearRect(0,0,W,H);
+
+  COF_ORDER.forEach((note, i) => {
+    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    const nextAngle = ((i+1) / 12) * Math.PI * 2 - Math.PI / 2;
+    const midAngle = (angle + nextAngle) / 2;
+    const isSelected = note === currentRoot;
+    const isInScale = getScaleNotes(currentRoot, currentMode).includes(note);
+
+    // Slice
+    cofCtx.beginPath();
+    cofCtx.moveTo(cx, cy);
+    cofCtx.arc(cx, cy, outerR, angle, nextAngle);
+    cofCtx.closePath();
+    if (isSelected) {
+      cofCtx.fillStyle = 'rgba(126,184,212,0.28)';
+    } else if (isInScale) {
+      cofCtx.fillStyle = 'rgba(126,184,212,0.07)';
+    } else {
+      cofCtx.fillStyle = 'rgba(13,13,16,0.9)';
+    }
+    cofCtx.fill();
+    cofCtx.strokeStyle = isSelected ? 'rgba(126,184,212,0.6)' : '#1a1a22';
+    cofCtx.lineWidth = isSelected ? 1.5 : 0.5;
+    cofCtx.stroke();
+
+    // Label
+    const labelR = (outerR + innerR) / 2;
+    const lx = cx + Math.cos(midAngle) * labelR;
+    const ly = cy + Math.sin(midAngle) * labelR;
+    cofCtx.font = isSelected
+      ? `bold ${W * 0.083}px Share Tech Mono, monospace`
+      : `${W * 0.072}px Share Tech Mono, monospace`;
+    cofCtx.textAlign = 'center';
+    cofCtx.textBaseline = 'middle';
+    cofCtx.fillStyle = isSelected ? '#7eb8d4' : isInScale ? 'rgba(168,184,212,0.7)' : '#3a3a48';
+    cofCtx.fillText(note, lx, ly);
+  });
+
+  // Inner circle
+  cofCtx.beginPath();
+  cofCtx.arc(cx, cy, innerR, 0, Math.PI*2);
+  cofCtx.fillStyle = '#08080b';
+  cofCtx.fill();
+  cofCtx.strokeStyle = '#1a1a22';
+  cofCtx.lineWidth = 1;
+  cofCtx.stroke();
+
+  // Center text
+  cofCtx.font = `bold ${W * 0.09}px Share Tech Mono, monospace`;
+  cofCtx.textAlign = 'center';
+  cofCtx.textBaseline = 'middle';
+  cofCtx.fillStyle = '#7eb8d4';
+  cofCtx.fillText(currentRoot, cx, cy - 7);
+  cofCtx.font = `${W * 0.055}px Share Tech Mono, monospace`;
+  cofCtx.fillStyle = '#3a3a48';
+  cofCtx.fillText(currentMode.slice(0,3).toUpperCase(), cx, cy + 10);
+}
+
+cofCanvas.addEventListener('click', e => {
+  const rect = cofCanvas.getBoundingClientRect();
+  const scaleX = cofCanvas.width / rect.width;
+  const scaleY = cofCanvas.height / rect.height;
+  const x = (e.clientX - rect.left) * scaleX - cofCanvas.width/2;
+  const y = (e.clientY - rect.top) * scaleY - cofCanvas.height/2;
+  const r = Math.sqrt(x*x + y*y);
+  const outerR = cofCanvas.width/2 - 4;
+  const innerR = outerR * 0.42;
+  if (r < innerR || r > outerR) return;
+  let angle = Math.atan2(y, x) + Math.PI/2;
+  if (angle < 0) angle += Math.PI*2;
+  const idx = Math.floor((angle / (Math.PI*2)) * 12) % 12;
+  currentRoot = COF_ORDER[idx];
+  document.getElementById('keyDisplay').textContent = currentRoot;
+  onKeyChange();
+});
+
+// ═══════════════════════════════════════════════
+// MODE SELECTOR
+// ═══════════════════════════════════════════════
+const modeGrid = document.getElementById('modeGrid');
+Object.keys(MODES).forEach(mode => {
+  const btn = document.createElement('button');
+  btn.className = 'mode-btn' + (mode === currentMode ? ' selected' : '');
+  btn.textContent = mode;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    currentMode = mode;
+    onKeyChange();
+  });
+  modeGrid.appendChild(btn);
+});
+
+function updateScalePills() {
+  const scaleNotes = getScaleNotes(currentRoot, currentMode);
+  const container = document.getElementById('scaleNotes');
+  container.innerHTML = '';
+  ALL_NOTES.forEach(n => {
+    const pill = document.createElement('div');
+    pill.className = 'scale-pill' + (scaleNotes.includes(n) ? ' active' : '');
+    pill.textContent = n;
+    container.appendChild(pill);
+  });
+}
+
+function onKeyChange() {
+  drawCOF();
+  updateScalePills();
+  rebuildAllNotePickers();
+}
+
+// ═══════════════════════════════════════════════
+// AUDIO
+// ═══════════════════════════════════════════════
+let actx = null;
+function getCtx() {
+  if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+
+let masterGain, filter, reverbNode, revWet, revDry, predelayNode, analyser;
+
+function buildFxChain() {
+  const ac = getCtx();
+  masterGain = ac.createGain(); masterGain.gain.value = 0.7;
+  filter = ac.createBiquadFilter();
+  filter.type = 'lowpass'; filter.frequency.value = 3500; filter.Q.value = 0.8;
+  predelayNode = ac.createDelay(0.3); predelayNode.delayTime.value = 0.02;
+  reverbNode = ac.createConvolver(); buildImpulse(5.0);
+  revWet = ac.createGain(); revWet.gain.value = 0.65;
+  revDry = ac.createGain(); revDry.gain.value = 0.5;
+  analyser = ac.createAnalyser(); analyser.fftSize = 2048; analyser.smoothingTimeConstant = 0.88;
+  filter.connect(revDry);
+  filter.connect(predelayNode);
+  predelayNode.connect(reverbNode);
+  reverbNode.connect(revWet);
+  revDry.connect(masterGain);
+  revWet.connect(masterGain);
+  masterGain.connect(analyser);
+  analyser.connect(ac.destination);
+}
+
+function buildImpulse(decay) {
+  const ac = getCtx();
+  const sr = ac.sampleRate, len = Math.floor(sr * decay);
+  const buf = ac.createBuffer(2, len, sr);
+  for (let c = 0; c < 2; c++) {
+    const d = buf.getChannelData(c);
+    for (let i = 0; i < len; i++) d[i] = (Math.random()*2-1) * Math.pow(1 - i/len, 1.4);
+  }
+  reverbNode.buffer = buf;
+}
+
+const WAVES = ['sine','triangle','sawtooth','square'];
+const WAVE_SVG = {
+  sine:     `<svg viewBox="0 0 26 14"><path d="M1 7 C4.5 1.5,8 1.5,13 7 C18 12.5,21.5 12.5,25 7" stroke="currentColor" fill="none" stroke-width="1.5"/></svg>`,
+  triangle: `<svg viewBox="0 0 26 14"><polyline points="1,7 6.5,1.5 13,12.5 19.5,1.5 25,7" stroke="currentColor" fill="none" stroke-width="1.5"/></svg>`,
+  sawtooth: `<svg viewBox="0 0 26 14"><polyline points="1,12.5 13,1.5 13,12.5 25,1.5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg>`,
+  square:   `<svg viewBox="0 0 26 14"><polyline points="1,12.5 1,3 13,3 13,12.5 13,3 25,3 25,12.5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg>`,
+};
+
+// Default starting notes (in key of A minor: A3, E3, A2)
+const oscState = [
+  { note:'A', oct:3, wave:'sine', vol:0.55, attack:3.0, lfoMode:'off', lfoRate:0.12, lfoDepth:0.2, playing:false, osc:null, gain:null, lfo:null, lfoGain:null },
+  { note:'E', oct:3, wave:'sine', vol:0.45, attack:4.0, lfoMode:'off', lfoRate:0.07, lfoDepth:0.18, playing:false, osc:null, gain:null, lfo:null, lfoGain:null },
+  { note:'C', oct:3, wave:'sine', vol:0.35, attack:5.0, lfoMode:'off', lfoRate:0.04, lfoDepth:0.15, playing:false, osc:null, gain:null, lfo:null, lfoGain:null },
+];
+
+function startOsc(i) {
+  const ac = getCtx();
+  if (!masterGain) buildFxChain();
+  const s = oscState[i];
+  if (s.playing) stopOsc(i, true);
+  s.osc = ac.createOscillator(); s.osc.type = s.wave;
+  s.osc.frequency.value = noteToFreq(s.note, s.oct);
+  s.gain = ac.createGain();
+  s.gain.gain.setValueAtTime(0.0001, ac.currentTime);
+  s.gain.gain.exponentialRampToValueAtTime(s.vol, ac.currentTime + s.attack);
+  s.lfo = ac.createOscillator(); s.lfo.type = 'sine'; s.lfo.frequency.value = s.lfoRate;
+  s.lfoGain = ac.createGain(); s.lfoGain.gain.value = 0;
+  s.lfo.connect(s.lfoGain);
+  applyLfoMode(i);
+  s.osc.connect(s.gain); s.gain.connect(filter);
+  s.osc.start(); s.lfo.start();
+  s.playing = true;
+}
+
+function applyLfoMode(i) {
+  const s = oscState[i];
+  if (!s.lfo || !s.lfoGain) return;
+  try { s.lfoGain.disconnect(); } catch(e) {}
+  if (s.lfoMode === 'tremolo') {
+    s.lfoGain.gain.value = s.lfoDepth * s.vol * 0.8;
+    s.lfoGain.connect(s.gain.gain);
+  } else if (s.lfoMode === 'vibrato') {
+    s.lfoGain.gain.value = noteToFreq(s.note, s.oct) * s.lfoDepth * 0.025;
+    s.lfoGain.connect(s.osc.frequency);
+  } else {
+    s.lfoGain.gain.value = 0;
+  }
+}
+
+function stopOsc(i, immediate) {
+  const s = oscState[i];
+  if (!s.osc) return;
+  const ac = getCtx(), now = ac.currentTime;
+  const fadeTime = immediate ? 0.05 : 2.0;
+  s.gain.gain.cancelScheduledValues(now);
+  s.gain.gain.setValueAtTime(s.gain.gain.value, now);
+  s.gain.gain.exponentialRampToValueAtTime(0.0001, now + fadeTime);
+  const o=s.osc, g=s.gain, l=s.lfo, lg=s.lfoGain;
+  setTimeout(() => {
+    try{o.stop();o.disconnect();}catch(e){}
+    try{l.stop();l.disconnect();lg.disconnect();}catch(e){}
+    try{g.disconnect();}catch(e){}
+  }, (fadeTime + 0.1) * 1000);
+  s.osc=null; s.gain=null; s.lfo=null; s.lfoGain=null;
+  s.playing=false;
+}
+
+function updateOscFreq(i) {
+  const s = oscState[i];
+  if (!s.osc) return;
+  const ac = getCtx();
+  s.osc.frequency.setTargetAtTime(noteToFreq(s.note, s.oct), ac.currentTime, 0.08);
+  if (s.lfoMode === 'vibrato' && s.lfoGain)
+    s.lfoGain.gain.setTargetAtTime(noteToFreq(s.note, s.oct) * s.lfoDepth * 0.025, ac.currentTime, 0.05);
+}
+
+// ═══════════════════════════════════════════════
+// BUILD OSCILLATOR PANELS
+// ═══════════════════════════════════════════════
+function buildOscPanels() {
+  const container = document.getElementById('oscContainer');
+  container.innerHTML = '';
+  for (let i = 0; i < 3; i++) buildOscPanel(i);
+}
+
+function buildOscPanel(i) {
+  const s = oscState[i];
+  const panel = document.createElement('div');
+  panel.className = 'osc-panel';
+  panel.dataset.osc = i;
+  panel.id = `oscPanel${i}`;
+
+  panel.innerHTML = `
+    <div class="osc-header">
+      <div class="osc-title">OSC ${i+1}</div>
+      <button class="power-btn" id="power${i}">&#9654;</button>
+    </div>
+
+    <div class="note-section">
+      <div class="note-picker-label">Note</div>
+      <div class="note-grid" id="noteGrid${i}">
+        ${getScaleNotes(currentRoot, currentMode).map(n =>
+          `<button class="note-btn-key${n===s.note?' selected':''}" data-note="${n}">${n}</button>`
+        ).join('')}
+      </div>
+      <div class="oct-grid" id="octGrid${i}">
+        ${[1,2,3,4,5].map(o =>
+          `<button class="oct-btn-key${o===s.oct?' selected':''}" data-oct="${o}">${o}</button>`
+        ).join('')}
+      </div>
+    </div>
+
+    <div class="wave-section">
+      <div class="note-picker-label" style="margin-bottom:4px;">Wave</div>
+      <div class="wave-row">
+        ${WAVES.map(w=>`<button class="wave-btn${w===s.wave?' selected':''}" data-wave="${w}">${WAVE_SVG[w]}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="vol-section sl-row">
+      <div class="sl-label"><span>Volume</span><span id="vol${i}Val">${Math.round(s.vol*100)}%</span></div>
+      <input type="range" id="vol${i}" min="0" max="100" value="${Math.round(s.vol*100)}">
+    </div>
+
+    <div class="atk-section sl-row">
+      <div class="sl-label"><span>Attack</span><span id="atk${i}Val">${s.attack.toFixed(1)}s</span></div>
+      <input type="range" id="atk${i}" min="0.05" max="12" step="0.05" value="${s.attack}">
+    </div>
+  `;
+
+  document.getElementById('oscContainer').appendChild(panel);
+
+  const powerBtn = panel.querySelector(`#power${i}`);
+  powerBtn.addEventListener('click', () => {
+    if (s.playing) {
+      stopOsc(i, false);
+      powerBtn.classList.remove('on'); powerBtn.innerHTML='&#9654;';
+      panel.classList.remove('active');
+    } else {
+      startOsc(i);
+      powerBtn.classList.add('on'); powerBtn.innerHTML='&#9646;&#9646;';
+      panel.classList.add('active');
+    }
+  });
+
+  panel.querySelectorAll('.note-btn-key').forEach(btn => {
+    btn.addEventListener('click', () => {
+      panel.querySelectorAll('.note-btn-key').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      s.note = btn.dataset.note;
+      updateOscFreq(i);
+    });
+  });
+
+  panel.querySelectorAll('.oct-btn-key').forEach(btn => {
+    btn.addEventListener('click', () => {
+      panel.querySelectorAll('.oct-btn-key').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      s.oct = parseInt(btn.dataset.oct);
+      updateOscFreq(i);
+    });
+  });
+
+  panel.querySelectorAll('.wave-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      panel.querySelectorAll('.wave-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      s.wave = btn.dataset.wave;
+      if (s.osc) s.osc.type = s.wave;
+    });
+  });
+
+  panel.querySelector(`#vol${i}`).addEventListener('input', e => {
+    s.vol = e.target.value/100;
+    document.getElementById(`vol${i}Val`).textContent = e.target.value+'%';
+    if (s.gain) s.gain.gain.setTargetAtTime(s.vol, getCtx().currentTime, 0.1);
+    if (s.lfoMode==='tremolo' && s.lfoGain) s.lfoGain.gain.value = s.lfoDepth*s.vol*0.8;
+  });
+
+  panel.querySelector(`#atk${i}`).addEventListener('input', e => {
+    s.attack = parseFloat(e.target.value);
+    document.getElementById(`atk${i}Val`).textContent = s.attack.toFixed(1)+'s';
+  });
+}
+
+function rebuildAllNotePickers() {
+  const scaleNotes = getScaleNotes(currentRoot, currentMode);
+  for (let i = 0; i < 3; i++) {
+    const s = oscState[i];
+    const noteGrid = document.getElementById(`noteGrid${i}`);
+    if (!noteGrid) continue;
+
+    // Snap note if no longer in scale
+    if (!scaleNotes.includes(s.note)) {
+      s.note = scaleNotes[0];
+      updateOscFreq(i);
+    }
+
+    // Rebuild note buttons
+    noteGrid.innerHTML = scaleNotes.map(n =>
+      `<button class="note-btn-key${n===s.note?' selected':''}" data-note="${n}">${n}</button>`
+    ).join('');
+
+    noteGrid.querySelectorAll('.note-btn-key').forEach(btn => {
+      btn.addEventListener('click', () => {
+        noteGrid.querySelectorAll('.note-btn-key').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        s.note = btn.dataset.note;
+        updateOscFreq(i);
+      });
+    });
+
+    // Octave grid stays fixed — just ensure selected is still valid
+    const octGrid = document.getElementById(`octGrid${i}`);
+    octGrid.querySelectorAll('.oct-btn-key').forEach(btn => {
+      btn.classList.toggle('selected', parseInt(btn.dataset.oct) === s.oct);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════
+// LFO X/Y PADS
+// ═══════════════════════════════════════════════
+const OSC_COLORS = ['#7eb8d4','#a8c5a0','#c4a882'];
+
+function buildLfoPads() {
+  const container = document.getElementById('lfoPads');
+  container.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const s = oscState[i];
+    const panel = document.createElement('div');
+    panel.className = 'lfo-pad-panel';
+    panel.dataset.osc = i;
+
+    const initX = (s.lfoRate / 2) * 100;
+    const initY = 100 - s.lfoDepth * 100;
+
+    panel.innerHTML = `
+      <div class="lfo-pad-title">OSC ${i+1} — LFO</div>
+      <div class="lfo-mode-row">
+        <button class="lfo-mode-btn${s.lfoMode==='off'?' selected':''}" data-mode="off">OFF</button>
+        <button class="lfo-mode-btn${s.lfoMode==='tremolo'?' selected':''}" data-mode="tremolo">TREM</button>
+        <button class="lfo-mode-btn${s.lfoMode==='vibrato'?' selected':''}" data-mode="vibrato">VIB</button>
+      </div>
+      <div style="position:relative; padding-bottom:20px; padding-left:18px;">
+        <div class="xy-pad" id="lfoPad${i}" style="aspect-ratio:3/2;">
+          <div class="xy-cursor" id="lfoCursor${i}"
+            style="left:${initX}%;top:${initY}%;background:${OSC_COLORS[i]};color:${OSC_COLORS[i]};">
+          </div>
+        </div>
+        <div class="xy-label-x">RATE →</div>
+        <div class="xy-label-y">← DEPTH</div>
+      </div>
+      <div class="pad-readout">
+        <span>rate <span id="lfoRateOut${i}">${s.lfoRate.toFixed(2)}Hz</span></span>
+        <span>depth <span id="lfoDepthOut${i}">${Math.round(s.lfoDepth*100)}%</span></span>
+      </div>
+    `;
+    container.appendChild(panel);
+
+    panel.querySelectorAll('.lfo-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        panel.querySelectorAll('.lfo-mode-btn').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');
+        s.lfoMode = btn.dataset.mode;
+        if (s.lfo) applyLfoMode(i);
+      });
+    });
+
+    setupXYPad(
+      document.getElementById(`lfoPad${i}`),
+      document.getElementById(`lfoCursor${i}`),
+      (nx, ny) => {
+        s.lfoRate = nx * 2;
+        s.lfoDepth = 1 - ny;
+        document.getElementById(`lfoRateOut${i}`).textContent = s.lfoRate.toFixed(2)+'Hz';
+        document.getElementById(`lfoDepthOut${i}`).textContent = Math.round(s.lfoDepth*100)+'%';
+        if (s.lfo) s.lfo.frequency.setTargetAtTime(s.lfoRate, getCtx().currentTime, 0.05);
+        if (s.lfoGain && s.lfoMode !== 'off') applyLfoMode(i);
+      }
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════
+// X/Y PAD UTILITY
+// ═══════════════════════════════════════════════
+function setupXYPad(padEl, cursorEl, onChange) {
+  let dragging = false;
+
+  function update(e) {
+    const rect = padEl.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const nx = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const ny = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+    cursorEl.style.left = (nx * 100) + '%';
+    cursorEl.style.top  = (ny * 100) + '%';
+    cursorEl.classList.add('active');
+    onChange(nx, ny);
+  }
+
+  padEl.addEventListener('mousedown',  e => { dragging=true; update(e); });
+  padEl.addEventListener('touchstart', e => { dragging=true; update(e); e.preventDefault(); }, {passive:false});
+  window.addEventListener('mousemove',  e => { if(dragging) update(e); });
+  window.addEventListener('touchmove',  e => { if(dragging) update(e); }, {passive:false});
+  window.addEventListener('mouseup',   () => { dragging=false; });
+  window.addEventListener('touchend',  () => { dragging=false; });
+}
+
+// ═══════════════════════════════════════════════
+// FX X/Y PADS
+// ═══════════════════════════════════════════════
+
+// Reverb pad — X = decay (0.5→14s), Y = mix (0→1), cursor starts at x=40%,y=35%
+setupXYPad(
+  document.getElementById('revPad'),
+  document.getElementById('revCursor'),
+  (nx, ny) => {
+    const decay = 0.5 + nx * 13.5;
+    const mix   = 1 - ny;
+    document.getElementById('revMixOut').textContent   = Math.round(mix*100)+'%';
+    document.getElementById('revDecayOut').textContent = decay.toFixed(1)+'s';
+    if (!revWet) return;
+    revWet.gain.setTargetAtTime(mix, getCtx().currentTime, 0.05);
+    revDry.gain.setTargetAtTime(Math.max(0.15, 1-mix*0.75), getCtx().currentTime, 0.05);
+    buildImpulse(decay);
+  }
+);
+
+// Filter pad — X = cutoff (80→18000Hz log), Y = resonance (0.1→12)
+setupXYPad(
+  document.getElementById('filtPad'),
+  document.getElementById('filtCursor'),
+  (nx, ny) => {
+    const freq = 80 * Math.pow(18000/80, nx);
+    const q    = 0.1 + (1-ny) * 11.9;
+    document.getElementById('filtFreqOut').textContent = Math.round(freq)+'Hz';
+    document.getElementById('filtQOut').textContent    = q.toFixed(1);
+    if (!filter) return;
+    filter.frequency.setTargetAtTime(freq, getCtx().currentTime, 0.04);
+    filter.Q.setTargetAtTime(q, getCtx().currentTime, 0.02);
+  }
+);
+
+document.getElementById('masterVol').addEventListener('input', e => {
+  document.getElementById('masterVolVal').textContent = e.target.value+'%';
+  if (masterGain) masterGain.gain.setTargetAtTime(e.target.value/100, getCtx().currentTime, 0.05);
+});
+
+document.getElementById('stopAll').addEventListener('click', () => {
+  for (let i=0; i<3; i++) {
+    if (oscState[i].playing) {
+      stopOsc(i, false);
+      document.getElementById(`power${i}`).classList.remove('on');
+      document.getElementById(`power${i}`).innerHTML='&#9654;';
+      document.querySelector(`.osc-panel[data-osc="${i}"]`).classList.remove('active');
+    }
+  }
+});
+
+// ═══════════════════════════════════════════════
+// VISUALIZER
+// ═══════════════════════════════════════════════
+const visCanvas = document.getElementById('vis');
+const vCtx = visCanvas.getContext('2d');
+
+function resizeVis() {
+  const dpr = window.devicePixelRatio||1;
+  visCanvas.width  = visCanvas.offsetWidth * dpr;
+  visCanvas.height = visCanvas.offsetHeight * dpr;
+  vCtx.scale(dpr, dpr);
+}
+resizeVis();
+window.addEventListener('resize', resizeVis);
+
+function drawVis() {
+  requestAnimationFrame(drawVis);
+  const W = visCanvas.offsetWidth, H = visCanvas.offsetHeight;
+  vCtx.fillStyle = 'rgba(6,6,9,0.3)';
+  vCtx.fillRect(0,0,W,H);
+
+  vCtx.strokeStyle = 'rgba(126,184,212,0.022)';
+  vCtx.lineWidth = 0.5;
+  for(let x=0;x<W;x+=60){vCtx.beginPath();vCtx.moveTo(x,0);vCtx.lineTo(x,H);vCtx.stroke();}
+  for(let y=0;y<H;y+=20){vCtx.beginPath();vCtx.moveTo(0,y);vCtx.lineTo(W,y);vCtx.stroke();}
+  vCtx.strokeStyle='rgba(126,184,212,0.05)';
+  vCtx.lineWidth=1;
+  vCtx.beginPath();vCtx.moveTo(0,H/2);vCtx.lineTo(W,H/2);vCtx.stroke();
+
+  if (!analyser) return;
+  const bufLen = analyser.frequencyBinCount;
+  const data = new Float32Array(bufLen);
+  analyser.getFloatTimeDomainData(data);
+  let start=0;
+  for(let i=1;i<bufLen-1;i++){if(data[i-1]<0&&data[i]>=0){start=i;break;}}
+  const drawLen=Math.min(bufLen,900), sw=W/drawLen;
+
+  vCtx.save();
+  vCtx.shadowBlur=12; vCtx.shadowColor='rgba(126,184,212,0.3)';
+  vCtx.strokeStyle='rgba(126,184,212,0.1)'; vCtx.lineWidth=5;
+  vCtx.beginPath();
+  for(let i=0;i<drawLen;i++){
+    const x=i*sw, y=H/2+data[(start+i)%bufLen]*H*0.42;
+    i===0?vCtx.moveTo(x,y):vCtx.lineTo(x,y);
+  }
+  vCtx.stroke(); vCtx.restore();
+
+  vCtx.strokeStyle='rgba(126,184,212,0.6)'; vCtx.lineWidth=1;
+  vCtx.beginPath();
+  for(let i=0;i<drawLen;i++){
+    const x=i*sw, y=H/2+data[(start+i)%bufLen]*H*0.42;
+    i===0?vCtx.moveTo(x,y):vCtx.lineTo(x,y);
+  }
+  vCtx.stroke();
+}
+drawVis();
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+drawCOF();
+updateScalePills();
+buildOscPanels();
+buildLfoPads();
+</script>
+</body>
+</html>
