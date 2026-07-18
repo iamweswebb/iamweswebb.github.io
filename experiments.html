@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experiments — iamweswebb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: #080608; color: #e8e0d4; font-family: 'JetBrains Mono', monospace; overflow-x: hidden; }
+  a { text-decoration: none; }
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 52px; position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,6,8,0.82); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(232,224,212,0.06);
+  }
+  .wm-lock { display: flex; align-items: center; gap: 12px; color: #e8e0d4; font-size: 13px; }
+  nav ul { list-style: none; display: flex; gap: 26px; }
+  nav ul li a { color: rgba(232,224,212,0.35); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.15s; }
+  nav ul li a:hover { color: #e2007a; }
+  nav ul li a.here { color: #e8e0d4; }
+  .hero {
+    min-height: 78vh; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 52px 56px; border-bottom: 1px solid rgba(232,224,212,0.08);
+  }
+  .hero h1 {
+    font-family: 'Anton', sans-serif; font-weight: 400;
+    font-size: clamp(44px, 6vw, 110px); line-height: 0.92; letter-spacing: 0.01em;
+    text-transform: uppercase; color: #e8e0d4;
+  }
+  .hero h1 span { color: #e2007a; }
+  .hero-meta { margin-top: 48px; border-top: 1px solid rgba(232,224,212,0.08); }
+  .hero-meta p { padding: 26px 0 0; font-size: 12px; line-height: 1.9; letter-spacing: 0.04em; color: rgba(232,224,212,0.4); max-width: 480px; }
+  .exp-row {
+    display: grid; grid-template-columns: 64px 1fr auto;
+    align-items: center; gap: 32px;
+    padding: 44px 52px; border-bottom: 1px solid rgba(232,224,212,0.08);
+    transition: background 0.25s; position: relative;
+  }
+  .exp-row:hover { background: rgba(232,224,212,0.04); }
+  .exp-num { font-size: 11px; color: rgba(232,224,212,0.3); }
+  .exp-name {
+    font-family: 'Anton', sans-serif; font-weight: 400;
+    font-size: clamp(36px, 4.5vw, 72px); line-height: 0.95;
+    text-transform: uppercase; color: #e8e0d4; transition: color 0.25s;
+    display: block;
+  }
+  .exp-row:hover .exp-name { color: #e2007a; }
+  .exp-desc { font-family: 'Lora', serif; font-size: 14px; line-height: 1.7; color: rgba(232,224,212,0.4); margin-top: 12px; max-width: 520px; display: block; }
+  .exp-status {
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 8px 16px; border: 1px solid rgba(232,224,212,0.2);
+    border-radius: 100px; white-space: nowrap; color: rgba(232,224,212,0.45);
+  }
+  .exp-status.live { background: #e2007a; color: #fff; border-color: #e2007a; }
+  footer { padding: 28px 52px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: 0.1em; color: rgba(232,224,212,0.25); }
+  footer a { color: inherit; transition: color 0.15s; }
+  footer a:hover { color: #e2007a; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .fade-in { animation: fadeUp 0.6s ease both; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="wm-lock">
+    <svg width="24" height="16" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="42" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="84" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="126" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="168" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="210" y="0" width="26" height="160" fill="#e8e0d4"></rect></svg>
+    iamweswebb
+  </a>
+  <ul>
+    <li><a href="work.html">Design</a></li>
+    <li><a href="sculpture.html">Sculpture</a></li>
+    <li><a href="music.html">Hazzze</a></li>
+    <li><a href="#" class="here">Experiments</a></li>
+  </ul>
+</nav>
+
+<div class="fade-in">
+<section class="hero">
+  <h1>Even if you fall flat<br>on your face, at least<br><span>you're moving forward</span></h1>
+  <div class="hero-meta">
+    <p>SOFTWARE TOYS AND TOOLS. SOME FINISHED, SOME COOKING, SOME ABANDONED MID-BAKE. THIS IS THE LAB.</p>
+  </div>
+</section>
+
+<!-- ── EXPERIMENTS — add hrefs when live, adjust statuses ── -->
+<a class="exp-row" href="https://iamweswebb.github.io/apps/drone_update.html" target="_blank" rel="noreferrer">
+  <span class="exp-num">01</span>
+  <span>
+    <span class="exp-name">Drone Synth</span>
+    <span class="exp-desc">A browser-based drone instrument. Slow-moving tones you can leave running for hours. Built with the Web Audio API.</span>
+  </span>
+  <span class="exp-status live">Playable</span>
+</a>
+<a class="exp-row" href="https://iamweswebb.github.io/apps/Mute_Button.html" target="_blank" rel="noreferrer">
+  <span class="exp-num">02</span>
+  <span>
+    <span class="exp-name">ADHD Mute</span>
+    <span class="exp-desc">A simple drone for focus. One button, one sound, no decisions. Due for a revisit.</span>
+  </span>
+  <span class="exp-status">Revisiting</span>
+</a>
+<a class="exp-row" href="#">
+  <span class="exp-num">03</span>
+  <span>
+    <span class="exp-name">Project Mgmt</span>
+    <span class="exp-desc">Project management software, built the way one designer actually works. Opinionated and personal.</span>
+  </span>
+  <span class="exp-status">Cooking</span>
+</a>
+<a class="exp-row" href="https://github.com/iamweswebb/Gym-Log" target="_blank" rel="noreferrer">
+  <span class="exp-num">04</span>
+  <span>
+    <span class="exp-name">Gym Log</span>
+    <span class="exp-desc">Keep track of workouts. Numbers in, trend out, zero gamification.</span>
+  </span>
+  <span class="exp-status">Cooking</span>
+</a>
+<a class="exp-row" href="https://github.com/iamweswebb/body-tracker" target="_blank" rel="noreferrer">
+  <span class="exp-num">05</span>
+  <span>
+    <span class="exp-name">Body Tracker</span>
+    <span class="exp-desc">Movement tracking in the browser. Camera in, data out.</span>
+  </span>
+  <span class="exp-status">Cooking</span>
+</a>
+
+<footer>
+  <span>© 2026 WES WEBB · IAMWESWEBB.COM</span>
+  <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a> · NASHVILLE, TN</span>
+</footer>
+</div>
+</body>
+</html>

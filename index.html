@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iamweswebb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #111; overflow-x: hidden; font-family: 'JetBrains Mono', monospace; }
+  a { text-decoration: none; }
+  header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 36px; background: #111; color: #fff;
+  }
+  .wm-lock { display: flex; align-items: center; gap: 12px; }
+  .wm-lock svg { display: block; }
+  .wm { font-weight: 500; font-size: 14px; letter-spacing: 0.02em; color: #fff; }
+  .meta { font-size: 10px; letter-spacing: 0.12em; color: rgba(255,255,255,0.4); }
+  .row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 36px; height: calc((100vh - 57px - 55px) / 4); min-height: 160px;
+    position: relative; overflow: hidden; cursor: pointer;
+    background: #f2f1ec; color: #111;
+    border-bottom: 1px solid #111;
+  }
+  .row-name {
+    font-family: 'Anton', sans-serif; font-weight: 400;
+    font-size: clamp(80px, 12.5vw, 210px); line-height: 0.9; letter-spacing: 0.01em;
+    text-transform: uppercase; position: relative; z-index: 2;
+    transition: color 0.3s;
+  }
+  .row-side { text-align: right; position: relative; z-index: 2; }
+  .row-desc { font-size: 11px; letter-spacing: 0.06em; line-height: 1.7; max-width: 240px; opacity: 0.6; display: inline-block; transition: color 0.3s, opacity 0.3s; }
+  .row-arrow { font-size: 28px; margin-top: 6px; display: inline-block; transition: transform 0.25s, color 0.3s; }
+  .row:hover .row-arrow { transform: translate(6px,-6px); }
+  .row-fill { position: absolute; inset: 0; z-index: 1; opacity: 0; transition: opacity 0.4s ease; }
+  .row-fill img { width: 100%; height: 100%; object-fit: cover; }
+  .row-fill::after { content:''; position: absolute; inset: 0; background: rgba(17,17,17,0.35); }
+  .row:hover .row-fill { opacity: 1; }
+  .row:hover .row-name, .row:hover .row-arrow { color: #fff; }
+  .row:hover .row-desc { color: #fff; opacity: 0.85; }
+  .row-fill.ph { background: #e2007a; }
+  .row-fill.ph::after { display: none; }
+  footer { padding: 20px 36px; background: #111; color: rgba(255,255,255,0.35); font-size: 10px; letter-spacing: 0.1em; display: flex; justify-content: space-between; }
+  footer a { color: inherit; transition: color 0.15s; }
+  footer a:hover { color: #e2007a; }
+</style>
+</head>
+<body>
+<header>
+  <span class="wm-lock">
+    <svg width="28" height="19" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="26" height="160" fill="#ffffff"></rect><rect x="42" y="75" width="26" height="85" fill="#ffffff"></rect><rect x="84" y="0" width="26" height="160" fill="#ffffff"></rect><rect x="126" y="0" width="26" height="160" fill="#ffffff"></rect><rect x="168" y="75" width="26" height="85" fill="#ffffff"></rect><rect x="210" y="0" width="26" height="160" fill="#ffffff"></rect></svg>
+    <span class="wm">iamweswebb</span>
+  </span>
+  <span class="meta">NASHVILLE · MAKER OF MANY THINGS</span>
+</header>
+<a class="row" href="work.html">
+  <span class="row-name">Design</span>
+  <span class="row-fill"><img src="https://images.squarespace-cdn.com/content/v1/5abe3866a9e028d3e4a20d4c/1559415442138-8C5FL70112R0MQFRF424/Champion_Port.jpg" alt=""></span>
+  <span class="row-side">
+    <span class="row-desc">Branding, graphic design, illustration. 20+ years.</span><br>
+    <span class="row-arrow">→</span>
+  </span>
+</a>
+<a class="row" href="sculpture.html">
+  <span class="row-name">Sculpture</span>
+  <span class="row-fill"><img src="https://images.squarespace-cdn.com/content/v1/5abe3866a9e028d3e4a20d4c/1543342216484-6NLMODXN478O1ZW89G2G/Black4.jpg?format=2500w" alt=""></span>
+  <span class="row-side">
+    <span class="row-desc">Salvaged wood given new purpose. One of one.</span><br>
+    <span class="row-arrow">→</span>
+  </span>
+</a>
+<a class="row" href="music.html">
+  <span class="row-name">Hazzze</span>
+  <span class="row-fill"><img src="assets/hazzze-bg.jpg" alt=""></span>
+  <span class="row-side">
+    <span class="row-desc">Ambient music. Three z's, because it's sleepy.</span><br>
+    <span class="row-arrow">→</span>
+  </span>
+</a>
+<a class="row" href="experiments.html">
+  <span class="row-name">Experiments</span>
+  <span class="row-fill ph"></span>
+  <span class="row-side">
+    <span class="row-desc">Software toys &amp; tools. Always cooking.</span><br>
+    <span class="row-arrow">→</span>
+  </span>
+</a>
+<footer>
+  <span>© 2026 WES WEBB</span>
+  <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a></span>
+</footer>
+</body>
+</html>

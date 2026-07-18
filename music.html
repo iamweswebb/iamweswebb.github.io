@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hazzze — iamweswebb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: #080608; color: #e8e0d4; overflow-x: hidden; font-family: 'Syne', sans-serif; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 22px 52px;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,6,8,0.82); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(232,224,212,0.06);
+  }
+  .nav-back {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    color: #e8e0d4; text-decoration: none; transition: color 0.2s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .nav-back:hover { color: #e2007a; }
+  .nav-logo { font-size: 15px; font-weight: 800; color: rgba(232,224,212,0.45); letter-spacing: -0.01em; }
+  nav ul { list-style: none; display: flex; gap: 28px; }
+  nav ul li a {
+    color: rgba(232,224,212,0.35); text-decoration: none; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.08em; font-weight: 400;
+    text-transform: uppercase; transition: color 0.15s;
+  }
+  nav ul li a:hover { color: #e2007a; }
+  nav ul li a.here { color: #e8e0d4; }
+
+  /* ── AMBIENT CANVAS ── */
+  #ambient-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none; opacity: 0.7;
+  }
+
+  .page { position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  .hz-hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 52px 64px;
+    border-bottom: 1px solid rgba(232,224,212,0.07);
+    position: relative; overflow: hidden;
+    background-image: url('assets/hazzze-bg.jpg');
+    background-size: cover; background-position: center 20%;
+  }
+  .hz-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(8,6,8,0.45) 0%, rgba(8,6,8,0.2) 40%, rgba(8,6,8,0.75) 100%);
+    z-index: 1;
+  }
+  .hz-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: #e2007a; margin-bottom: 20px;
+    position: relative; z-index: 2;
+  }
+  .hz-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(72px, 12vw, 180px);
+    font-weight: 800; line-height: 0.88; letter-spacing: -0.04em;
+    color: #e8e0d4; position: relative; z-index: 2;
+  }
+  .hz-name-sub {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: clamp(20px, 2.8vw, 42px);
+    color: rgba(232,224,212,0.3); margin-top: 10px; letter-spacing: -0.01em;
+    position: relative; z-index: 2;
+  }
+  .hz-hero-bottom {
+    margin-top: 52px;
+    display: flex; gap: 0; align-items: stretch;
+    border-top: 1px solid rgba(232,224,212,0.07);
+    position: relative; z-index: 2;
+  }
+  .hz-meta-item {
+    padding: 28px 48px 28px 0; margin-right: 48px;
+    border-right: 1px solid rgba(232,224,212,0.07);
+  }
+  .hz-meta-item:last-child { border-right: none; margin-right: 0; }
+  .hz-meta-label {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(232,224,212,0.25); margin-bottom: 7px;
+  }
+  .hz-meta-val { font-size: 14px; font-weight: 700; color: #e8e0d4; }
+  .hz-meta-val.pink { color: #e2007a; }
+  .hz-meta-val a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(226,0,122,0.3); transition: border-color 0.2s; }
+  .hz-meta-val a:hover { border-color: #e2007a; }
+
+  /* ── FULL-BLEED IMAGE ── */
+  .hz-image-strip {
+    width: 100%; height: 60vh; min-height: 400px;
+    overflow: hidden; position: relative;
+    border-bottom: 1px solid rgba(232,224,212,0.07);
+  }
+  .hz-image-strip img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center 20%;
+    filter: brightness(0.75);
+    display: block;
+  }
+  .hz-image-strip::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(8,6,8,0.3) 0%, transparent 40%, rgba(8,6,8,0.5) 100%);
+  }
+
+  /* ── SECTION BASE ── */
+  .hz-section {
+    padding: 80px 52px;
+    border-bottom: 1px solid rgba(232,224,212,0.06);
+  }
+  .hz-section-label {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #e2007a; margin-bottom: 36px;
+  }
+  .hz-section h2 {
+    font-family: 'Syne', sans-serif; font-size: clamp(28px, 3.5vw, 52px);
+    font-weight: 800; letter-spacing: -0.03em; color: #e8e0d4;
+    line-height: 1.05; margin-bottom: 36px;
+  }
+
+  /* ── ABOUT LAYOUT ── */
+  .hz-about {
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: start;
+  }
+  .hz-about p {
+    font-family: 'Lora', serif; font-size: 17px; line-height: 1.88;
+    color: rgba(232,224,212,0.5); margin-bottom: 22px;
+  }
+  .hz-about p em { color: rgba(232,224,212,0.8); font-style: italic; }
+  .hz-about p strong { color: rgba(232,224,212,0.75); font-style: normal; font-weight: 600; }
+
+  /* ── INSTRUMENT CARDS ── */
+  .instrument-cards { display: flex; flex-direction: column; gap: 2px; }
+  .instr-card {
+    padding: 28px 32px; background: rgba(232,224,212,0.025);
+    border: 1px solid rgba(232,224,212,0.06);
+    transition: border-color 0.2s;
+  }
+  .instr-card:hover { border-color: rgba(226,0,122,0.3); }
+  .instr-num {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em;
+    color: #e2007a; margin-bottom: 10px;
+  }
+  .instr-title { font-size: 17px; font-weight: 700; color: #e8e0d4; margin-bottom: 8px; }
+  .instr-body {
+    font-family: 'Lora', serif; font-size: 14px; line-height: 1.65;
+    color: rgba(232,224,212,0.38);
+  }
+
+  /* ── WAVEFORM ── */
+  .waveform-row {
+    display: flex; align-items: center; gap: 3px;
+    height: 72px; margin-bottom: 48px;
+  }
+  .wbar { border-radius: 1px; transition: height 0.9s cubic-bezier(0.4,0,0.2,1); }
+
+  /* ── PLATFORMS ── */
+  .platforms { display: flex; flex-direction: column; }
+  .plat {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 0; border-bottom: 1px solid rgba(232,224,212,0.06);
+    text-decoration: none; cursor: pointer; transition: padding-left 0.2s;
+  }
+  .plat:first-child { border-top: 1px solid rgba(232,224,212,0.06); }
+  .plat-left { display: flex; align-items: center; gap: 20px; }
+  .plat-num {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: rgba(232,224,212,0.18); min-width: 24px;
+  }
+  .plat-name { font-size: 26px; font-weight: 700; color: #e8e0d4; font-family: 'Syne', sans-serif; transition: color 0.15s; }
+  .plat-arr { font-size: 20px; color: rgba(232,224,212,0.12); transition: all 0.15s; }
+  .plat:hover { padding-left: 12px; }
+  .plat:hover .plat-name { color: #e2007a; }
+  .plat:hover .plat-arr { color: #e2007a; transform: translate(4px, -4px); }
+
+  /* ── VINYL STRIP ── */
+  .vinyl-strip {
+    padding: 52px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid rgba(232,224,212,0.06);
+    gap: 40px;
+  }
+  .vinyl-left .vinyl-label {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: #e2007a; margin-bottom: 12px;
+  }
+  .vinyl-left h3 {
+    font-size: clamp(24px, 2.5vw, 40px); font-weight: 800; color: #e8e0d4;
+    letter-spacing: -0.02em; margin-bottom: 8px;
+  }
+  .vinyl-left p {
+    font-family: 'Lora', serif; font-size: 15px; color: rgba(232,224,212,0.4);
+  }
+  .hz-btn {
+    padding: 16px 36px; background: #e2007a; color: #fff;
+    text-decoration: none; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: opacity 0.2s; white-space: nowrap; border-radius: 2px;
+    font-family: 'Syne', sans-serif; flex-shrink: 0;
+  }
+  .hz-btn:hover { opacity: 0.82; }
+  .hz-btn.outline {
+    background: transparent; border: 1px solid rgba(232,224,212,0.18);
+    color: rgba(232,224,212,0.5);
+  }
+  .hz-btn.outline:hover { border-color: #e2007a; color: #e2007a; opacity: 1; }
+
+  /* ── CTA STRIP ── */
+  .hz-cta-strip {
+    padding: 80px 52px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid rgba(232,224,212,0.06); gap: 40px;
+  }
+  .hz-cta-strip h2 {
+    font-family: 'Syne', sans-serif; font-size: clamp(24px, 2.8vw, 44px);
+    font-weight: 800; letter-spacing: -0.03em; color: #e8e0d4; line-height: 1.1;
+  }
+  .hz-cta-strip h2 span { color: #e2007a; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 32px 52px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.04em;
+    color: rgba(232,224,212,0.18);
+  }
+  footer a { color: rgba(232,224,212,0.18); text-decoration: none; transition: color 0.15s; }
+  footer a:hover { color: #e2007a; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .fade-in { animation: fadeUp 0.7s ease both; }
+  .fade-in-2 { animation: fadeUp 0.7s 0.1s ease both; }
+  .fade-in-3 { animation: fadeUp 0.7s 0.2s ease both; }
+</style>
+</head>
+<body>
+
+<canvas id="ambient-canvas"></canvas>
+
+<nav>
+  <a href="index.html" class="nav-back" style="display:flex;align-items:center;gap:12px;"><svg width="24" height="16" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="42" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="84" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="126" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="168" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="210" y="0" width="26" height="160" fill="#e8e0d4"></rect></svg> iamweswebb</a>
+  <span class="nav-logo">HAZZZE</span>
+  <ul>
+    <li><a href="work.html">Design</a></li>
+    <li><a href="sculpture.html">Sculpture</a></li>
+    <li><a href="#" class="here">Hazzze</a></li>
+    <li><a href="experiments.html">Experiments</a></li>
+  </ul>
+</nav>
+
+<div id="root" class="page"></div>
+
+<script>
+// ── AMBIENT CANVAS ────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('ambient-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], t = 0;
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+  function initParticles() {
+    particles = Array.from({length: 50}, () => ({
+      x: Math.random() * (typeof W !== 'undefined' ? W : 1440),
+      y: Math.random() * (typeof H !== 'undefined' ? H : 900),
+      r: 1 + Math.random() * 2.5,
+      vx: (Math.random() - 0.5) * 0.1,
+      vy: (Math.random() - 0.5) * 0.07,
+      alpha: 0.025 + Math.random() * 0.065,
+      pink: Math.random() > 0.6,
+    }));
+  }
+
+  function drawWave(y, amp, freq, phase, alpha, rgb) {
+    ctx.beginPath();
+    ctx.strokeStyle = `rgba(${rgb},${alpha})`;
+    ctx.lineWidth = 0.7;
+    for (let x = 0; x <= W; x += 2) {
+      const ny = y + Math.sin(x * freq + phase) * amp + Math.sin(x * freq * 0.4 + phase * 1.2) * amp * 0.35;
+      x === 0 ? ctx.moveTo(x, ny) : ctx.lineTo(x, ny);
+    }
+    ctx.stroke();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createRadialGradient(W*0.25, H*0.35, 0, W*0.25, H*0.35, W*0.55);
+    g.addColorStop(0, 'rgba(226,0,122,0.05)'); g.addColorStop(1, 'transparent');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    const g2 = ctx.createRadialGradient(W*0.8, H*0.7, 0, W*0.8, H*0.7, W*0.4);
+    g2.addColorStop(0, 'rgba(245,166,35,0.03)'); g2.addColorStop(1, 'transparent');
+    ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+
+    [
+      { y: H*0.2, amp: 35, freq: 0.0025, phase: t*0.00035, alpha: 0.055, rgb:'226,0,122' },
+      { y: H*0.42, amp: 55, freq: 0.0018, phase: t*0.00028+1, alpha: 0.035, rgb:'226,0,122' },
+      { y: H*0.62, amp: 42, freq: 0.0022, phase: t*0.00032+2, alpha: 0.045, rgb:'245,166,35' },
+      { y: H*0.82, amp: 28, freq: 0.003, phase: t*0.00042+0.5, alpha: 0.03, rgb:'226,0,122' },
+    ].forEach(w => drawWave(w.y, w.amp, w.freq, w.phase, w.alpha, w.rgb));
+
+    particles.forEach(p => {
+      p.x += p.vx + Math.sin(t*0.0003 + p.y*0.01) * 0.04;
+      p.y += p.vy + Math.cos(t*0.0002 + p.x*0.01) * 0.035;
+      if (p.x < -10) p.x = W+10; if (p.x > W+10) p.x = -10;
+      if (p.y < -10) p.y = H+10; if (p.y > H+10) p.y = -10;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.pink ? `rgba(226,0,122,${p.alpha})` : `rgba(245,166,35,${p.alpha})`;
+      ctx.fill();
+    });
+    t++; requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize(); initParticles(); draw();
+})();
+</script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ── STREAMING PLATFORMS — add real links in href ──
+const PLATFORMS = [
+  { name: "Spotify",       href: "#", num: "01" },
+  { name: "Apple Music",   href: "#", num: "02" },
+  { name: "Bandcamp",      href: "#", num: "03" },
+  { name: "SoundCloud",    href: "#", num: "04" },
+  { name: "YouTube Music", href: "#", num: "05" },
+];
+
+function AnimatedWaveform() {
+  const [bars, setBars] = useState(() =>
+    Array.from({length: 72}, (_, i) => Math.max(6, Math.min(90,
+      18 + Math.sin(i*0.55)*22 + Math.sin(i*0.22)*14
+    )))
+  );
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setBars(prev => prev.map((h, i) => {
+        const base = 18 + Math.sin(i*0.55 + Date.now()*0.0008)*20 + Math.sin(i*0.22)*12;
+        return Math.max(5, Math.min(92, base + (Math.random()-0.5)*10));
+      }));
+    }, 1000);
+    return () => clearInterval(iv);
+  }, []);
+  return (
+    <div className="waveform-row">
+      {bars.map((h, i) => (
+        <div key={i} className="wbar" style={{
+          flex:1, height:`${h}%`,
+          background: i % 9 === 0
+            ? '#e2007a'
+            : `rgba(232,224,212,${0.05 + h/280})`,
+        }} />
+      ))}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      {/* ═══ HERO ═══ */}
+      <section className="hz-hero fade-in">
+        <div className="hz-eyebrow">Music · iamweswebb · Nashville, TN</div>
+        <div className="hz-name">HAZZZE</div>
+        {/* ── PRONUNCIATION — edit here ── */}
+        <div className="hz-name-sub">Pronounced "Haze" • three z's because it's sleepy music.</div>
+        <div className="hz-hero-bottom">
+          {[
+            {label:'Project',     val:'Solo',              pink:false},
+            {label:'Genre',       val:'Ambient / Electronic'},
+            {label:'Based in',    val:'Nashville, TN'},
+            {label:'Latest',      val:<a href="https://elasticstage.com/hazzze/releases/therefore-album" target="_blank" rel="noreferrer">Therefore (vinyl)</a>, pink:true},
+          ].map(({label,val,pink}) => (
+            <div key={label} className="hz-meta-item">
+              <div className="hz-meta-label">{label}</div>
+              <div className={`hz-meta-val${pink?' pink':''}`}>{val}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══ ARTIST PHOTO removed — now used as hero bg ═══ */}
+
+      {/* ═══ LISTEN ═══ */}
+      <section className="hz-section fade-in-2" id="listen">
+        <div className="hz-section-label">Stream / Download</div>
+        <div className="platforms">
+          {PLATFORMS.map(({name,href,num}) => (
+            <a key={name} href={href} className="plat">
+              <div className="plat-left">
+                <span className="plat-num">{num}</span>
+                <span className="plat-name">{name}</span>
+              </div>
+              <span className="plat-arr">↗</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══ VINYL ═══ */}
+      <div className="vinyl-strip">
+        <div className="vinyl-left">
+          <div className="vinyl-label">Available on vinyl</div>
+          <h3>Therefore</h3>
+          {/* ── VINYL COPY — edit below ── */}
+          <p>The debut full-length. Order the vinyl at elasticstage.com.</p>
+        </div>
+        <a href="https://elasticstage.com/hazzze/releases/therefore-album" target="_blank" rel="noreferrer" className="hz-btn">
+          Order vinyl ↗
+        </a>
+      </div>
+
+      {/* ═══ ABOUT ═══ */}
+      <section className="hz-section fade-in-3" id="about">
+        <div className="hz-section-label">About the project</div>
+        <div className="hz-about">
+          <div>
+            <h2>Music for the<br/>in-between.</h2>
+            {/* ── ARTIST BIO — edit below ── */}
+            <p>Hazzze is the solo project of Nashville-based musician Wes Webb. Blending ambient, post-rock, and electronic textures, Hazzze creates music that lives in the in-between — built from <em>drifting synths, processed guitars, and looping patterns</em> that unfold patiently and without words.</p>
+            <p>With room for presence, rest, and reflection. This is music for late nights, deep focus, and quiet moments. <em>A small pause from the pace of everything else</em> — even if only for a moment.</p>
+            <p style={{color:'rgba(232,224,212,0.28)', fontSize:14, fontFamily:"'DM Mono', monospace", letterSpacing:'0.04em'}}>Three Zs, because it is sleepy music.</p>
+          </div>
+
+          {/* ── INSTRUMENT CARDS — edit titles and descriptions ── */}
+          <div className="instrument-cards">
+            {[
+              {
+                num:'01',
+                title:'Real instruments, real performances.',
+                body:'Every sound is performed and recorded live. Synths, guitars, and voice — nothing fake, nothing triggered.',
+              },
+              {
+                num:'02',
+                title:'Making space for rest.',
+                body:'Built for a chaotic world. Music that slows things down, opens up, and gives you somewhere quiet to be.',
+              },
+              {
+                num:'03',
+                title:'Patient and wordless.',
+                body:'No lyrics. No hooks. Just textures that shift slowly over time — compositions that reward attention without demanding it.',
+              },
+            ].map(({num,title,body}) => (
+              <div key={num} className="instr-card">
+                <div className="instr-num">{num}</div>
+                <div className="instr-title">{title}</div>
+                <div className="instr-body">{body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ CTA ═══ */}
+      <div className="hz-cta-strip">
+        <h2>Made in Nashville.<br/>By the same hands<br/>that <span>build brands.</span></h2>
+        <div style={{display:'flex', gap:12, flexShrink:0, flexDirection:'column', alignItems:'flex-end'}}>
+          <a href="#listen" className="hz-btn">Listen now →</a>
+          <a href="work.html" className="hz-btn outline">See design work →</a>
+        </div>
+      </div>
+
+      <footer>
+        <span>© 2026 WES WEBB · HAZZZE · IAMWESWEBB.COM</span>
+        <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a> · NASHVILLE, TN</span>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

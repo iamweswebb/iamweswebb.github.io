@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sculpture — iamweswebb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: #080608; color: #e8e0d4; font-family: 'JetBrains Mono', monospace; overflow-x: hidden; }
+  a { text-decoration: none; }
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 52px; position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,6,8,0.82); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(232,224,212,0.06);
+  }
+  .wm-lock { display: flex; align-items: center; gap: 12px; color: #e8e0d4; font-size: 13px; }
+  nav ul { list-style: none; display: flex; gap: 26px; }
+  nav ul li a { color: rgba(232,224,212,0.35); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.15s; }
+  nav ul li a:hover { color: #e2007a; }
+  nav ul li a.here { color: #e8e0d4; }
+  .hero {
+    min-height: 88vh; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 52px 56px; border-bottom: 1px solid rgba(232,224,212,0.08);
+    position: relative; overflow: hidden;
+    background-image: url('https://images.squarespace-cdn.com/content/v1/5abe3866a9e028d3e4a20d4c/1543342216484-6NLMODXN478O1ZW89G2G/Black4.jpg?format=2500w');
+    background-size: cover; background-position: center 30%;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(8,6,8,0.5) 0%, rgba(8,6,8,0.25) 45%, rgba(8,6,8,0.85) 100%);
+  }
+  .hero > * { position: relative; z-index: 2; }
+  .hero h1 {
+    font-family: 'Anton', sans-serif; font-weight: 400;
+    font-size: clamp(52px, 7vw, 130px); line-height: 0.92; letter-spacing: 0.01em;
+    text-transform: uppercase; color: #e8e0d4;
+  }
+  .hero h1 .accent { color: #e2007a; }
+  .hero-meta { margin-top: 48px; border-top: 1px solid rgba(232,224,212,0.12); }
+  .hero-meta p { padding: 26px 48px 0 0; font-family: 'Lora', serif; font-size: 16px; line-height: 1.75; color: rgba(232,224,212,0.65); max-width: 560px; }
+  .section { padding: 80px 52px; border-bottom: 1px solid rgba(232,224,212,0.06); }
+  .section-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #e2007a; margin-bottom: 36px; }
+  .section h2 {
+    font-family: 'Anton', sans-serif; font-weight: 400;
+    font-size: clamp(28px, 3.5vw, 56px); letter-spacing: 0.01em; text-transform: uppercase;
+    line-height: 1.02; color: #e8e0d4; margin-bottom: 36px;
+  }
+  .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .work-tile {
+    position: relative; cursor: pointer; overflow: hidden;
+    border: 1px solid rgba(232,224,212,0.08); background: rgba(232,224,212,0.03);
+    aspect-ratio: 3/4; display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 22px; color: inherit;
+    transition: border-color 0.22s;
+  }
+  .work-tile:hover { border-color: #e2007a; }
+  .work-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .work-tile:hover img { transform: scale(1.03); }
+  .work-tile::after { content:''; position:absolute; left:0; right:0; bottom:0; height:45%; background:linear-gradient(to top, rgba(8,6,8,0.8), transparent); z-index:1; }
+  .tile-meta { position: relative; z-index: 2; }
+  .tile-num { font-size: 10px; letter-spacing: 0.12em; color: rgba(232,224,212,0.45); margin-bottom: 4px; }
+  .tile-name { font-size: 19px; font-weight: 500; color: #f5f0e8; line-height: 1.2; font-family: 'Lora', serif; }
+  .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: start; }
+  .about-grid p { font-family: 'Lora', serif; font-size: 17px; line-height: 1.88; color: rgba(232,224,212,0.5); margin-bottom: 20px; }
+  .about-grid p em { color: rgba(232,224,212,0.8); font-style: italic; }
+  .instr-cards { display: flex; flex-direction: column; gap: 2px; }
+  .instr-card { padding: 28px 32px; background: rgba(232,224,212,0.025); border: 1px solid rgba(232,224,212,0.06); transition: border-color 0.2s; }
+  .instr-card:hover { border-color: rgba(226,0,122,0.3); }
+  .instr-num { font-size: 10px; letter-spacing: 0.15em; color: #e2007a; margin-bottom: 10px; }
+  .instr-title { font-size: 16px; font-weight: 500; color: #e8e0d4; margin-bottom: 8px; }
+  .instr-body { font-family: 'Lora', serif; font-size: 14px; line-height: 1.65; color: rgba(232,224,212,0.38); }
+  .vinyl-strip { padding: 52px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(232,224,212,0.06); gap: 40px; }
+  .vinyl-strip .vs-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #e2007a; margin-bottom: 12px; }
+  .vinyl-strip h3 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(24px, 2.5vw, 40px); text-transform: uppercase; letter-spacing: 0.01em; color: #e8e0d4; margin-bottom: 8px; }
+  .vinyl-strip p { font-family: 'Lora', serif; font-size: 15px; color: rgba(232,224,212,0.4); }
+  .hz-btn {
+    padding: 16px 36px; background: #e2007a; color: #fff;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: opacity 0.2s; white-space: nowrap; border-radius: 2px; flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .hz-btn:hover { opacity: 0.82; }
+  .hz-btn.outline { background: transparent; border: 1px solid rgba(232,224,212,0.18); color: rgba(232,224,212,0.6); }
+  .hz-btn.outline:hover { border-color: #e2007a; color: #e2007a; opacity: 1; }
+  .cta-strip { padding: 80px 52px; display: flex; justify-content: space-between; align-items: center; gap: 40px; border-bottom: 1px solid rgba(232,224,212,0.06); }
+  .cta-strip h2 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(28px, 3.2vw, 52px); letter-spacing: 0.01em; text-transform: uppercase; line-height: 1.02; color: #e8e0d4; }
+  .cta-strip h2 span { color: #e2007a; }
+  footer { padding: 28px 52px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: 0.1em; color: rgba(232,224,212,0.25); }
+  footer a { color: inherit; transition: color 0.15s; }
+  footer a:hover { color: #e2007a; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .fade-in { animation: fadeUp 0.6s ease both; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="wm-lock">
+    <svg width="24" height="16" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="42" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="84" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="126" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="168" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="210" y="0" width="26" height="160" fill="#e8e0d4"></rect></svg>
+    iamweswebb
+  </a>
+  <ul>
+    <li><a href="work.html">Design</a></li>
+    <li><a href="#" class="here">Sculpture</a></li>
+    <li><a href="music.html">Hazzze</a></li>
+    <li><a href="experiments.html">Experiments</a></li>
+  </ul>
+</nav>
+<div id="root"></div>
+<script type="text/babel">
+const CDN = 'https://images.squarespace-cdn.com/content/v1/5abe3866a9e028d3e4a20d4c/';
+
+// ── PIECES — real work from iamweswebb.com/sculptural ──
+const PIECES = [
+  { id:'01', name:'Night Mission',   src:CDN+'1543344900930-X405VBAHXR42OLQJWQ39/BlackPort.jpg', href:'http://iamweswebb.com/nightmission' },
+  { id:'02', name:'Barley Tusk',     src:CDN+'1558011919025-D667XLEW1CEID5JCRK86/BarleyPort.jpg', href:'http://iamweswebb.com/barleytusk' },
+  { id:'03', name:'A-Frame',         src:CDN+'1559486065169-PF8B1XLNG90BQN9SJZB0/aframe_port.jpg', href:'#' },
+  { id:'04', name:'Water Totem',     src:CDN+'1543344901749-6HUPL1L8OOFBBI9O0B9W/HollyPort.jpg', href:'http://iamweswebb.com/water-totem' },
+  { id:'05', name:'Sun Salutation',  src:CDN+'1558011550995-WEY20PV3X2XTGPU0QVF2/sunport.jpg', href:'http://iamweswebb.com/sunsalutation' },
+  { id:'06', name:'Water Totem II',  src:CDN+'1543344902137-1IZY1MRJAX75PSHU1SCT/PeachPort.jpg', href:'http://iamweswebb.com/water-totem-2' },
+  { id:'07', name:'Water Totem III', src:CDN+'1543344902299-19AED7U0VCK1QRAXF460/RedPort.jpg', href:'http://iamweswebb.com/water-totem-3' },
+  { id:'08', name:'Water Type',      src:CDN+'1558012754616-7XNE964IPCA0W3F0TYQM/WTPort.jpg', href:'http://iamweswebb.com/watertype' },
+  { id:'09', name:'Water Block',     src:CDN+'1543344901129-WXWF3XPPCYK2VVQD91DE/BlockPort.jpg', href:'http://iamweswebb.com/water-block' },
+  { id:'10', name:'Black Crescent',  src:CDN+'1558012192304-8K4Y7PPZNO1B67NN4LZK/crescentport.jpg', href:'http://iamweswebb.com/blackcrescent' },
+  { id:'11', name:'Barley Twist',    src:CDN+'1558012510294-I18XWFR3JZLZOY6GYC7Q/BarleyTwistPort.jpg', href:'http://iamweswebb.com/barleytwist' },
+  { id:'12', name:'Broken Vessel',   src:CDN+'1543344901584-6WPWNG6EJBZQQPPPERCG/BrokenPort.jpg', href:'http://iamweswebb.com/broken-vessel' },
+];
+
+function App() {
+  return (
+    <div className="fade-in">
+      <section className="hero">
+        {/* ── HEADLINE — edit below ── */}
+        <h1>First you have to<br/>ask the wood<br/><span className="accent">what it wants to be</span></h1>
+        <div className="hero-meta">
+          <p>I primarily use salvaged wood destined for chippers and burn piles. With a few basic tools — a chainsaw, an angle grinder, a Dremel — I create works that represent ideas imbued upon the natural forms of the wood.</p>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-label">Selected pieces</div>
+        <h2>Twelve pieces, twelve second chances</h2>
+        <div className="work-grid">
+          {PIECES.map(p => (
+            <a href={p.href} key={p.id} className="work-tile" target="_blank" rel="noreferrer">
+              <img src={p.src} alt={p.name} loading="lazy" />
+              <div className="tile-meta">
+                <div className="tile-num">{p.id}</div>
+                <div className="tile-name">{p.name}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="section" id="about">
+        <div className="section-label">About the work</div>
+        <div className="about-grid">
+          <div>
+            <h2>Each piece is<br/>a self-portrait</h2>
+            {/* ── ARTIST STATEMENT — edit below ── */}
+            <p>All of this work is, in a conceptual sense, a self-portrait. It starts with wood pulled from the trash — discarded, overlooked. Through no merit of its own, it gets chosen.</p>
+            <p>Then it is made into something new. Given a purpose it did not have before. A new identity. And then it is <em>set apart</em> as something with honor — something that belongs, something worth keeping.</p>
+            <p style={{fontFamily:"'JetBrains Mono', monospace", fontSize:13, color:'rgba(232,224,212,0.28)', letterSpacing:'0.04em'}}>Wes Webb · 20+ years in wood · Nashville, TN</p>
+          </div>
+          <div className="instr-cards">
+            {[
+              { num:'01', title:'Salvaged material.', body:'Every piece starts with found or reclaimed wood — pulled from the trash, overlooked, chosen. Nothing harvested for the sake of it.' },
+              { num:'02', title:'Hand-worked, start to finish.', body:'Cut, shaped, and finished by hand. No CNC, no shortcuts. The grain decides as much as the maker does.' },
+              { num:'03', title:'One of one.', body:'Each piece is unique and unrepeatable. A new identity given to something that had none. When it is sold, it is gone.' },
+            ].map(({num, title, body}) => (
+              <div key={num} className="instr-card">
+                <div className="instr-num">{num}</div>
+                <div className="instr-title">{title}</div>
+                <div className="instr-body">{body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="vinyl-strip">
+        <div>
+          <div className="vs-label">Available through</div>
+          <h3>The Copper Fox Gallery</h3>
+          <p>Selected pieces available for purchase. Bowls, jars, and platters in the shop.</p>
+        </div>
+        <a href="#" className="hz-btn">Visit gallery ↗</a>
+      </div>
+
+      <div className="cta-strip">
+        <h2>Made by the same hands<br/>that <span>build brands</span><br/>and make sound</h2>
+        <div style={{display:'flex', gap:12, flexDirection:'column', alignItems:'flex-end', flexShrink:0}}>
+          <a href="work.html" className="hz-btn">See design work →</a>
+          <a href="music.html" className="hz-btn outline">Hear the music →</a>
+        </div>
+      </div>
+
+      <footer>
+        <span>© 2026 WES WEBB · IAMWESWEBB.COM</span>
+        <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a> · NASHVILLE, TN</span>
+      </footer>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
