@@ -30,7 +30,7 @@
     min-height: 88vh; display: flex; flex-direction: column; justify-content: flex-end;
     padding: 0 52px 56px; border-bottom: 1px solid rgba(232,224,212,0.08);
     position: relative; overflow: hidden;
-    background-image: url('https://images.squarespace-cdn.com/content/v1/5abe3866a9e028d3e4a20d4c/1543342216484-6NLMODXN478O1ZW89G2G/Black4.jpg?format=2500w');
+    background-image: url('assets/img/w89g2g-black4.jpg');
     background-size: cover; background-position: center 30%;
   }
   .hero::before {
@@ -115,22 +115,21 @@
 </nav>
 <div id="root"></div>
 <script type="text/babel">
-const CDN = 'https://images.squarespace-cdn.com/content/v1/5abe3866a9e028d3e4a20d4c/';
 
 // ── PIECES — real work from iamweswebb.com/sculptural ──
 const PIECES = [
-  { id:'01', name:'Night Mission',   src:CDN+'1543344900930-X405VBAHXR42OLQJWQ39/BlackPort.jpg', href:'http://iamweswebb.com/nightmission' },
-  { id:'02', name:'Barley Tusk',     src:CDN+'1558011919025-D667XLEW1CEID5JCRK86/BarleyPort.jpg', href:'http://iamweswebb.com/barleytusk' },
-  { id:'03', name:'A-Frame',         src:CDN+'1559486065169-PF8B1XLNG90BQN9SJZB0/aframe_port.jpg', href:'#' },
-  { id:'04', name:'Water Totem',     src:CDN+'1543344901749-6HUPL1L8OOFBBI9O0B9W/HollyPort.jpg', href:'http://iamweswebb.com/water-totem' },
-  { id:'05', name:'Sun Salutation',  src:CDN+'1558011550995-WEY20PV3X2XTGPU0QVF2/sunport.jpg', href:'http://iamweswebb.com/sunsalutation' },
-  { id:'06', name:'Water Totem II',  src:CDN+'1543344902137-1IZY1MRJAX75PSHU1SCT/PeachPort.jpg', href:'http://iamweswebb.com/water-totem-2' },
-  { id:'07', name:'Water Totem III', src:CDN+'1543344902299-19AED7U0VCK1QRAXF460/RedPort.jpg', href:'http://iamweswebb.com/water-totem-3' },
-  { id:'08', name:'Water Type',      src:CDN+'1558012754616-7XNE964IPCA0W3F0TYQM/WTPort.jpg', href:'http://iamweswebb.com/watertype' },
-  { id:'09', name:'Water Block',     src:CDN+'1543344901129-WXWF3XPPCYK2VVQD91DE/BlockPort.jpg', href:'http://iamweswebb.com/water-block' },
-  { id:'10', name:'Black Crescent',  src:CDN+'1558012192304-8K4Y7PPZNO1B67NN4LZK/crescentport.jpg', href:'http://iamweswebb.com/blackcrescent' },
-  { id:'11', name:'Barley Twist',    src:CDN+'1558012510294-I18XWFR3JZLZOY6GYC7Q/BarleyTwistPort.jpg', href:'http://iamweswebb.com/barleytwist' },
-  { id:'12', name:'Broken Vessel',   src:CDN+'1543344901584-6WPWNG6EJBZQQPPPERCG/BrokenPort.jpg', href:'http://iamweswebb.com/broken-vessel' },
+  { id:'01', name:'Night Mission',   src:'assets/img/qjwq39-blackport.jpg', href:'http://iamweswebb.com/nightmission' },
+  { id:'02', name:'Barley Tusk',     src:'assets/img/jcrk86-barleyport.jpg', href:'http://iamweswebb.com/barleytusk' },
+  { id:'03', name:'A-Frame',         src:'assets/img/9sjzb0-aframeport.jpg', href:'#' },
+  { id:'04', name:'Water Totem',     src:'assets/img/9o0b9w-hollyport.jpg', href:'http://iamweswebb.com/water-totem' },
+  { id:'05', name:'Sun Salutation',  src:'assets/img/u0qvf2-sunport.jpg', href:'http://iamweswebb.com/sunsalutation' },
+  { id:'06', name:'Water Totem II',  src:'assets/img/hu1sct-peachport.jpg', href:'http://iamweswebb.com/water-totem-2' },
+  { id:'07', name:'Water Totem III', src:'assets/img/axf460-redport.jpg', href:'http://iamweswebb.com/water-totem-3' },
+  { id:'08', name:'Water Type',      src:'assets/img/f0tyqm-wtport.jpg', href:'http://iamweswebb.com/watertype' },
+  { id:'09', name:'Water Block',     src:'assets/img/qd91de-blockport.jpg', href:'http://iamweswebb.com/water-block' },
+  { id:'10', name:'Black Crescent',  src:'assets/img/nn4lzk-crescentport.jpg', href:'http://iamweswebb.com/blackcrescent' },
+  { id:'11', name:'Barley Twist',    src:'assets/img/6gyc7q-barleytwistport.jpg', href:'http://iamweswebb.com/barleytwist' },
+  { id:'12', name:'Broken Vessel',   src:'assets/img/ppercg-brokenport.jpg', href:'http://iamweswebb.com/broken-vessel' },
 ];
 
 function App() {

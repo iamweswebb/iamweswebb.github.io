@@ -10,6 +10,7 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="assets/projects-data.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -30,7 +31,7 @@
     min-height: 88vh; display: flex; flex-direction: column; justify-content: flex-end;
     padding: 0 52px 56px; border-bottom: 1px solid rgba(232,224,212,0.08);
     position: relative; overflow: hidden;
-    background-image: url('https://images.squarespace-cdn.com/content/v1/5abe3866a9e028d3e4a20d4c/1559415542267-UROCZ0FP0ANCL50AN2XR/MissileMockup.jpg?format=2500w');
+    background-image: url('assets/img/0an2xr-missilemockup.jpg');
     background-size: cover; background-position: center 40%;
   }
   .hero::before {
@@ -98,6 +99,20 @@
   footer a:hover { color: #e2007a; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
   .fade-in { animation: fadeUp 0.6s ease both; }
+  .lb-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(8,6,8,0.97); overflow-y: auto; animation: fadeUp 0.3s ease both; }
+  .lb-inner { max-width: 880px; margin: 0 auto; padding: 90px 32px 120px; }
+  .lb-close {
+    position: fixed; top: 20px; right: 28px; z-index: 210;
+    width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(232,224,212,0.2);
+    background: rgba(8,6,8,0.8); color: #e8e0d4; font-size: 20px; line-height: 1;
+    cursor: pointer; font-family: 'JetBrains Mono', monospace; transition: all 0.15s;
+  }
+  .lb-close:hover { border-color: #e2007a; color: #e2007a; }
+  .lb-cat { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #e2007a; margin-bottom: 14px; }
+  .lb-title { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(38px, 5vw, 72px); line-height: 0.96; letter-spacing: 0.01em; text-transform: uppercase; color: #e8e0d4; margin-bottom: 30px; }
+  .lb-text { font-family: 'Lora', serif; font-size: 16px; line-height: 1.75; color: rgba(232,224,212,0.62); margin-bottom: 18px; white-space: pre-line; }
+  .lb-imgs { display: flex; flex-direction: column; gap: 14px; margin-top: 38px; }
+  .lb-imgs img { width: 100%; display: block; border: 1px solid rgba(232,224,212,0.08); }
 </style>
 </head>
 <body>
@@ -115,52 +130,45 @@
 </nav>
 <div id="root"></div>
 <script type="text/babel">
-const { useState } = React;
-const CDN = 'https://images.squarespace-cdn.com/content/v1/5abe3866a9e028d3e4a20d4c/';
+const { useState, useEffect } = React;
+const IMG = 'assets/img/';
 
-// ── ALL PROJECTS — real images from the live site ──
+// ── PROJECTS — slug opens the full case-study lightbox; img-only entries open a single-image lightbox ──
 const PROJECTS = {
   graphic: [
-    { name:"Lolly's Creamery",         cat:'Graphic Design', img: CDN+'1559269737534-YC09L8ODTHHCIG8F7K57/Lolly_Port.jpg',     href:'http://iamweswebb.com/lollys' },
-    { name:'Champion Brewery',          cat:'Graphic Design', img: CDN+'1559415442138-8C5FL70112R0MQFRF424/Champion_Port.jpg',   href:'http://iamweswebb.com/champion' },
-    { name:'UVA Arts',                  cat:'Graphic Design', img: CDN+'1559269524015-N93EZE1XHYFJJTH78G5W/UVA_Port.jpg',       href:'http://iamweswebb.com/uva-arts' },
-    { name:'Wine Labels',               cat:'Graphic Design', img: CDN+'1559440997857-IOFYGDPZCN2MX8NJZC6S/variosbottles_port.jpg', href:'http://iamweswebb.com/wine-labels' },
-    { name:"O'Charley's Restaurants",   cat:'Graphic Design', img: CDN+'1559441106495-LVOSUZRVE71KO3A8ZDS3/och_port.jpg',       href:'http://iamweswebb.com/ocharleys' },
-    { name:'Boys & Girls Club',         cat:'Graphic Design', img: CDN+'1559413060015-EQEX2TDJFHLJEAQM7IAH/BGC_Port.jpg',       href:'http://iamweswebb.com./boys-girls-club' },
-    { name:'VA Film Festival',          cat:'Graphic Design', img: CDN+'1559269524871-VVES1C57X07VC6FO8YHY/vaff_port.jpg',      href:'http://iamweswebb.com/virginia-film-festival' },
-    { name:'Blue Mountain Brewery',     cat:'Graphic Design', img: CDN+'1560305240911-D4BV6APRME759P6YZWIJ/BMBPort2.jpg',       href:'http://iamweswebb.com/blue-mountain-brewery' },
-    { name:'Out Here Magazine',         cat:'Graphic Design', img: CDN+'1559416098363-P2YSQE3T2R6Z5CGWN46X/outhere_port.jpg',   href:'http://iamweswebb.com/out-here-magazine' },
-    { name:'Blue Mountain Barrel House',cat:'Graphic Design', img: CDN+'1559269520324-R254OTP7BEC9PAEU3PA2/BH_Port.jpg',        href:'http://iamweswebb.com/blue-mountain-barrel-house' },
-    { name:'UVA Drama',                 cat:'Graphic Design', img: CDN+'1559440077802-2D8Z99OS1J2QTNGI2GWU/drama_port.jpg',     href:'http://iamweswebb.com/uva-drama' },
-    { name:'James Harris Moore',        cat:'Graphic Design', img: CDN+'1559440683542-3RFSG4G4WLHV4K3K2OMB/JHM_Port.jpg',       href:'http://iamweswebb.com/jamesharrismoore' },
+    { name:"Lolly's Creamery",          cat:'Graphic Design', img: IMG+'8f7k57-lollyport.jpg',      slug:'lollys' },
+    { name:'Champion Brewery',          cat:'Graphic Design', img: IMG+'frf424-championport.jpg',   slug:'champion' },
+    { name:'UVA Arts',                  cat:'Graphic Design', img: IMG+'h78g5w-uvaport.jpg',        slug:'uva-arts' },
+    { name:'Wine Labels',               cat:'Graphic Design', img: IMG+'njzc6s-variosbottlesport.jpg', slug:'wine-labels' },
+    { name:'Boys & Girls Club',         cat:'Graphic Design', img: IMG+'qm7iah-bgcport.jpg',        slug:'boys-girls-club' },
+    { name:'VA Film Festival',          cat:'Graphic Design', img: IMG+'fo8yhy-vaffport.jpg',       slug:'virginia-film-festival' },
+    { name:'Blue Mountain Brewery',     cat:'Graphic Design', img: IMG+'6yzwij-bmbport2.jpg',       slug:'blue-mountain-brewery' },
+    { name:'Out Here Magazine',         cat:'Graphic Design', img: IMG+'gwn46x-outhereport.jpg',    slug:'out-here-magazine' },
+    { name:'Blue Mountain Barrel House',cat:'Graphic Design', img: IMG+'eu3pa2-bhport.jpg',         slug:'blue-mountain-barrel-house' },
+    { name:'UVA Drama',                 cat:'Graphic Design', img: IMG+'gi2gwu-dramaport.jpg',      slug:'uva-drama' },
+    { name:'James Harris Moore',        cat:'Graphic Design', img: IMG+'3k2omb-jhmport.jpg',        slug:'jamesharrismoore' },
   ],
   branding: [
-    { name:"Lolly's Creamery",         cat:'Brand Identity', img: CDN+'1559401329249-AVDGMMYOVD60DSY0KDPW/VARIOUS+LOGOS-06.jpg', href:'http://iamweswebb.com/lollys' },
-    { name:'Champion Brewery',          cat:'Brand Identity', img: CDN+'1559401328235-SMAH4RPHMPEOP8TEMNTE/VARIOUS+LOGOS-01.jpg', href:'http://iamweswebb.com/champion' },
-    { name:'UVA Arts',                  cat:'Brand Identity', img: CDN+'1559411737660-N7PCG3U0Q1VD7L1HIKBD/UVAArts_Final_BW-01-01.png', href:'http://iamweswebb.com/uva-arts' },
-    { name:'Blue Mountain Brewery',     cat:'Brand Identity', img: CDN+'1559410482010-RJ88LN4ZBR4C04ZJTR4L/bmb_logo_bw-01.png', href:'http://iamweswebb.com/blue-mountain-brewery' },
-    { name:'Restaurant',                cat:'Brand Identity', img: CDN+'1560691055379-HWIDN77QMSD4MEEBLV3M/VARIOUS+LOGOS-02.jpg', href:'#' },
-    { name:'Fitness Coach',             cat:'Brand Identity', img: CDN+'1560691070718-DEQS8FB6PM43L76FRA8N/VARIOUS+LOGOS-07.jpg', href:'#' },
-    { name:'Awards Ceremony',           cat:'Brand Identity', img: CDN+'1560691081550-JCDGU5OL4OAMQGMIXQZW/VARIOUS+LOGOS-05.jpg', href:'#' },
-    { name:'Civic Identity',            cat:'Brand Identity', img: CDN+'1560691268885-IUQ9864MYDFTWAFFAT0G/newrochelle.jpg',      href:'#' },
-    { name:'Media Company',             cat:'Brand Identity', img: CDN+'1560691044305-FEW8319G1UKTPKBMNOHL/VARIOUS+LOGOS-08.jpg', href:'#' },
-    { name:'University Program',        cat:'Brand Identity', img: CDN+'1560691088239-1H2U0J2099DVGHMC275L/VARIOUS+LOGOS-04.jpg', href:'#' },
-    { name:'Real Estate Developer',     cat:'Brand Identity', img: CDN+'1560691110797-21GTLROVWMXP3QI7G89R/San-Jose-West-Logo-ONE-COLOR-PRO.jpg', href:'#' },
-    { name:'Winery',                    cat:'Brand Identity', img: CDN+'1560691192054-5BNH5U49FPH16QZQB73X/VARIOUS+LOGOS-03.jpg', href:'#' },
+    { name:"Lolly's Creamery",          cat:'Brand Identity', img: IMG+'y0kdpw-various-logos-06.jpg', slug:'lollys' },
+    { name:'Champion Brewery',          cat:'Brand Identity', img: IMG+'temnte-various-logos-01.jpg', slug:'champion' },
+    { name:'UVA Arts',                  cat:'Brand Identity', img: IMG+'1hikbd-uvaartsfinalbw-01-01.png', slug:'uva-arts' },
+    { name:'Blue Mountain Brewery',     cat:'Brand Identity', img: IMG+'zjtr4l-bmblogobw-01.png',    slug:'blue-mountain-brewery' },
+    { name:'Restaurant',                cat:'Brand Identity', img: IMG+'eblv3m-various-logos-02.jpg' },
+    { name:'Fitness Coach',             cat:'Brand Identity', img: IMG+'6fra8n-various-logos-07.jpg' },
+    { name:'Awards Ceremony',           cat:'Brand Identity', img: IMG+'mixqzw-various-logos-05.jpg' },
+    { name:'Civic Identity',            cat:'Brand Identity', img: IMG+'ffat0g-newrochelle.jpg' },
+    { name:'Media Company',             cat:'Brand Identity', img: IMG+'bmnohl-various-logos-08.jpg' },
+    { name:'University Program',        cat:'Brand Identity', img: IMG+'mc275l-various-logos-04.jpg' },
+    { name:'Real Estate Developer',     cat:'Brand Identity', img: IMG+'i7g89r-san-jose-west-logo-one-color-pro.jpg' },
+    { name:'Winery',                    cat:'Brand Identity', img: IMG+'zqb73x-various-logos-03.jpg' },
   ],
   illustration: [
-    { name:'BLDR Posters',             cat:'Illustration', img: CDN+'1559416221684-S58AJTAS9756SBFILP6B/bldr_port.jpg',          href:'http://iamweswebb.com/bldr-posters' },
-    { name:'James Harris Moore',        cat:'Illustration', img: CDN+'1559416221104-SLRTUX89NS4K2RF5F4NZ/JHM_Port.jpg',          href:'http://iamweswebb.com/jamesharrismoore' },
-    { name:'Timothy Ryan Driscoll',     cat:'Illustration', img: CDN+'1559416222289-9UCZTJU12H8ZM3LAOXJJ/TRD_Port.jpg',          href:'http://iamweswebb.com/timothy-ryan-driscoll' },
-    { name:'VA Film Festival',          cat:'Illustration', img: CDN+'1559416222887-30JY3YJ7254ESVPNHKJM/vaff_port.jpg',         href:'http://iamweswebb.com/virginia-film-festival' },
-    { name:'BLDR Web',                  cat:'Illustration', img: CDN+'1560606053185-SJ87EKILJ56YARWD2YVB/bldr_port.jpg',         href:'http://iamweswebb.com/bldr-web' },
-    { name:'Solar Poster Series',       cat:'Illustration', img: CDN+'1559416945785-PYB0PX5XNVXCJZPL6SMM/solar_port.jpg',        href:'http://iamweswebb.com/poster-series' },
-    { name:'Theo Chocolate',            cat:'Illustration', img: CDN+'1560698254695-7ILLQM9NW0QIO702KS3W/theo_port.png',         href:'https://www.iamweswebb.com/theo-chocolate' },
-    { name:'Vanderbilt University',     cat:'Illustration', img: CDN+'1560717281928-S8WFA48J6YHLVP891U10/vandy_port.png',        href:'http://iamweswebb.com/vanderbilt' },
-    { name:'Abstract Work',             cat:'Illustration', img: CDN+'1559441624032-NR88UWMNRCMNRXJNP4IM/abstract_port.jpg',     href:'http://iamweswebb.com/abstracts' },
-    { name:'Lunch Break Illustrations', cat:'Illustration', img: CDN+'1559441954531-NO2TDOW9ZZM5JPKDJDQR/Tape_Port.jpg',        href:'http://iamweswebb.com/lunch-break-illustrations' },
-    { name:'Fear Not',                  cat:'Illustration', img: CDN+'1559441965321-TBH5FRSRMZMRSC9Z1ATW/do-not-fear.jpg',       href:'http://iamweswebb.com/fear-not' },
-    { name:'Grow',                      cat:'Illustration', img: CDN+'1559442180390-MH8JT660Y8R9EQ5J1CVB/treegrow_port.jpg',    href:'http://iamweswebb.com/grow' },
+    { name:'James Harris Moore',        cat:'Illustration', img: IMG+'f5f4nz-jhmport.jpg',   slug:'jamesharrismoore' },
+    { name:'Timothy Ryan Driscoll',     cat:'Illustration', img: IMG+'laoxjj-trdport.jpg',   slug:'timothy-ryan-driscoll' },
+    { name:'VA Film Festival',          cat:'Illustration', img: IMG+'pnhkjm-vaffport.jpg',  slug:'virginia-film-festival' },
+    { name:'Solar Poster Series',       cat:'Illustration', img: IMG+'pl6smm-solarport.jpg', slug:'poster-series' },
+    { name:'Theo Chocolate',            cat:'Illustration', img: IMG+'02ks3w-theoport.png',  slug:'theo-chocolate' },
+    { name:'Vanderbilt University',     cat:'Illustration', img: IMG+'891u10-vandyport.png', slug:'vanderbilt' },
   ],
 };
 
@@ -171,15 +179,39 @@ const TABS = [
   { key:'illustration', label:'Illustration' },
 ];
 
+function Lightbox({ project, onClose }) {
+  useEffect(() => {
+    const onKey = e => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, []);
+  const detail = project.slug ? window.PROJECT_DETAILS[project.slug] : null;
+  return ReactDOM.createPortal(
+    <div className="lb-backdrop" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <button className="lb-close" onClick={onClose} aria-label="Close">✕</button>
+      <div className="lb-inner">
+        <div className="lb-cat">{project.cat}</div>
+        <div className="lb-title">{detail ? detail.title : project.name}</div>
+        {detail && detail.text.map((t, i) => <p className="lb-text" key={i}>{t}</p>)}
+        <div className="lb-imgs">
+          {(detail ? detail.images : [project.img]).map((src, i) => <img src={src} key={i} loading="lazy" alt="" />)}
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function App() {
   const [active, setActive] = useState('all');
+  const [open, setOpen] = useState(null);
   const projects = active === 'all'
     ? [...PROJECTS.graphic, ...PROJECTS.branding, ...PROJECTS.illustration]
     : PROJECTS[active];
   return (
     <div className="fade-in">
       <section className="hero">
-        {/* ── HEADLINE — edit below ── */}
         <h1>Let's make<br/>something fun<br/><span className="accent">together</span></h1>
         <div className="hero-meta">
           <p>After two decades working with clients ranging from startups to universities, I know that good design is as much about listening as it is about making.</p>
@@ -195,14 +227,14 @@ function App() {
         </div>
         <div className="work-grid">
           {projects.map((p, i) => (
-            <a href={p.href} key={p.name + i} className="work-tile" target="_blank" rel="noreferrer">
+            <div key={p.name + p.cat + i} className="work-tile" onClick={() => setOpen(p)} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') setOpen(p); }}>
               <img src={p.img} alt={p.name} loading="lazy" />
               <div className="tile-overlay"></div>
               <div className="tile-meta">
                 <div className="tile-cat">{p.cat}</div>
                 <div className="tile-name">{p.name}</div>
               </div>
-            </a>
+            </div>
           ))}
         </div>
       </section>
@@ -219,6 +251,8 @@ function App() {
         <span>© 2026 WES WEBB · IAMWESWEBB.COM</span>
         <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a> · NASHVILLE, TN</span>
       </footer>
+
+      {open && <Lightbox project={open} onClose={() => setOpen(null)} />}
     </div>
   );
 }
