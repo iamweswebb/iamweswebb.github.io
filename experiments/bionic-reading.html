@@ -1,110 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bionic Reading Converter</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            font-size: 1.8em;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 10px;
-            font-size: 1.1em;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            resize: vertical;
-            min-height: 150px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            font-size: 1.2em;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #output {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-
-        .bionic-bold {
-            font-weight: bold;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bionic Reading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--paper:#f6f1e7;--ink:#211d16;--faint:rgba(33,29,22,0.45);--line:rgba(33,29,22,0.14);--accent:#c04f15}
+body{background:var(--paper);color:var(--ink);font-family:'Newsreader',serif;min-height:100vh;min-height:100dvh}
+a{color:var(--accent)}a:hover{color:var(--ink)}
+.view{display:none}.view.active{display:block}
+/* ── input view ── */
+.wrap{max-width:640px;margin:0 auto;padding:9vh 24px 60px}
+.brand{font-family:'Space Grotesk',sans-serif;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--faint);margin-bottom:34px}
+h1{font-size:clamp(42px,8vw,64px);font-weight:400;line-height:1.05;letter-spacing:-0.01em;margin-bottom:14px}
+h1 b{font-weight:700}
+.sub{font-size:19px;font-style:italic;color:var(--faint);margin-bottom:44px;line-height:1.5}
+textarea{width:100%;min-height:38vh;padding:22px;font-family:'Newsreader',serif;font-size:19px;line-height:1.65;color:var(--ink);background:rgba(255,255,255,0.55);border:1px solid var(--line);border-radius:4px;resize:vertical;outline:none;transition:border-color 0.15s}
+textarea:focus{border-color:var(--ink)}
+textarea::placeholder{color:rgba(33,29,22,0.3);font-style:italic}
+.go{margin-top:18px;width:100%;padding:18px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--paper);background:var(--ink);border:none;border-radius:4px;cursor:pointer;transition:background 0.15s}
+.go:hover{background:var(--accent)}
+.hint{margin-top:16px;font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:0.08em;color:var(--faint);text-align:center}
+/* ── reading view ── */
+.bar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:linear-gradient(to bottom,var(--paper) 60%,rgba(246,241,231,0));z-index:10}
+.bar button{font-family:'Space Grotesk',sans-serif;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid var(--line);border-radius:100px;padding:10px 20px;color:var(--ink);cursor:pointer;transition:all 0.15s;min-height:44px}
+.bar button:hover{border-color:var(--accent);color:var(--accent)}
+.page{max-width:33em;margin:0 auto;padding:110px 24px 30vh}
+.page p{font-size:21px;line-height:1.8;margin-bottom:1.2em;text-wrap:pretty}
+.page b{font-weight:700}
+@media(max-width:600px){.page p{font-size:19px}}
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Bionic Reading Converter</h1>
-        <textarea id="inputText" placeholder="Enter your text here"></textarea>
-        <button onclick="convertToBionicReading()">Convert</button>
-        <div id="output"></div>
-    </div>
+<div class="view active" id="inputView">
+  <div class="wrap">
+    <div class="brand">iamweswebb · experiment</div>
+    <h1><b>Bio</b>nic <b>Rea</b>ding</h1>
+    <p class="sub">Bold anchors at the front of each word pull your eyes through the text. Paste anything. Read it faster.</p>
+    <textarea id="inputText" placeholder="Paste your text here…"></textarea>
+    <button class="go" onclick="convert()">Read it →</button>
+    <p class="hint">Nothing leaves your browser.</p>
+  </div>
+</div>
 
-    <script>
-        function convertToBionicReading() {
-            const inputText = document.getElementById('inputText').value;
-            const words = inputText.split(' ');
-            let outputHtml = '';
+<div class="view" id="readView">
+  <div class="bar">
+    <button onclick="backToInput()">← New text</button>
+    <button id="copyBtn" onclick="copyResult()">Copy</button>
+  </div>
+  <div class="page" id="output"></div>
+</div>
 
-            words.forEach(word => {
-                let boldPart = '';
-                let regularPart = '';
-
-                if (word.length > 1) {
-                    const splitIndex = Math.ceil(word.length / 2);
-                    boldPart = word.slice(0, splitIndex);
-                    regularPart = word.slice(splitIndex);
-                } else {
-                    boldPart = word;  // Single character words stay bold
-                }
-
-                outputHtml += `<span class="bionic-bold">${boldPart}</span>${regularPart} `;
-            });
-
-            document.getElementById('output').innerHTML = outputHtml;
-        }
-    </script>
-
+<script>
+function bionicWord(word){
+  if(!word) return '';
+  const m = word.match(/^(\W*)([\w'’-]+)(\W*)$/u);
+  if(!m) return word;
+  const [,pre,core,post] = m;
+  const n = core.length===1 ? 1 : Math.ceil(core.length/2);
+  return pre+'<b>'+core.slice(0,n)+'</b>'+core.slice(n)+post;
+}
+function convert(){
+  const raw = document.getElementById('inputText').value.trim();
+  if(!raw) return;
+  const html = raw.split(/\n\s*\n/).map(par =>
+    '<p>'+par.split(/\s+/).map(bionicWord).join(' ')+'</p>'
+  ).join('');
+  document.getElementById('output').innerHTML = html;
+  document.getElementById('inputView').classList.remove('active');
+  document.getElementById('readView').classList.add('active');
+  window.scrollTo(0,0);
+}
+function backToInput(){
+  document.getElementById('readView').classList.remove('active');
+  document.getElementById('inputView').classList.add('active');
+}
+async function copyResult(){
+  const out = document.getElementById('output');
+  const btn = document.getElementById('copyBtn');
+  try{
+    const html = new Blob([out.innerHTML],{type:'text/html'});
+    const text = new Blob([out.innerText],{type:'text/plain'});
+    await navigator.clipboard.write([new ClipboardItem({'text/html':html,'text/plain':text})]);
+  }catch(e){
+    try{ await navigator.clipboard.writeText(out.innerText); }catch(e2){}
+  }
+  btn.textContent = 'Copied ✓';
+  setTimeout(()=>{ btn.textContent = 'Copy'; }, 1600);
+}
+</script>
 </body>
 </html>

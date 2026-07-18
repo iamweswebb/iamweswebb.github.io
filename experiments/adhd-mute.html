@@ -1,207 +1,210 @@
-@ -1,206 +0,0 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADHD Mute Button</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            background-color: #2D363D;
-            color: #425460;
-        }
-        .play-button-container {
-            position: relative;
-            margin-bottom: 40px;
-        }
-        .play-button {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 4px solid #425460;
-            background: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-        }
-        .play-button svg {
-            fill: none;
-            stroke: #425460;
-            stroke-width: 3;
-        }
-        .play-button-text {
-            position: absolute;
-            top: -40px;
-            width: 100%;
-            text-align: center;
-            font-size: 1.2em;
-            letter-spacing: 1px;
-        }
-        .slider-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 30px;
-        }
-        input[type=range] {
-            writing-mode: bt-lr; /* Vertical slider */
-            -webkit-appearance: slider-vertical;
-            width: 12px;
-            height: 150px;
-            background: none;
-            outline: none;
-            border: none;
-            accent-color: #425460;
-        }
-        label {
-            margin-top: 10px;
-            color: #425460;
-            font-size: 0.9em;
-            text-transform: uppercase;
-        }
-        .sliders-group {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MÜTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080b;--panel:#0d0d10;--border:#1a1a22;--text:#a8a8b8;--dim:#3a3a48;--c1:#7eb8d4;--c2:#a8c5a0;--c3:#c4a882}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;padding:20px 14px 50px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:0.016;pointer-events:none;z-index:1000}
+header{width:100%;max-width:560px;display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.logo{font-family:'Share Tech Mono',monospace;font-size:1.7rem;letter-spacing:0.4em;color:var(--c1);text-shadow:0 0 28px rgba(126,184,212,0.22)}
+.subtitle{font-size:0.62rem;letter-spacing:0.22em;color:var(--dim);text-transform:uppercase;text-align:right}
+/* ── SCREEN / VISUALIZER ── */
+.screen-wrap{width:100%;max-width:560px;position:relative;margin-bottom:12px}
+.screen{width:100%;aspect-ratio:16/8;background:#060609;border:1px solid var(--border);border-radius:4px;position:relative;overflow:hidden}
+.blobs{position:absolute;inset:-20%;filter:blur(34px) saturate(1.2);opacity:0;transition:opacity 2.5s ease}
+body.playing .blobs{opacity:1}
+.blob{position:absolute;border-radius:50%}
+.blob.b1{width:60%;height:90%;left:-6%;top:-16%;background:radial-gradient(circle at 40% 40%,rgba(126,184,212,0.55),transparent 65%);animation:d1 18s ease-in-out infinite alternate}
+.blob.b2{width:52%;height:82%;right:-4%;bottom:-14%;background:radial-gradient(circle at 55% 50%,rgba(168,197,160,0.45),transparent 65%);animation:d2 23s ease-in-out infinite alternate}
+.blob.b3{width:42%;height:70%;left:34%;top:26%;background:radial-gradient(circle at 50% 50%,rgba(196,168,130,0.38),transparent 65%);animation:d3 29s ease-in-out infinite alternate}
+@keyframes d1{from{transform:translate(0,0) scale(1)}to{transform:translate(26%,18%) scale(1.25)}}
+@keyframes d2{from{transform:translate(0,0) scale(1.15)}to{transform:translate(-22%,-16%) scale(0.9)}}
+@keyframes d3{from{transform:translate(0,0) scale(0.9)}to{transform:translate(-18%,14%) scale(1.3)}}
+.scanlines{position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 2px,rgba(0,0,0,0.16) 2px 3px);pointer-events:none}
+.screen-label{position:absolute;top:7px;left:11px;font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.2em;color:var(--dim);z-index:2}
+.screen-status{position:absolute;top:7px;right:11px;font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.2em;color:var(--dim);z-index:2;transition:color 0.5s}
+body.playing .screen-status{color:var(--c1);text-shadow:0 0 10px rgba(126,184,212,0.5)}
+.screen-count{position:absolute;bottom:8px;right:11px;font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.16em;color:var(--dim);z-index:2}
+body.playing .screen-count{color:var(--text)}
+/* ── TRANSPORT ── */
+.transport{width:100%;max-width:560px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:16px;display:flex;align-items:center;gap:18px;margin-bottom:12px}
+.power{width:74px;height:74px;border-radius:50%;border:1px solid var(--border);background:#0a0a0d;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.25s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.power svg{stroke:var(--dim);stroke-width:2;fill:none;stroke-linecap:round;transition:stroke 0.25s;width:26px;height:26px}
+.power:hover{border-color:var(--c1)}
+.power:hover svg{stroke:var(--text)}
+body.playing .power{border-color:var(--c1);box-shadow:0 0 18px rgba(126,184,212,0.25),inset 0 0 14px rgba(126,184,212,0.07);animation:pulse 5s ease-in-out infinite}
+body.playing .power svg{stroke:var(--c1)}
+@keyframes pulse{0%,100%{box-shadow:0 0 12px rgba(126,184,212,0.18),inset 0 0 12px rgba(126,184,212,0.05)}50%{box-shadow:0 0 30px rgba(126,184,212,0.4),inset 0 0 18px rgba(126,184,212,0.12)}}
+.transport-info{flex:1;display:flex;flex-direction:column;gap:9px}
+.t-label{font-family:'Share Tech Mono',monospace;font-size:0.52rem;letter-spacing:0.22em;color:var(--dim);text-transform:uppercase}
+.timer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.timer-btn{padding:9px 4px;border:1px solid var(--border);background:#0a0a0d;border-radius:3px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;color:var(--dim);transition:all 0.15s;text-align:center;min-height:38px;-webkit-tap-highlight-color:transparent}
+.timer-btn:hover{border-color:var(--c1);color:var(--text)}
+.timer-btn.selected{border-color:var(--c1);color:var(--c1);background:rgba(126,184,212,0.07)}
+/* ── TONE CHANNELS ── */
+.section-label{width:100%;max-width:560px;font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.25em;color:var(--dim);opacity:0.5;margin-bottom:5px}
+.tones{width:100%;max-width:560px;display:flex;flex-direction:column;gap:8px}
+.tone{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;gap:8px 14px;align-items:center;transition:border-color 0.4s}
+.tone[data-t="0"]{--oc:var(--c1)}
+.tone[data-t="1"]{--oc:var(--c2)}
+.tone[data-t="2"]{--oc:var(--c3)}
+body.playing .tone{border-color:color-mix(in srgb,var(--oc) 30%,transparent)}
+.tone-id{display:flex;flex-direction:column;gap:2px;min-width:74px}
+.tone-name{font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.24em;color:var(--oc);opacity:0.85}
+.tone-freq{font-family:'Share Tech Mono',monospace;font-size:0.48rem;letter-spacing:0.12em;color:var(--dim)}
+.tone input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:none;outline:none;cursor:pointer}
+.tone input[type=range]::-webkit-slider-runnable-track{background:var(--border);height:2px;border-radius:1px}
+.tone input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--oc);margin-top:-7px;box-shadow:0 0 8px color-mix(in srgb,var(--oc) 55%,transparent)}
+.tone input[type=range]::-moz-range-track{background:var(--border);height:2px;border-radius:1px}
+.tone input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--oc);border:none;box-shadow:0 0 8px color-mix(in srgb,var(--oc) 55%,transparent)}
+.tone-val{font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--oc);min-width:30px;text-align:right}
+footer{width:100%;max-width:560px;margin-top:16px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:0.45rem;letter-spacing:0.2em;color:var(--dim);text-transform:uppercase}
+footer a{color:var(--dim);text-decoration:none}
+footer a:hover{color:var(--c1)}
+</style>
 </head>
 <body>
-    <div class="play-button-container">
-        <button id="startButton" class="play-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
-                <polygon points="5,3 19,12 5,21" />
-            </svg>
-        </button>
-        <button id="stopButton" class="play-button" style="display:none;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
-                <line x1="7" y1="4" x2="7" y2="20" /><line x1="17" y1="4" x2="17" y2="20" />
-            </svg>
-        </button>
+<header>
+  <div class="logo">MÜTE</div>
+  <div class="subtitle">Focus drone<br>One sound · no decisions</div>
+</header>
+
+<div class="screen-wrap">
+  <div class="screen">
+    <div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+    <div class="scanlines"></div>
+    <div class="screen-label">FIELD</div>
+    <div class="screen-status" id="status">STANDBY</div>
+    <div class="screen-count" id="countdown"></div>
+  </div>
+</div>
+
+<div class="transport">
+  <button class="power" id="playBtn" aria-label="Power">
+    <svg id="iconPlay" viewBox="0 0 24 24"><polygon points="7,4 19,12 7,20"></polygon></svg>
+    <svg id="iconPause" viewBox="0 0 24 24" style="display:none"><line x1="8" y1="5" x2="8" y2="19"></line><line x1="16" y1="5" x2="16" y2="19"></line></svg>
+  </button>
+  <div class="transport-info">
+    <div class="t-label">Auto-stop</div>
+    <div class="timer-grid">
+      <button class="timer-btn selected" data-min="0">&#8734;</button>
+      <button class="timer-btn" data-min="25">25:00</button>
+      <button class="timer-btn" data-min="50">50:00</button>
     </div>
-    <div class="sliders-group">
-        <div class="slider-container">
-            <input id="octave1Slider" type="range" min="0" max="1" step="0.01" value="0.5">
-            <label for="octave1Slider">Tone One</label>
-        </div>
-        <div class="slider-container">
-            <input id="octave2Slider" type="range" min="0" max="1" step="0.01" value="0.5">
-            <label for="octave2Slider">Tone Two</label>
-        </div>
-        <div class="slider-container">
-            <input id="binauralSlider" type="range" min="0" max="1" step="0.01" value="0.5">
-            <label for="binauralSlider">Tone Three</label>
-        </div>
-    </div>
-    <script>
-        let audioContext = null;
-        let oscillators = [];
-        let gainNode = null;
-        let octave1GainNode = null;
-        let octave2GainNode = null;
-        let binauralGainNode = null;
+  </div>
+</div>
 
-        const startButton = document.getElementById('startButton');
-        const stopButton = document.getElementById('stopButton');
-        const octave1Slider = document.getElementById('octave1Slider');
-        const octave2Slider = document.getElementById('octave2Slider');
-        const binauralSlider = document.getElementById('binauralSlider');
+<div class="section-label">TONE CHANNELS</div>
+<div class="tones">
+  <div class="tone" data-t="0">
+    <div class="tone-id"><span class="tone-name">TONE 01</span><span class="tone-freq">426 HZ</span></div>
+    <input id="t1" type="range" min="0" max="1" step="0.01" value="0.5">
+    <span class="tone-val" id="v1">50</span>
+  </div>
+  <div class="tone" data-t="1">
+    <div class="tone-id"><span class="tone-name">TONE 02</span><span class="tone-freq">213 HZ</span></div>
+    <input id="t2" type="range" min="0" max="1" step="0.01" value="0.5">
+    <span class="tone-val" id="v2">50</span>
+  </div>
+  <div class="tone" data-t="2">
+    <div class="tone-id"><span class="tone-name">TONE 03</span><span class="tone-freq">852 HZ</span></div>
+    <input id="t3" type="range" min="0" max="1" step="0.01" value="0.5">
+    <span class="tone-val" id="v3">50</span>
+  </div>
+</div>
 
-        startButton.addEventListener('click', () => {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                gainNode = audioContext.createGain();
-                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime); // Set initial master volume
+<footer>
+  <span>ADHD MUTE · v2</span>
+  <span><a href="../experiments.html">IAMWESWEBB</a></span>
+</footer>
 
-                octave1GainNode = audioContext.createGain();
-                octave1GainNode.gain.setValueAtTime(octave1Slider.value, audioContext.currentTime);
+<script>
+const FREQS = [426, 213, 852];
+const FADE_IN = 2.5, FADE_OUT = 1.8;
+let ctx = null, master = null, toneGains = [], oscs = [], playing = false, stopping = false;
+let timerMin = 0, timerEnd = null, timerTick = null;
+const sliders = [document.getElementById('t1'), document.getElementById('t2'), document.getElementById('t3')];
+const vals = [document.getElementById('v1'), document.getElementById('v2'), document.getElementById('v3')];
+const statusEl = document.getElementById('status');
+const countdownEl = document.getElementById('countdown');
+const iconPlay = document.getElementById('iconPlay');
+const iconPause = document.getElementById('iconPause');
 
-                octave2GainNode = audioContext.createGain();
-                octave2GainNode.gain.setValueAtTime(octave2Slider.value, audioContext.currentTime);
-
-                binauralGainNode = audioContext.createGain();
-                binauralGainNode.gain.setValueAtTime(binauralSlider.value, audioContext.currentTime);
-
-                const frequencies = [426, 213]; // Two octaves: 426Hz and 213Hz (lower octave)
-
-                frequencies.forEach((frequency, index) => {
-                    let oscillator = audioContext.createOscillator();
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-                    if (index === 0) {
-                        oscillator.connect(octave1GainNode);
-                    } else {
-                        oscillator.connect(octave2GainNode);
-                    }
-                    oscillators.push(oscillator);
-                });
-
-                // Add binaural tone
-                let binauralOscillator = audioContext.createOscillator();
-                binauralOscillator.type = 'sine';
-                binauralOscillator.frequency.setValueAtTime(852, audioContext.currentTime); // Set to 852Hz as a complementary binaural tone
-                binauralOscillator.connect(binauralGainNode);
-                binauralGainNode.connect(gainNode);
-                oscillators.push(binauralOscillator);
-
-                octave1GainNode.connect(gainNode);
-                octave2GainNode.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                oscillators.forEach(oscillator => oscillator.start());
-            }
-
-            startButton.style.display = 'none';
-            stopButton.style.display = 'block';
-        });
-
-        stopButton.addEventListener('click', () => {
-            if (oscillators.length > 0) {
-                oscillators.forEach(oscillator => {
-                    oscillator.stop(audioContext.currentTime + 0.1);
-                    oscillator.onended = () => {
-                        oscillator.disconnect();
-                    };
-                });
-                gainNode.disconnect();
-                audioContext.close();
-                audioContext = null;
-                oscillators = [];
-                gainNode = null;
-                octave1GainNode = null;
-                octave2GainNode = null;
-                binauralGainNode = null;
-            }
-
-            startButton.style.display = 'block';
-            stopButton.style.display = 'none';
-        });
-
-        octave1Slider.addEventListener('input', (event) => {
-            if (octave1GainNode) {
-                octave1GainNode.gain.setValueAtTime(event.target.value, audioContext.currentTime);
-            }
-        });
-
-        octave2Slider.addEventListener('input', (event) => {
-            if (octave2GainNode) {
-                octave2GainNode.gain.setValueAtTime(event.target.value, audioContext.currentTime);
-            }
-        });
-
-        binauralSlider.addEventListener('input', (event) => {
-            if (binauralGainNode) {
-                binauralGainNode.gain.setValueAtTime(event.target.value, audioContext.currentTime);
-            }
-        });
-
-    </script>
+function setIcons(on){
+  iconPlay.style.display = on ? 'none' : 'block';
+  iconPause.style.display = on ? 'block' : 'none';
+}
+function start(){
+  if(playing || stopping) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  master = ctx.createGain();
+  master.gain.setValueAtTime(0.0001, ctx.currentTime);
+  master.gain.exponentialRampToValueAtTime(0.5, ctx.currentTime + FADE_IN);
+  master.connect(ctx.destination);
+  toneGains = []; oscs = [];
+  FREQS.forEach((f, i) => {
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(parseFloat(sliders[i].value), ctx.currentTime);
+    const o = ctx.createOscillator();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(f, ctx.currentTime);
+    o.connect(g); g.connect(master); o.start();
+    toneGains.push(g); oscs.push(o);
+  });
+  playing = true;
+  document.body.classList.add('playing');
+  statusEl.textContent = 'RUNNING';
+  setIcons(true);
+  if(timerMin > 0) armTimer();
+}
+function stop(){
+  if(!playing || stopping) return;
+  stopping = true;
+  clearTimer();
+  const t = ctx.currentTime;
+  master.gain.cancelScheduledValues(t);
+  master.gain.setValueAtTime(Math.max(master.gain.value, 0.0001), t);
+  master.gain.exponentialRampToValueAtTime(0.0001, t + FADE_OUT);
+  document.body.classList.remove('playing');
+  statusEl.textContent = 'STANDBY';
+  setIcons(false);
+  const oldCtx = ctx, oldOscs = oscs;
+  setTimeout(() => {
+    oldOscs.forEach(o => { try{o.stop()}catch(e){} });
+    oldCtx.close();
+  }, FADE_OUT * 1000 + 150);
+  ctx = null; master = null; toneGains = []; oscs = []; playing = false;
+  setTimeout(() => { stopping = false; }, FADE_OUT * 1000 + 200);
+}
+document.getElementById('playBtn').addEventListener('click', () => playing ? stop() : start());
+sliders.forEach((s, i) => s.addEventListener('input', e => {
+  vals[i].textContent = Math.round(e.target.value * 100);
+  if(toneGains[i]) toneGains[i].gain.setTargetAtTime(parseFloat(e.target.value), ctx.currentTime, 0.05);
+}));
+document.querySelectorAll('.timer-btn').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  timerMin = parseInt(btn.dataset.min);
+  if(playing){ clearTimer(); if(timerMin > 0) armTimer(); }
+}));
+function armTimer(){
+  timerEnd = Date.now() + timerMin * 60000;
+  timerTick = setInterval(() => {
+    const left = timerEnd - Date.now();
+    if(left <= 0){ stop(); return; }
+    const m = Math.floor(left / 60000), s = Math.floor((left % 60000) / 1000);
+    countdownEl.textContent = m + ':' + String(s).padStart(2, '0');
+  }, 250);
+}
+function clearTimer(){
+  if(timerTick){ clearInterval(timerTick); timerTick = null; }
+  countdownEl.textContent = '';
+}
+</script>
 </body>
 </html>
