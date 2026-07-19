@@ -241,10 +241,40 @@
   footer a { color: rgba(232,224,212,0.18); text-decoration: none; transition: color 0.15s; }
   footer a:hover { color: #e2007a; }
 
+  /* ── EXCLUSIVE PLAYER ── */
+  .hz-player{display:flex;align-items:center;gap:32px}
+  .hz-play-btn{width:76px;height:76px;border-radius:50%;flex-shrink:0;border:1px solid rgba(226,0,122,0.5);background:rgba(226,0,122,0.08);color:#e2007a;font-size:20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif}
+  .hz-play-btn:hover{background:#e2007a;color:#fff;box-shadow:0 0 40px rgba(226,0,122,0.35)}
+  .hz-player-main{flex:1;min-width:0}
+  .hz-player-track{font-size:22px;font-weight:700;color:#e8e0d4;margin-bottom:4px;letter-spacing:-0.01em}
+  .hz-player-sub{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(232,224,212,0.35);margin-bottom:20px}
+  .hz-player-wave{display:flex;align-items:flex-end;gap:2px;height:58px;cursor:pointer}
+  .hz-player-wave .pbar{flex:1;border-radius:1px;min-height:3px;transition:height .12s linear}
+  .hz-player-times{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:rgba(232,224,212,0.3);margin-top:10px}
+  @media(max-width:760px){.hz-player{flex-direction:column;align-items:flex-start;gap:22px}}
+
   @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
   .fade-in { animation: fadeUp 0.7s ease both; }
   .fade-in-2 { animation: fadeUp 0.7s 0.1s ease both; }
   .fade-in-3 { animation: fadeUp 0.7s 0.2s ease both; }
+
+@media(max-width:760px){
+  nav{flex-wrap:wrap;padding:14px 20px;gap:8px 16px}
+  .nav-logo{order:2}
+  nav ul{order:3;width:100%;flex-wrap:wrap;gap:8px 18px}
+  .hz-hero{padding:0 20px 44px}
+  .hz-name{font-size:clamp(44px,14.5vw,180px)}
+  .hz-name-sub{font-size:17px}
+  .hz-hero-bottom{flex-wrap:wrap;margin-top:36px}
+  .hz-meta-item{padding:18px 24px 0 0;margin-right:24px;border-right:none}
+  .hz-section{padding:56px 20px}
+  .hz-about{grid-template-columns:1fr;gap:44px}
+  .vinyl-strip{flex-direction:column;align-items:flex-start;padding:44px 20px;gap:24px}
+  .hz-cta-strip{flex-direction:column;align-items:flex-start;padding:56px 20px;gap:28px}
+  .hz-cta-strip>div{align-items:flex-start !important}
+  .plat-name{font-size:20px}
+  footer{flex-direction:column;align-items:flex-start;gap:8px;padding:24px 20px}
+}
 </style>
 </head>
 <body>
@@ -372,6 +402,92 @@ function AnimatedWaveform() {
   );
 }
 
+function HazzzePlayer() {
+  const audioRef = React.useRef(null);
+  const ctxRef = React.useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [t, setT] = useState(0);
+  const [dur, setDur] = useState(0);
+  const [bars, setBars] = useState(() => Array.from({length:64},(_,i)=>10+Math.abs(Math.sin(i*0.4))*38));
+  useEffect(() => {
+    const a = audioRef.current;
+    const saved = parseFloat(localStorage.getItem('hz-remix-pos')||'0');
+    // Serve via blob URL so the media is always seekable (server lacks Range support)
+    let blobUrl;
+    fetch('assets/likewise-the-spirit-remix.mp3').then(r=>r.blob()).then(b=>{
+      blobUrl = URL.createObjectURL(b);
+      const wasPlaying = !a.paused, pos = a.currentTime;
+      a.src = blobUrl; a.load();
+      a.addEventListener('loadedmetadata', () => {
+        const target = pos>0 ? pos : (saved>0 && saved<a.duration-2 ? saved : 0);
+        if (target>0) a.currentTime = target;
+        if (wasPlaying) a.play().catch(()=>{});
+      }, { once: true });
+    }).catch(()=>{});
+    const onMeta = () => {
+      if (!isFinite(a.duration)) { a.currentTime = 1e101; return; }
+      setDur(a.duration); if (saved>0 && saved<a.duration-2) a.currentTime=saved;
+    };
+    const onDur = () => {
+      if (isFinite(a.duration) && a.duration>0) { setDur(a.duration); if (a.currentTime>a.duration) a.currentTime = (saved>0 && saved<a.duration-2) ? saved : 0; }
+    };
+    const onTime = () => { if (isFinite(a.duration) && a.currentTime<=a.duration) { setT(a.currentTime); localStorage.setItem('hz-remix-pos', String(a.currentTime)); } };
+    const onEnd = () => { setPlaying(false); localStorage.setItem('hz-remix-pos','0'); };
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    a.addEventListener('loadedmetadata', onMeta); a.addEventListener('durationchange', onDur); a.addEventListener('timeupdate', onTime); a.addEventListener('ended', onEnd); a.addEventListener('play', onPlay); a.addEventListener('pause', onPause);
+    return () => { a.removeEventListener('loadedmetadata', onMeta); a.removeEventListener('durationchange', onDur); a.removeEventListener('timeupdate', onTime); a.removeEventListener('ended', onEnd); a.removeEventListener('play', onPlay); a.removeEventListener('pause', onPause); };
+  }, []);
+  useEffect(() => {
+    if (!playing) return;
+    if (!ctxRef.current) {
+      try {
+        const ac = new (window.AudioContext||window.webkitAudioContext)();
+        const src = ac.createMediaElementSource(audioRef.current);
+        const an = ac.createAnalyser(); an.fftSize = 256;
+        src.connect(an); an.connect(ac.destination);
+        ctxRef.current = { ac, an, data: new Uint8Array(an.frequencyBinCount) };
+      } catch(e) { ctxRef.current = null; }
+    }
+    if (!ctxRef.current) return;
+    ctxRef.current.ac.resume();
+    let raf, last = 0;
+    const loop = (ts) => {
+      if (ts - last > 70) {
+        last = ts;
+        const { an, data } = ctxRef.current;
+        an.getByteFrequencyData(data);
+        setBars(Array.from({length:64},(_,i)=>Math.max(5,(data[Math.floor(i*data.length/90)]/255)*100)));
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [playing]);
+  const toggle = () => { const a = audioRef.current; if (!a.paused) { a.pause(); } else { a.play().catch(()=>setPlaying(false)); } };
+  const seek = (e) => { if (!dur || !isFinite(dur)) return; const r = e.currentTarget.getBoundingClientRect(); audioRef.current.currentTime = ((e.clientX-r.left)/r.width)*dur; };
+  const fmt = (s) => (!isFinite(s) || isNaN(s)) ? '–:––' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  const prog = (dur && isFinite(dur)) ? t/dur : 0;
+  return (
+    <section className="hz-section fade-in-2" id="exclusive">
+      <div className="hz-player">
+        <button className="hz-play-btn" onClick={toggle} aria-label={playing?'Pause':'Play'}>{playing ? '❚❚' : '▶'}</button>
+        <div className="hz-player-main">
+          <div className="hz-player-track">Likewise the Spirit Helps Us <span style={{color:'#e2007a'}}>(remix)</span></div>
+          <div className="hz-player-sub">Hazzze · unreleased remix · nowhere else but here</div>
+          <div className="hz-player-wave" onClick={seek}>
+            {bars.map((h,i) => (
+              <div key={i} className="pbar" style={{height:`${h}%`, background: i/64 <= prog ? '#e2007a' : `rgba(232,224,212,${0.08+h/400})`}}></div>
+            ))}
+          </div>
+          <div className="hz-player-times"><span>{fmt(t)}</span><span>{fmt(dur)}</span></div>
+        </div>
+      </div>
+      <audio ref={audioRef} src="assets/likewise-the-spirit-remix.mp3" preload="metadata"></audio>
+    </section>
+  );
+}
+
 function App() {
   return (
     <div>
@@ -397,6 +513,9 @@ function App() {
       </section>
 
       {/* ═══ ARTIST PHOTO removed — now used as hero bg ═══ */}
+
+      {/* ═══ SITE-EXCLUSIVE PLAYER ═══ */}
+      <HazzzePlayer />
 
       {/* ═══ LISTEN ═══ */}
       <section className="hz-section fade-in-2" id="listen">
@@ -479,7 +598,7 @@ function App() {
 
       <footer>
         <span>© 2026 WES WEBB · HAZZZE · IAMWESWEBB.COM</span>
-        <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a> · NASHVILLE, TN</span>
+        <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:iamweswebb@gmail.com">EMAIL</a> · NASHVILLE, TN</span>
       </footer>
     </div>
   );
@@ -487,5 +606,6 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
+<script src="assets/transition.js"></script>
 </body>
 </html>

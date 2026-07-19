@@ -6,7 +6,7 @@
 <title>Sculpture — iamweswebb</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Syne:wght@700;800&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -49,11 +49,7 @@
   .hero-meta p { padding: 26px 48px 0 0; font-family: 'Lora', serif; font-size: 16px; line-height: 1.75; color: rgba(232,224,212,0.65); max-width: 560px; }
   .section { padding: 80px 52px; border-bottom: 1px solid rgba(232,224,212,0.06); }
   .section-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #e2007a; margin-bottom: 36px; }
-  .section h2 {
-    font-family: 'Anton', sans-serif; font-weight: 400;
-    font-size: clamp(28px, 3.5vw, 56px); letter-spacing: 0.01em; text-transform: uppercase;
-    line-height: 1.02; color: #e8e0d4; margin-bottom: 36px;
-  }
+  .section h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(26px, 3.2vw, 50px); letter-spacing: -0.03em; line-height: 1.05; color: #e8e0d4; margin-bottom: 36px; }
   .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
   .work-tile {
     position: relative; cursor: pointer; overflow: hidden;
@@ -80,7 +76,7 @@
   .instr-body { font-family: 'Lora', serif; font-size: 14px; line-height: 1.65; color: rgba(232,224,212,0.38); }
   .vinyl-strip { padding: 52px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(232,224,212,0.06); gap: 40px; }
   .vinyl-strip .vs-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #e2007a; margin-bottom: 12px; }
-  .vinyl-strip h3 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(24px, 2.5vw, 40px); text-transform: uppercase; letter-spacing: 0.01em; color: #e8e0d4; margin-bottom: 8px; }
+  .vinyl-strip h3 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(22px, 2.4vw, 38px); letter-spacing: -0.02em; color: #e8e0d4; margin-bottom: 8px; }
   .vinyl-strip p { font-family: 'Lora', serif; font-size: 15px; color: rgba(232,224,212,0.4); }
   .hz-btn {
     padding: 16px 36px; background: #e2007a; color: #fff;
@@ -92,7 +88,7 @@
   .hz-btn.outline { background: transparent; border: 1px solid rgba(232,224,212,0.18); color: rgba(232,224,212,0.6); }
   .hz-btn.outline:hover { border-color: #e2007a; color: #e2007a; opacity: 1; }
   .cta-strip { padding: 80px 52px; display: flex; justify-content: space-between; align-items: center; gap: 40px; border-bottom: 1px solid rgba(232,224,212,0.06); }
-  .cta-strip h2 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(28px, 3.2vw, 52px); letter-spacing: 0.01em; text-transform: uppercase; line-height: 1.02; color: #e8e0d4; }
+  .cta-strip h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(26px, 3vw, 48px); letter-spacing: -0.03em; line-height: 1.08; color: #e8e0d4; }
   .cta-strip h2 span { color: #e2007a; }
   footer { padding: 28px 52px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: 0.1em; color: rgba(232,224,212,0.25); }
   footer a { color: inherit; transition: color 0.15s; }
@@ -109,10 +105,25 @@
   }
   .lb-close:hover { border-color: #e2007a; color: #e2007a; }
   .lb-cat { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #e2007a; margin-bottom: 14px; }
-  .lb-title { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(38px, 5vw, 72px); line-height: 0.96; letter-spacing: 0.01em; text-transform: uppercase; color: #e8e0d4; margin-bottom: 30px; }
+  .lb-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(32px, 4.5vw, 60px); line-height: 1.02; letter-spacing: -0.03em; color: #e8e0d4; margin-bottom: 30px; }
   .lb-text { font-family: 'Lora', serif; font-size: 16px; line-height: 1.75; color: rgba(232,224,212,0.62); margin-bottom: 18px; white-space: pre-line; }
   .lb-imgs { display: flex; flex-direction: column; gap: 14px; margin-top: 38px; }
   .lb-imgs img { width: 100%; display: block; border: 1px solid rgba(232,224,212,0.08); }
+
+@media(max-width:760px){
+  nav{flex-wrap:wrap;padding:14px 20px;gap:8px 16px}
+  nav ul{order:3;width:100%;flex-wrap:wrap;gap:8px 18px}
+  .hero{padding:0 20px 44px}
+  .hero h1{font-size:clamp(32px,9.5vw,130px)}
+  .hero-meta p{padding-right:0}
+  .section{padding:56px 20px}
+  .work-grid{grid-template-columns:repeat(2,1fr)}
+  .about-grid{grid-template-columns:1fr;gap:44px}
+  .vinyl-strip{flex-direction:column;align-items:flex-start;padding:44px 20px;gap:24px}
+  .cta-strip{flex-direction:column;align-items:flex-start;padding:56px 20px;gap:28px}
+  .lb-inner{padding:80px 20px 90px}
+  footer{flex-direction:column;align-items:flex-start;gap:8px;padding:24px 20px}
+}
 </style>
 </head>
 <body>
@@ -134,18 +145,18 @@ const { useState, useEffect } = React;
 
 // ── PIECES — slug opens the lightbox with the piece's full story ──
 const PIECES = [
-  { id:'01', name:'Night Mission',   src:'assets/img/qjwq39-blackport.jpg', slug:'nightmission' },
-  { id:'02', name:'Barley Tusk',     src:'assets/img/jcrk86-barleyport.jpg', slug:'barleytusk' },
+  { id:'01', name:'Night Mission',   src:'assets/img/zfwkw4-black1.jpg', slug:'nightmission' },
+  { id:'02', name:'Barley Tusk',     src:'assets/img/ek91p8-barleytusk.jpg', slug:'barleytusk' },
   { id:'03', name:'A-Frame',         src:'assets/img/9sjzb0-aframeport.jpg' },
-  { id:'04', name:'Water Totem',     src:'assets/img/9o0b9w-hollyport.jpg', slug:'water-totem' },
-  { id:'05', name:'Sun Salutation',  src:'assets/img/u0qvf2-sunport.jpg', slug:'sunsalutation' },
-  { id:'06', name:'Water Totem II',  src:'assets/img/hu1sct-peachport.jpg', slug:'water-totem-2' },
-  { id:'07', name:'Water Totem III', src:'assets/img/axf460-redport.jpg', slug:'water-totem-3' },
-  { id:'08', name:'Water Type',      src:'assets/img/f0tyqm-wtport.jpg', slug:'watertype' },
-  { id:'09', name:'Water Block',     src:'assets/img/qd91de-blockport.jpg', slug:'water-block' },
-  { id:'10', name:'Black Crescent',  src:'assets/img/nn4lzk-crescentport.jpg', slug:'blackcrescent' },
-  { id:'11', name:'Barley Twist',    src:'assets/img/6gyc7q-barleytwistport.jpg', slug:'barleytwist' },
-  { id:'12', name:'Broken Vessel',   src:'assets/img/ppercg-brokenport.jpg', slug:'broken-vessel' },
+  { id:'04', name:'Water Totem',     src:'assets/img/71rpgj-holly1.jpg', slug:'water-totem' },
+  { id:'05', name:'Sun Salutation',  src:'assets/img/3bbcl1-sunsalutation1.jpg', slug:'sunsalutation' },
+  { id:'06', name:'Water Totem II',  src:'assets/img/9gmssl-peach1.jpg', slug:'water-totem-2' },
+  { id:'07', name:'Water Totem III', src:'assets/img/z6uyd0-red1.jpg', slug:'water-totem-3' },
+  { id:'08', name:'Water Type',      src:'assets/img/zsqlfk-watertype.jpg', slug:'watertype' },
+  { id:'09', name:'Water Block',     src:'assets/img/kwle6t-block1.jpg', slug:'water-block' },
+  { id:'10', name:'Black Crescent',  src:'assets/img/bebvt0-crescenttotem.jpg', slug:'blackcrescent' },
+  { id:'11', name:'Barley Twist',    src:'assets/img/ds1w7p-barleytwist.jpg', slug:'barleytwist' },
+  { id:'12', name:'Broken Vessel',   src:'assets/img/2lqyu3-broken1.jpg', slug:'broken-vessel' },
 ];
 
 function Lightbox({ piece, onClose }) {
@@ -245,7 +256,7 @@ function App() {
 
       <footer>
         <span>© 2026 WES WEBB · IAMWESWEBB.COM</span>
-        <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a> · NASHVILLE, TN</span>
+        <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:iamweswebb@gmail.com">EMAIL</a> · NASHVILLE, TN</span>
       </footer>
 
       {open && <Lightbox piece={open} onClose={() => setOpen(null)} />}
@@ -254,5 +265,6 @@ function App() {
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
+<script src="assets/transition.js"></script>
 </body>
 </html>

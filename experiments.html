@@ -6,7 +6,7 @@
 <title>Experiments — iamweswebb</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Syne:wght@700;800&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -43,12 +43,7 @@
   }
   .exp-row:hover { background: rgba(232,224,212,0.04); }
   .exp-num { font-size: 11px; color: rgba(232,224,212,0.3); }
-  .exp-name {
-    font-family: 'Anton', sans-serif; font-weight: 400;
-    font-size: clamp(36px, 4.5vw, 72px); line-height: 0.95;
-    text-transform: uppercase; color: #e8e0d4; transition: color 0.25s;
-    display: block;
-  }
+  .exp-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(30px, 4vw, 60px); line-height: 1.0; letter-spacing: -0.03em; color: #e8e0d4; transition: color 0.25s; display: block; }
   .exp-row:hover .exp-name { color: #e2007a; }
   .exp-desc { font-family: 'Lora', serif; font-size: 14px; line-height: 1.7; color: rgba(232,224,212,0.4); margin-top: 12px; max-width: 520px; display: block; }
   .exp-status {
@@ -62,6 +57,17 @@
   footer a:hover { color: #e2007a; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
   .fade-in { animation: fadeUp 0.6s ease both; }
+
+@media(max-width:760px){
+  nav{flex-wrap:wrap;padding:14px 20px;gap:8px 16px}
+  nav ul{order:3;width:100%;flex-wrap:wrap;gap:8px 18px}
+  .hero{padding:0 20px 44px}
+  .hero h1{font-size:clamp(30px,8.5vw,110px)}
+  .exp-row{grid-template-columns:1fr;gap:16px;padding:36px 20px}
+  .exp-num{display:none}
+  .exp-status{justify-self:start}
+  footer{flex-direction:column;align-items:flex-start;gap:8px;padding:24px 20px}
+}
 </style>
 </head>
 <body>
@@ -138,8 +144,9 @@
 
 <footer>
   <span>© 2026 WES WEBB · IAMWESWEBB.COM</span>
-  <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a> · NASHVILLE, TN</span>
+  <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:iamweswebb@gmail.com">EMAIL</a> · NASHVILLE, TN</span>
 </footer>
 </div>
+<script src="assets/transition.js"></script>
 </body>
 </html>

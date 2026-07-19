@@ -44,9 +44,38 @@
   .row:hover .row-desc { color: #fff; opacity: 0.85; }
   .row-fill.ph { background: #e2007a; }
   .row-fill.ph::after { display: none; }
+  .about{background:#111;color:#f2f1ec;padding:72px 36px;display:grid;grid-template-columns:280px 1fr;gap:64px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08)}
+  .about-photo{width:280px;height:340px}
+  .about-label{font-size:10px;letter-spacing:0.2em;color:#e2007a;margin-bottom:18px}
+  .about h2{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(34px,4.5vw,68px);line-height:0.95;letter-spacing:0.01em;text-transform:uppercase;margin-bottom:24px}
+  .about h2 span{color:#e2007a}
+  .about p{font-size:12px;line-height:1.9;letter-spacing:0.03em;color:rgba(255,255,255,0.55);max-width:620px;margin-bottom:14px}
+  .about p:last-of-type{margin-bottom:0}
   footer { padding: 20px 36px; background: #111; color: rgba(255,255,255,0.35); font-size: 10px; letter-spacing: 0.1em; display: flex; justify-content: space-between; }
   footer a { color: inherit; transition: color 0.15s; }
   footer a:hover { color: #e2007a; }
+
+@media(max-width:760px){
+  header{flex-wrap:wrap;padding:16px 20px;gap:6px 12px}
+  .meta{width:100%;font-size:9px}
+  .row{flex-direction:column;align-items:flex-start;justify-content:center;gap:14px;height:auto;min-height:0;padding:30px 20px}
+  .row-name{font-size:clamp(40px,13.5vw,80px)}
+  .row-side{text-align:left}
+  .row-desc{max-width:none}
+  .row-arrow{margin-top:0}
+  footer{flex-direction:column;gap:8px;padding:20px}
+}
+@media(hover:none){
+  .row-fill{opacity:1}
+  .row-fill::after{background:rgba(17,17,17,0.6)}
+  .row-name,.row-arrow{color:#fff}
+  .row-desc{color:#fff;opacity:0.85}
+  .row-fill.ph{opacity:1}
+}
+@media(max-width:760px){
+  .about{grid-template-columns:1fr;gap:36px;padding:56px 20px}
+  .about-photo{width:100%;max-width:340px;height:380px}
+}
 </style>
 </head>
 <body>
@@ -55,7 +84,7 @@
     <svg width="28" height="19" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="26" height="160" fill="#ffffff"></rect><rect x="42" y="75" width="26" height="85" fill="#ffffff"></rect><rect x="84" y="0" width="26" height="160" fill="#ffffff"></rect><rect x="126" y="0" width="26" height="160" fill="#ffffff"></rect><rect x="168" y="75" width="26" height="85" fill="#ffffff"></rect><rect x="210" y="0" width="26" height="160" fill="#ffffff"></rect></svg>
     <span class="wm">iamweswebb</span>
   </span>
-  <span class="meta">NASHVILLE · MAKER OF MANY THINGS</span>
+  <span class="meta">CREATING INTENTIONAL EXPERIENCES</span>
 </header>
 <a class="row" href="work.html">
   <span class="row-name">Design</span>
@@ -89,9 +118,20 @@
     <span class="row-arrow">→</span>
   </span>
 </a>
+<section class="about">
+  <div class="about-photo"><image-slot id="wes-portrait" shape="rect" src="assets/img/ww.jpg" placeholder="portrait of Wes"></image-slot></div>
+  <div>
+    <div class="about-label">ABOUT</div>
+    <h2>One pair of hands.<br><span>Many things made.</span></h2>
+    <p>I'm Wes Webb — a Nashville-based designer, sculptor, and musician. For 20+ years I've built brands and told visual stories. Along the way the making spilled past the screen: salvaged wood became sculpture, late nights became ambient records, and half-formed ideas became software experiments.</p>
+    <p>Different materials, same instinct — take a raw thing and ask what it wants to be.</p>
+  </div>
+</section>
 <footer>
   <span>© 2026 WES WEBB</span>
-  <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a></span>
+  <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:iamweswebb@gmail.com">EMAIL</a></span>
 </footer>
+<script src="assets/image-slot.js"></script>
+<script src="assets/transition.js"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 <title>Design — iamweswebb</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Syne:wght@700;800&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -80,7 +80,7 @@
   .tile-cat { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(232,224,212,0.45); margin-bottom: 5px; }
   .tile-name { font-size: 19px; font-weight: 500; color: #f5f0e8; line-height: 1.2; font-family: 'Lora', serif; }
   .cta-strip { padding: 80px 52px; display: flex; justify-content: space-between; align-items: center; gap: 40px; border-bottom: 1px solid rgba(232,224,212,0.06); }
-  .cta-strip h2 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(28px, 3.2vw, 52px); letter-spacing: 0.01em; text-transform: uppercase; line-height: 1.02; color: #e8e0d4; }
+  .cta-strip h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(26px, 3vw, 48px); letter-spacing: -0.03em; line-height: 1.08; color: #e8e0d4; }
   .cta-strip h2 span { color: #e2007a; }
   .hz-btn {
     padding: 16px 36px; background: #e2007a; color: #fff;
@@ -109,10 +109,23 @@
   }
   .lb-close:hover { border-color: #e2007a; color: #e2007a; }
   .lb-cat { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #e2007a; margin-bottom: 14px; }
-  .lb-title { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(38px, 5vw, 72px); line-height: 0.96; letter-spacing: 0.01em; text-transform: uppercase; color: #e8e0d4; margin-bottom: 30px; }
+  .lb-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(32px, 4.5vw, 60px); line-height: 1.02; letter-spacing: -0.03em; color: #e8e0d4; margin-bottom: 30px; }
   .lb-text { font-family: 'Lora', serif; font-size: 16px; line-height: 1.75; color: rgba(232,224,212,0.62); margin-bottom: 18px; white-space: pre-line; }
   .lb-imgs { display: flex; flex-direction: column; gap: 14px; margin-top: 38px; }
   .lb-imgs img { width: 100%; display: block; border: 1px solid rgba(232,224,212,0.08); }
+
+@media(max-width:760px){
+  nav{flex-wrap:wrap;padding:14px 20px;gap:8px 16px}
+  nav ul{order:3;width:100%;flex-wrap:wrap;gap:8px 18px}
+  .hero{padding:0 20px 44px}
+  .hero h1{font-size:clamp(36px,10.5vw,150px)}
+  .hero-meta p{padding-right:0}
+  .section{padding:56px 20px}
+  .work-grid{grid-template-columns:repeat(2,1fr)}
+  .cta-strip{flex-direction:column;align-items:flex-start;padding:56px 20px;gap:28px}
+  .lb-inner{padding:80px 20px 90px}
+  footer{flex-direction:column;align-items:flex-start;gap:8px;padding:24px 20px}
+}
 </style>
 </head>
 <body>
@@ -249,7 +262,7 @@ function App() {
 
       <footer>
         <span>© 2026 WES WEBB · IAMWESWEBB.COM</span>
-        <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:wes@iamweswebb.com">EMAIL</a> · NASHVILLE, TN</span>
+        <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:iamweswebb@gmail.com">EMAIL</a> · NASHVILLE, TN</span>
       </footer>
 
       {open && <Lightbox project={open} onClose={() => setOpen(null)} />}
@@ -258,5 +271,6 @@ function App() {
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
+<script src="assets/transition.js"></script>
 </body>
 </html>
