@@ -30,6 +30,10 @@
     font-family: 'Anton', sans-serif; font-weight: 400;
     font-size: clamp(80px, 12.5vw, 210px); line-height: 0.9; letter-spacing: 0.01em;
     text-transform: uppercase; position: relative; z-index: 2;
+    background-size: cover; background-position: center;
+    background-color: rgba(17,17,17,0.55); background-blend-mode: multiply;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
     transition: color 0.3s;
   }
   .row-side { text-align: right; position: relative; z-index: 2; }
@@ -40,10 +44,10 @@
   .row-fill img { width: 100%; height: 100%; object-fit: cover; }
   .row-fill::after { content:''; position: absolute; inset: 0; background: rgba(17,17,17,0.35); }
   .row:hover .row-fill { opacity: 1; }
-  .row:hover .row-name, .row:hover .row-arrow { color: #fff; }
+  .row:hover .row-name { color: #fff; }
+  .row:hover .row-arrow { color: #fff; }
   .row:hover .row-desc { color: #fff; opacity: 0.85; }
-  .row-fill.ph { background: #e2007a; }
-  .row-fill.ph::after { display: none; }
+
   .about{background:#111;color:#f2f1ec;padding:72px 36px;display:grid;grid-template-columns:280px 1fr;gap:64px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08)}
   .about-photo{width:280px;height:340px}
   .about-label{font-size:10px;letter-spacing:0.2em;color:#e2007a;margin-bottom:18px}
@@ -54,6 +58,19 @@
   footer { padding: 20px 36px; background: #111; color: rgba(255,255,255,0.35); font-size: 10px; letter-spacing: 0.1em; display: flex; justify-content: space-between; }
   footer a { color: inherit; transition: color 0.15s; }
   footer a:hover { color: #e2007a; }
+  .contact{background:#111;color:#f2f1ec;padding:72px 36px;display:grid;grid-template-columns:280px 1fr;gap:64px;border-bottom:1px solid rgba(255,255,255,0.08)}
+  .contact-label{font-size:10px;letter-spacing:0.2em;color:#e2007a;margin-bottom:18px}
+  .contact h2{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(30px,3.8vw,56px);line-height:0.95;letter-spacing:0.01em;text-transform:uppercase}
+  .contact form{display:grid;gap:18px;max-width:620px}
+  .contact label{font-size:10px;letter-spacing:0.18em;color:rgba(255,255,255,0.45);display:block;margin-bottom:8px}
+  .contact input,.contact textarea{width:100%;background:transparent;border:1px solid rgba(255,255,255,0.18);color:#f2f1ec;font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px 14px;border-radius:0;outline:none;transition:border-color 0.2s}
+  .contact input:focus,.contact textarea:focus{border-color:#e2007a}
+  .contact textarea{min-height:140px;resize:vertical}
+  .contact-row2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .contact button{justify-self:start;background:#e2007a;color:#fff;border:none;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.18em;padding:14px 32px;cursor:pointer;transition:background 0.2s}
+  .contact button:hover{background:#fff;color:#111}
+  .contact button:disabled{opacity:0.5;cursor:default}
+  .form-status{font-size:11px;letter-spacing:0.08em;color:#e2007a;min-height:16px}
 
 @media(max-width:760px){
   header{flex-wrap:wrap;padding:16px 20px;gap:6px 12px}
@@ -70,11 +87,12 @@
   .row-fill::after{background:rgba(17,17,17,0.6)}
   .row-name,.row-arrow{color:#fff}
   .row-desc{color:#fff;opacity:0.85}
-  .row-fill.ph{opacity:1}
 }
 @media(max-width:760px){
   .about{grid-template-columns:1fr;gap:36px;padding:56px 20px}
   .about-photo{width:100%;max-width:340px;height:380px}
+  .contact{grid-template-columns:1fr;gap:36px;padding:56px 20px}
+  .contact-row2{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -87,7 +105,7 @@
   <span class="meta">CREATING INTENTIONAL EXPERIENCES</span>
 </header>
 <a class="row" href="work.html">
-  <span class="row-name">Design</span>
+  <span class="row-name" style="background-image:url('assets/img/frf424-championport.jpg')">Design</span>
   <span class="row-fill"><img src="assets/img/frf424-championport.jpg" alt=""></span>
   <span class="row-side">
     <span class="row-desc">Branding, graphic design, illustration. 20+ years.</span><br>
@@ -95,7 +113,7 @@
   </span>
 </a>
 <a class="row" href="sculpture.html">
-  <span class="row-name">Sculpture</span>
+  <span class="row-name" style="background-image:url('assets/img/w89g2g-black4.jpg')">Sculpture</span>
   <span class="row-fill"><img src="assets/img/w89g2g-black4.jpg" alt=""></span>
   <span class="row-side">
     <span class="row-desc">Salvaged wood given new purpose. One of one.</span><br>
@@ -103,7 +121,7 @@
   </span>
 </a>
 <a class="row" href="music.html">
-  <span class="row-name">Hazzze</span>
+  <span class="row-name" style="background-image:url('assets/hazzze-bg.jpg')">Hazzze</span>
   <span class="row-fill"><img src="assets/hazzze-bg.jpg" alt=""></span>
   <span class="row-side">
     <span class="row-desc">Ambient music. Three z's, because it's sleepy.</span><br>
@@ -111,8 +129,8 @@
   </span>
 </a>
 <a class="row" href="experiments.html">
-  <span class="row-name">Experiments</span>
-  <span class="row-fill ph"></span>
+  <span class="row-name" style="background-image:url('assets/img/drone-synth.png')">Experiments</span>
+  <span class="row-fill"><img src="assets/img/drone-synth.png" alt=""></span>
   <span class="row-side">
     <span class="row-desc">Software toys &amp; tools. Always cooking.</span><br>
     <span class="row-arrow">→</span>
@@ -127,10 +145,70 @@
     <p>Different materials, same instinct — take a raw thing and ask what it wants to be.</p>
   </div>
 </section>
+<section class="contact" id="contact">
+  <div>
+    <div class="contact-label">CONTACT</div>
+    <h2>Say hello.</h2>
+  </div>
+  <form id="contact-form">
+    <div class="contact-row2">
+      <div><label for="cf-name">NAME</label><input id="cf-name" name="name" type="text" required></div>
+      <div><label for="cf-email">EMAIL</label><input id="cf-email" name="email" type="email" required></div>
+    </div>
+    <div><label for="cf-msg">MESSAGE</label><textarea id="cf-msg" name="message" required></textarea></div>
+    <button type="submit">SEND →</button>
+    <div class="form-status" id="form-status"></div>
+  </form>
+</section>
 <footer>
   <span>© 2026 WES WEBB</span>
-  <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="mailto:iamweswebb@gmail.com">EMAIL</a></span>
+  <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="#contact">CONTACT</a></span>
 </footer>
+<script>
+// Size each cutout title's background to match the row's cover-fit hover image exactly
+(function(){
+  var names = Array.prototype.slice.call(document.querySelectorAll('.row-name[style*="background-image"]'));
+  var imgs = {};
+  function fit(name){
+    var row = name.closest('.row'); if(!row) return;
+    var url = (name.style.backgroundImage.match(/url\(["']?([^"')]+)/)||[])[1]; if(!url) return;
+    var img = imgs[url]; if(!img || !img.naturalWidth) return;
+    var rw = row.clientWidth, rh = row.clientHeight;
+    var s = Math.max(rw/img.naturalWidth, rh/img.naturalHeight);
+    var w = img.naturalWidth*s, h = img.naturalHeight*s;
+    var nr = name.getBoundingClientRect(), rr = row.getBoundingClientRect();
+    name.style.backgroundSize = w+'px '+h+'px';
+    name.style.backgroundPosition = ((rw-w)/2-(nr.left-rr.left))+'px '+((rh-h)/2-(nr.top-rr.top))+'px';
+  }
+  function all(){ names.forEach(fit); }
+  names.forEach(function(name){
+    var url = (name.style.backgroundImage.match(/url\(["']?([^"')]+)/)||[])[1]; if(!url) return;
+    if(!imgs[url]){ imgs[url] = new Image(); imgs[url].onload = all; imgs[url].src = url; }
+  });
+  window.addEventListener('resize', all);
+  window.addEventListener('load', all);
+})();
+</script>
+<script>
+document.getElementById('contact-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+  var btn = this.querySelector('button'), status = document.getElementById('form-status');
+  btn.disabled = true; status.textContent = 'SENDING…';
+  try {
+    var res = await fetch('https://formsubmit.co/ajax/iamweswebb@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ name: this.name.value, email: this.email.value, message: this.message.value, _subject: 'iamweswebb.com — new message' })
+    });
+    if (!res.ok) throw new Error();
+    status.textContent = 'SENT. TALK SOON.';
+    this.reset();
+  } catch (err) {
+    status.textContent = 'HMM, THAT DIDN\u2019T GO THROUGH. EMAIL ME: IAMWESWEBB@GMAIL.COM';
+  }
+  btn.disabled = false;
+});
+</script>
 <script src="assets/image-slot.js"></script>
 <script src="assets/transition.js"></script>
 </body>

@@ -26,7 +26,11 @@
   .hero {
     min-height: 78vh; display: flex; flex-direction: column; justify-content: flex-end;
     padding: 0 52px 56px; border-bottom: 1px solid rgba(232,224,212,0.08);
+    position: relative; overflow: hidden;
   }
+  .hero-bg { position: absolute; inset: 0; z-index: 0; background: url('assets/img/drone-synth.png') center/cover no-repeat; opacity: 0.5; }
+  .hero-bg::after { content:''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,6,8,0.55) 0%, rgba(8,6,8,0.25) 45%, #080608 100%); }
+  .hero > *:not(.hero-bg) { position: relative; z-index: 1; }
   .hero h1 {
     font-family: 'Anton', sans-serif; font-weight: 400;
     font-size: clamp(44px, 6vw, 110px); line-height: 0.92; letter-spacing: 0.01em;
@@ -86,6 +90,7 @@
 
 <div class="fade-in">
 <section class="hero">
+  <div class="hero-bg"></div>
   <h1>Even if you fall flat<br>on your face, at least<br><span>you're moving forward</span></h1>
   <div class="hero-meta">
     <p>SOFTWARE TOYS AND TOOLS. SOME FINISHED, SOME COOKING, SOME ABANDONED MID-BAKE. THIS IS THE LAB.</p>
