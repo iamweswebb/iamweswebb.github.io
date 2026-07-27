@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hazzze — iamweswebb</title>
+<title>Music — iamweswebb</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -253,6 +253,25 @@
   .hz-player-times{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:rgba(232,224,212,0.3);margin-top:10px}
   @media(max-width:760px){.hz-player{flex-direction:column;align-items:flex-start;gap:22px}}
 
+  /* ── MUSIC HERO ── */
+  .music-hero{padding:160px 52px 64px;border-bottom:1px solid rgba(232,224,212,0.07)}
+  .music-hero h1{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(80px,13vw,190px);line-height:0.9;letter-spacing:0.01em;text-transform:uppercase;color:#e8e0d4}
+  .music-hero .sub{font-family:'Lora',serif;font-style:italic;font-size:clamp(17px,2.2vw,26px);color:rgba(232,224,212,0.35);margin-top:16px}
+  /* ── BAND SECTIONS ── */
+  .band{position:relative;padding:90px 52px;border-bottom:1px solid rgba(232,224,212,0.06);overflow:hidden}
+  .band-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.35;z-index:0}
+  .band-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(8,6,8,0.92) 0%,rgba(8,6,8,0.55) 55%,rgba(8,6,8,0.85) 100%)}
+  .band-bg.empty{background:rgba(232,224,212,0.02);opacity:1}
+  .band-split{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:72px;align-items:center}
+  .band-split>div:first-child{min-width:0}
+  .band-name{font-family:'Syne',sans-serif;font-size:clamp(44px,6.5vw,96px);font-weight:800;line-height:0.92;letter-spacing:-0.03em;color:#e8e0d4;margin-bottom:20px;overflow-wrap:break-word}
+  .band-meta{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(232,224,212,0.4);display:flex;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+  .band-meta .pink{color:#e2007a}
+  .band p{font-family:'Lora',serif;font-size:16px;line-height:1.85;color:rgba(232,224,212,0.5);max-width:560px;margin-bottom:8px}
+  .band p em{color:rgba(232,224,212,0.8)}
+  .band-art{width:100%;aspect-ratio:1;object-fit:cover;display:block;border:1px solid rgba(232,224,212,0.1)}
+  .band-artph{width:100%;aspect-ratio:1;background:rgba(232,224,212,0.03);border:1px solid rgba(232,224,212,0.1);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.16em;color:rgba(232,224,212,0.22);text-transform:uppercase;text-align:center;padding:20px}
+
   @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
   .fade-in { animation: fadeUp 0.7s ease both; }
   .fade-in-2 { animation: fadeUp 0.7s 0.1s ease both; }
@@ -262,7 +281,11 @@
   nav{flex-wrap:wrap;padding:14px 20px;gap:8px 16px}
   .nav-logo{order:2}
   nav ul{order:3;width:100%;flex-wrap:wrap;gap:8px 18px}
-  .hz-hero{padding:0 20px 44px}
+  .hz-hero{padding:60px 20px 44px;min-height:70vh}
+  .music-hero{padding:110px 20px 48px}
+  .band{padding:56px 20px}
+  .band-split{grid-template-columns:1fr;gap:36px}
+  .band-art,.band-artph{max-width:340px}
   .hz-name{font-size:clamp(44px,14.5vw,180px)}
   .hz-name-sub{font-size:17px}
   .hz-hero-bottom{flex-wrap:wrap;margin-top:36px}
@@ -283,11 +306,11 @@
 
 <nav>
   <a href="index.html" class="nav-back" style="display:flex;align-items:center;gap:12px;"><svg width="24" height="16" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="42" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="84" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="126" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="168" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="210" y="0" width="26" height="160" fill="#e8e0d4"></rect></svg> iamweswebb</a>
-  <span class="nav-logo">HAZZZE</span>
+  <span class="nav-logo">MUSIC</span>
   <ul>
     <li><a href="work.html">Design</a></li>
     <li><a href="sculpture.html">Sculpture</a></li>
-    <li><a href="#" class="here">Hazzze</a></li>
+    <li><a href="#" class="here">Music</a></li>
     <li><a href="experiments.html">Experiments</a></li>
   </ul>
 </nav>
@@ -491,12 +514,17 @@ function HazzzePlayer() {
 function App() {
   return (
     <div>
-      {/* ═══ HERO ═══ */}
-      <section className="hz-hero fade-in">
-        <div className="hz-eyebrow">Music · iamweswebb · Nashville, TN</div>
+      {/* ═══ MUSIC HERO ═══ */}
+      <section className="music-hero fade-in">
+        <h1>Music</h1>
+        <div className="sub">A history of bands, basement shows, double-necked guitars, and ceaseless exploration.</div>
+      </section>
+
+      {/* ═══ HAZZZE ═══ */}
+      <section className="hz-hero fade-in" style={{justifyContent:'flex-end'}}>
         <div className="hz-name">HAZZZE</div>
         {/* ── PRONUNCIATION — edit here ── */}
-        <div className="hz-name-sub">Pronounced "Haze" • three z's because it's sleepy music.</div>
+        <div className="hz-name-sub">It's pronounced "Haze" and spelled with three z's because it's sleepy music.</div>
         <div className="hz-hero-bottom">
           {[
             {label:'Project',     val:'Solo',              pink:false},
@@ -584,6 +612,34 @@ function App() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ═══ PENNY PISTOL ═══ */}
+      <section className="band" id="penny-pistol">
+        <div className="band-bg" style={{backgroundImage:"url('assets/img/penny-pistol-bg.jpg')"}}></div>
+        <div className="band-split">
+          <div>
+            <div className="band-name">Penny Pistol</div>
+            <div className="band-meta"><span>Alt / Indie Rock Trio</span><span>Charlottesville, VA</span><span>Bass · Guitar · Backing Vox</span></div>
+            <p><em>First Light, Second Best</em> still streams everywhere.</p>
+            <a href="https://open.spotify.com/artist/5xIIC1xf2mvE03dND25lBz" target="_blank" rel="noreferrer" className="hz-btn outline" style={{display:'inline-block',marginTop:24}}>Listen on Spotify ↗</a>
+          </div>
+          <img className="band-art" src="assets/img/penny-pistol-flsb.jpg" alt="Penny Pistol — First Light, Second Best album art" />
+        </div>
+      </section>
+
+      {/* ═══ PANORAMIC ═══ */}
+      <section className="band" id="panoramic">
+        <div className="band-bg" style={{backgroundImage:"url('assets/img/panoramic-bg.jpg')"}}></div>
+        <div className="band-split">
+          <div>
+            <div className="band-name">Panoramic</div>
+            <div className="band-meta"><span>Instrumental Post-Rock</span><span>Harrisonburg, VA</span><span>Guitar</span></div>
+            <p>Instrumental post-rock from the Shenandoah Valley. Long builds, loud payoffs, zero lyrics.</p>
+            <a href="https://open.spotify.com/artist/1bFnqN81TjC6f0XlSoxoDd" target="_blank" rel="noreferrer" className="hz-btn outline" style={{display:'inline-block',marginTop:24}}>Listen on Spotify ↗</a>
+          </div>
+          <img className="band-art" src="assets/img/panoramic-art.jpg" alt="Panoramic — It's All Too Quiet album art" />
         </div>
       </section>
 
