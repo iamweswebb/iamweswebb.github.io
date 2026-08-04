@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>iamweswebb</title>
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<meta name="description" content="Creating intentional experiences. Design, sculpture, music, and experiments from Nashville, TN.">
+<meta property="og:title" content="Wes Webb · iamweswebb">
+<meta property="og:description" content="Creating intentional experiences. Design, sculpture, music, and experiments from Nashville, TN.">
+<meta property="og:image" content="https://iamweswebb.com/assets/hazzze-bg.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -19,34 +27,40 @@
   .wm-lock svg { display: block; }
   .wm { font-weight: 500; font-size: 14px; letter-spacing: 0.02em; color: #fff; }
   .meta { font-size: 10px; letter-spacing: 0.12em; color: rgba(255,255,255,0.4); }
+  .rows { display: flex; flex-direction: column; height: calc(100vh - 57px - 55px); min-height: 620px; }
   .row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 36px; height: calc((100vh - 57px - 55px) / 4); min-height: 160px;
-    position: relative; overflow: hidden; cursor: pointer;
-    background: #f2f1ec; color: #111;
-    border-bottom: 1px solid #111;
+    position: relative; flex: 1; overflow: hidden; cursor: pointer;
+    display: flex; align-items: center; padding: 0 36px;
+    background: #f2f1ec; color: #111; border-bottom: 1px solid #111;
+    transition: flex 0.75s cubic-bezier(.16,1,.3,1);
   }
+  .rows:hover .row { flex: 0.8; }
+  .rows .row:hover { flex: 3.4; }
+  .row-imgs { position: absolute; inset: 0; overflow: hidden; }
+  .row-imgs i { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(1) brightness(.5); opacity: 0; transform: scale(1.03); transition: opacity 1.5s linear, filter 1s ease; }
+  .row:hover .row-imgs i { filter: grayscale(0) brightness(.6); }
+  .row-imgs i.live { opacity: 1; }
+  .row-imgs i.kb { animation: kb 14s linear forwards; }
+  @keyframes kb { from { transform: scale(1.03) translate(0,0); } to { transform: scale(1.2) translate(-2%,-1.2%); } }
+  .row-body { position: relative; z-index: 2; display: flex; flex-direction: column; transition: transform .75s cubic-bezier(.16,1,.3,1); }
+  .row:hover .row-body { transform: translateX(6px); }
   .row-name {
     font-family: 'Anton', sans-serif; font-weight: 400;
-    font-size: clamp(80px, 12.5vw, 210px); line-height: 0.9; letter-spacing: 0.01em;
-    text-transform: uppercase; position: relative; z-index: 2;
-    background-size: cover; background-position: center;
-    background-color: rgba(17,17,17,0.55); background-blend-mode: multiply;
-    background-repeat: no-repeat;
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    transition: color 0.3s;
+    font-size: clamp(46px, 9vw, 130px); line-height: 0.88; letter-spacing: 0.01em;
+    text-transform: uppercase; color: #111;
+    transition: color .5s ease;
   }
-  .row-side { text-align: right; position: relative; z-index: 2; }
-  .row-desc { font-size: 11px; letter-spacing: 0.06em; line-height: 1.7; max-width: 240px; opacity: 0.6; display: inline-block; transition: color 0.3s, opacity 0.3s; }
-  .row-arrow { font-size: 28px; margin-top: 6px; display: inline-block; transition: transform 0.25s, color 0.3s; }
-  .row:hover .row-arrow { transform: translate(6px,-6px); }
-  .row-fill { position: absolute; inset: 0; z-index: 1; opacity: 0; transition: opacity 0.4s ease; }
-  .row-fill img { width: 100%; height: 100%; object-fit: cover; }
-  .row-fill::after { content:''; position: absolute; inset: 0; background: rgba(17,17,17,0.35); }
-  .row:hover .row-fill { opacity: 1; }
   .row:hover .row-name { color: #fff; }
-  .row:hover .row-arrow { color: #fff; }
-  .row:hover .row-desc { color: #fff; opacity: 0.85; }
+  .row-desc {
+    font-size: 11px; letter-spacing: 0.06em; line-height: 1.7; max-width: 520px;
+    color: rgba(17,17,17,0.55); max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; padding-left: 3px;
+    transition: max-height .7s cubic-bezier(.16,1,.3,1), opacity .5s ease, margin-top .7s cubic-bezier(.16,1,.3,1), color .5s ease;
+  }
+  .row:hover .row-desc { max-height: 60px; opacity: 1; margin-top: 16px; color: rgba(255,255,255,0.85); }
+  .row-arrow { position: relative; z-index: 2; margin-left: auto; align-self: center; font-size: 28px; color: #111; transition: color .5s ease, transform .35s ease; }
+  .row:hover .row-arrow { color: #e2007a; transform: translate(6px,-6px); }
+  .row-idx { position: absolute; left: 14px; top: 12px; z-index: 2; font-size: 10px; letter-spacing: 0.16em; color: rgba(17,17,17,0.3); transition: color .5s; }
+  .row:hover .row-idx { color: rgba(255,255,255,0.55); }
 
   .about{background:#111;color:#f2f1ec;padding:72px 36px;display:grid;grid-template-columns:280px 1fr;gap:64px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08)}
   .about-photo{width:280px;height:340px}
@@ -75,18 +89,18 @@
 @media(max-width:760px){
   header{flex-wrap:wrap;padding:16px 20px;gap:6px 12px}
   .meta{width:100%;font-size:9px}
-  .row{flex-direction:column;align-items:flex-start;justify-content:center;gap:14px;height:auto;min-height:0;padding:30px 20px}
+  .rows{height:auto;min-height:0;display:block}
+  .row{flex-direction:column;align-items:flex-start;justify-content:center;gap:0;height:auto;min-height:0;padding:30px 20px}
   .row-name{font-size:clamp(40px,13.5vw,80px)}
-  .row-side{text-align:left}
-  .row-desc{max-width:none}
-  .row-arrow{margin-top:0}
+  .row-desc{max-width:none;max-height:60px;opacity:1;margin-top:12px}
+  .row-arrow{margin-left:0;margin-top:10px;align-self:flex-start}
+  .row-idx{display:none}
   footer{flex-direction:column;gap:8px;padding:20px}
 }
 @media(hover:none){
-  .row-fill{opacity:1}
-  .row-fill::after{background:rgba(17,17,17,0.6)}
+  .row-imgs i:first-child{opacity:1}
   .row-name,.row-arrow{color:#fff}
-  .row-desc{color:#fff;opacity:0.85}
+  .row-desc{color:#fff;opacity:.85}
 }
 @media(max-width:760px){
   .about{grid-template-columns:1fr;gap:36px;padding:56px 20px}
@@ -104,45 +118,31 @@
   </span>
   <span class="meta">CREATING INTENTIONAL EXPERIENCES</span>
 </header>
-<a class="row" href="work.html">
-  <span class="row-name" style="background-image:url('assets/img/frf424-championport.jpg')">Design</span>
-  <span class="row-fill"><img src="assets/img/frf424-championport.jpg" alt=""></span>
-  <span class="row-side">
-    <span class="row-desc">Branding, graphic design, illustration. 20+ years.</span><br>
-    <span class="row-arrow">→</span>
-  </span>
-</a>
-<a class="row" href="sculpture.html">
-  <span class="row-name" style="background-image:url('assets/img/w89g2g-black4.jpg')">Sculpture</span>
-  <span class="row-fill"><img src="assets/img/w89g2g-black4.jpg" alt=""></span>
-  <span class="row-side">
-    <span class="row-desc">Salvaged wood given new purpose. One of one.</span><br>
-    <span class="row-arrow">→</span>
-  </span>
-</a>
-<a class="row" href="music.html">
-  <span class="row-name" style="background-image:url('assets/hazzze-bg.jpg')">Hazzze</span>
-  <span class="row-fill"><img src="assets/hazzze-bg.jpg" alt=""></span>
-  <span class="row-side">
-    <span class="row-desc">Ambient music. Three z's, because it's sleepy.</span><br>
-    <span class="row-arrow">→</span>
-  </span>
-</a>
-<a class="row" href="experiments.html">
-  <span class="row-name" style="background-image:url('assets/img/drone-synth.png')">Experiments</span>
-  <span class="row-fill"><img src="assets/img/drone-synth.png" alt=""></span>
-  <span class="row-side">
-    <span class="row-desc">Software toys &amp; tools. Always cooking.</span><br>
-    <span class="row-arrow">→</span>
-  </span>
-</a>
+<div class="rows">
+<a class="row" href="work.html"><span class="row-idx">01</span>
+<span class="row-imgs"><i style="background-image:url('assets/img/0an2xr-missilemockup.jpg')"></i><i style="background-image:url('assets/img/no5gqs-solarsystemmockup.jpg')"></i><i style="background-image:url('assets/img/vml6uk-vaffposters.jpg')"></i><i style="background-image:url('assets/img/sdsuhi-alphabetposter.jpg')"></i><i style="background-image:url('assets/img/yy937n-bmblineup.jpg')"></i></span>
+<span class="row-body"><span class="row-name">Design</span><span class="row-desc">Branding, graphic design, illustration. 20+ years.</span></span>
+<span class="row-arrow">→</span></a>
+<a class="row" href="sculpture.html"><span class="row-idx">02</span>
+<span class="row-imgs"><i style="background-image:url('assets/img/w89g2g-black4.jpg')"></i><i style="background-image:url('assets/img/2lqyu3-broken1.jpg')"></i><i style="background-image:url('assets/img/3gv0o9-barleytusk3.jpg')"></i><i style="background-image:url('assets/img/9gmssl-peach1.jpg')"></i><i style="background-image:url('assets/img/kwle6t-block1.jpg')"></i></span>
+<span class="row-body"><span class="row-name">Sculpture</span><span class="row-desc">Salvaged wood given new purpose. One of one.</span></span>
+<span class="row-arrow">→</span></a>
+<a class="row" href="music.html"><span class="row-idx">03</span>
+<span class="row-imgs"><i style="background-image:url('assets/hazzze-bg.jpg')"></i><i style="background-image:url('assets/img/penny-pistol-bg.jpg')"></i><i style="background-image:url('assets/img/panoramic-art.jpg')"></i></span>
+<span class="row-body"><span class="row-name">Music</span><span class="row-desc">Bands, basement shows, and ambient solo work as HAZZZE.</span></span>
+<span class="row-arrow">→</span></a>
+<a class="row" href="experiments.html"><span class="row-idx">04</span>
+<span class="row-imgs"><i style="background-image:url('assets/img/drone-synth.png')"></i></span>
+<span class="row-body"><span class="row-name">Experiments</span><span class="row-desc">Software toys &amp; tools. Always cooking.</span></span>
+<span class="row-arrow">→</span></a>
+</div>
 <section class="about">
   <div class="about-photo"><image-slot id="wes-portrait" shape="rect" src="assets/img/ww.jpg" placeholder="portrait of Wes"></image-slot></div>
   <div>
     <div class="about-label">ABOUT</div>
     <h2>One pair of hands.<br><span>Many things made.</span></h2>
-    <p>I'm Wes Webb — a Nashville-based designer, sculptor, and musician. For 20+ years I've built brands and told visual stories. Along the way the making spilled past the screen: salvaged wood became sculpture, late nights became ambient records, and half-formed ideas became software experiments.</p>
-    <p>Different materials, same instinct — take a raw thing and ask what it wants to be.</p>
+    <p>I'm Wes Webb, a Nashville-based designer, sculptor, and musician. For 20+ years I've built brands and told visual stories. Along the way the making spilled past the screen: salvaged wood became sculpture, late nights became ambient records, and half-formed ideas became software experiments.</p>
+    <p>Different materials, same instinct: take a raw thing and ask what it wants to be.</p>
   </div>
 </section>
 <section class="contact" id="contact">
@@ -165,29 +165,30 @@
   <span><a href="https://www.instagram.com/iamweswebb/" target="_blank" rel="noreferrer">INSTAGRAM</a> · <a href="#contact">CONTACT</a></span>
 </footer>
 <script>
-// Size each cutout title's background to match the row's cover-fit hover image exactly
-(function(){
-  var names = Array.prototype.slice.call(document.querySelectorAll('.row-name[style*="background-image"]'));
-  var imgs = {};
-  function fit(name){
-    var row = name.closest('.row'); if(!row) return;
-    var url = (name.style.backgroundImage.match(/url\(["']?([^"')]+)/)||[])[1]; if(!url) return;
-    var img = imgs[url]; if(!img || !img.naturalWidth) return;
-    var rw = row.clientWidth, rh = row.clientHeight;
-    var s = Math.max(rw/img.naturalWidth, rh/img.naturalHeight);
-    var w = img.naturalWidth*s, h = img.naturalHeight*s;
-    var nr = name.getBoundingClientRect(), rr = row.getBoundingClientRect();
-    name.style.backgroundSize = w+'px '+h+'px';
-    name.style.backgroundPosition = ((rw-w)/2-(nr.left-rr.left))+'px '+((rh-h)/2-(nr.top-rr.top))+'px';
+// Accordion rows: Ken Burns drift + crossfade through each discipline's work
+document.querySelectorAll('.rows .row').forEach(function(row){
+  var layers = Array.prototype.slice.call(row.querySelectorAll('.row-imgs i')), idx = 0, timer;
+  function show(n){
+    var l = layers[n];
+    l.classList.remove('kb'); void l.offsetWidth; l.classList.add('kb');
+    layers.forEach(function(o,i){ o.style.zIndex = i === n ? 2 : 1; });
+    l.classList.add('live');
+    setTimeout(function(){
+      layers.forEach(function(o,i){
+        if (i !== n) { o.style.transition = 'none'; o.classList.remove('live'); requestAnimationFrame(function(){ o.style.transition = ''; }); }
+      });
+    }, 1550);
   }
-  function all(){ names.forEach(fit); }
-  names.forEach(function(name){
-    var url = (name.style.backgroundImage.match(/url\(["']?([^"')]+)/)||[])[1]; if(!url) return;
-    if(!imgs[url]){ imgs[url] = new Image(); imgs[url].onload = all; imgs[url].src = url; }
+  row.addEventListener('mouseenter', function(){
+    clearInterval(timer); idx = 0; show(0);
+    if (layers.length > 1) timer = setInterval(function(){ idx = (idx+1) % layers.length; show(idx); }, 3400);
   });
-  window.addEventListener('resize', all);
-  window.addEventListener('load', all);
-})();
+  row.addEventListener('mouseleave', function(){
+    clearInterval(timer);
+    layers.forEach(function(l){ l.classList.remove('live'); });
+    setTimeout(function(){ layers.forEach(function(l){ l.classList.remove('kb'); l.style.zIndex = ''; }); }, 1600);
+  });
+});
 </script>
 <script>
 document.getElementById('contact-form').addEventListener('submit', async function(e){
@@ -198,7 +199,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
     var res = await fetch('https://formsubmit.co/ajax/iamweswebb@gmail.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ name: this.name.value, email: this.email.value, message: this.message.value, _subject: 'iamweswebb.com — new message' })
+      body: JSON.stringify({ name: this.name.value, email: this.email.value, message: this.message.value, _subject: 'iamweswebb.com: new message' })
     });
     if (!res.ok) throw new Error();
     status.textContent = 'SENT. TALK SOON.';

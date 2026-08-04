@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music — iamweswebb</title>
+<title>Music · iamweswebb</title>
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<meta name="description" content="HAZZZE, Penny Pistol, Panoramic. A history of bands, basement shows, and ceaseless exploration.">
+<meta property="og:title" content="Music · iamweswebb">
+<meta property="og:description" content="HAZZZE, Penny Pistol, Panoramic. A history of bands, basement shows, and ceaseless exploration.">
+<meta property="og:image" content="https://iamweswebb.com/assets/hazzze-bg.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -306,7 +314,7 @@
 
 <nav>
   <a href="index.html" class="nav-back" style="display:flex;align-items:center;gap:12px;"><svg width="24" height="16" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="42" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="84" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="126" y="0" width="26" height="160" fill="#e8e0d4"></rect><rect x="168" y="75" width="26" height="85" fill="#e8e0d4"></rect><rect x="210" y="0" width="26" height="160" fill="#e8e0d4"></rect></svg> iamweswebb</a>
-  <span class="nav-logo">MUSIC</span>
+  <span class="nav-logo"></span>
   <ul>
     <li><a href="work.html">Design</a></li>
     <li><a href="sculpture.html">Sculpture</a></li>
@@ -581,8 +589,8 @@ function App() {
           <div>
             <h2>Music for the<br/>in-between.</h2>
             {/* ── ARTIST BIO — edit below ── */}
-            <p>Hazzze is the solo project of Nashville-based musician Wes Webb. Blending ambient, post-rock, and electronic textures, Hazzze creates music that lives in the in-between — built from <em>drifting synths, processed guitars, and looping patterns</em> that unfold patiently and without words.</p>
-            <p>With room for presence, rest, and reflection. This is music for late nights, deep focus, and quiet moments. <em>A small pause from the pace of everything else</em> — even if only for a moment.</p>
+            <p>Hazzze is the solo project of Nashville-based musician Wes Webb. Blending ambient, post-rock, and electronic textures, Hazzze creates music that lives in the in-between, built from <em>drifting synths, processed guitars, and looping patterns</em> that unfold patiently and without words.</p>
+            <p>With room for presence, rest, and reflection. This is music for late nights, deep focus, and quiet moments. <em>A small pause from the pace of everything else</em>, even if only for a moment.</p>
             <p style={{color:'rgba(232,224,212,0.28)', fontSize:14, fontFamily:"'DM Mono', monospace", letterSpacing:'0.04em'}}>Three Zs, because it is sleepy music.</p>
           </div>
 
@@ -592,7 +600,7 @@ function App() {
               {
                 num:'01',
                 title:'Real instruments, real performances.',
-                body:'Every sound is performed and recorded live. Synths, guitars, and voice — nothing fake, nothing triggered.',
+                body:'Every sound is performed and recorded live. Synths, guitars, and voice. Nothing fake, nothing triggered.',
               },
               {
                 num:'02',
@@ -602,7 +610,7 @@ function App() {
               {
                 num:'03',
                 title:'Patient and wordless.',
-                body:'No lyrics. No hooks. Just textures that shift slowly over time — compositions that reward attention without demanding it.',
+                body:'No lyrics. No hooks. Just textures that shift slowly over time. Compositions that reward attention without demanding it.',
               },
             ].map(({num,title,body}) => (
               <div key={num} className="instr-card">
@@ -625,7 +633,7 @@ function App() {
             <p><em>First Light, Second Best</em> still streams everywhere.</p>
             <a href="https://open.spotify.com/artist/5xIIC1xf2mvE03dND25lBz" target="_blank" rel="noreferrer" className="hz-btn outline" style={{display:'inline-block',marginTop:24}}>Listen on Spotify ↗</a>
           </div>
-          <img className="band-art" src="assets/img/penny-pistol-flsb.jpg" alt="Penny Pistol — First Light, Second Best album art" />
+          <img className="band-art" src="assets/img/penny-pistol-flsb.jpg" alt="Penny Pistol: First Light, Second Best album art" />
         </div>
       </section>
 
@@ -639,7 +647,7 @@ function App() {
             <p>Instrumental post-rock from the Shenandoah Valley. Long builds, loud payoffs, zero lyrics.</p>
             <a href="https://open.spotify.com/artist/1bFnqN81TjC6f0XlSoxoDd" target="_blank" rel="noreferrer" className="hz-btn outline" style={{display:'inline-block',marginTop:24}}>Listen on Spotify ↗</a>
           </div>
-          <img className="band-art" src="assets/img/panoramic-art.jpg" alt="Panoramic — It's All Too Quiet album art" />
+          <img className="band-art" src="assets/img/panoramic-art.jpg" alt="Panoramic: It's All Too Quiet album art" />
         </div>
       </section>
 
