@@ -9,7 +9,7 @@
 <meta name="description" content="Salvaged wood, hand tools, one-of-one pieces. Sculpture by Wes Webb.">
 <meta property="og:title" content="Sculpture · iamweswebb">
 <meta property="og:description" content="Salvaged wood, hand tools, one-of-one pieces. Sculpture by Wes Webb.">
-<meta property="og:image" content="https://iamweswebb.com/assets/img/w89g2g-black4.jpg">
+<meta property="og:image" content="https://iamweswebb.com/assets/img/zfwkw4-black1.jpg">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,8 +39,8 @@
     min-height: 88vh; display: flex; flex-direction: column; justify-content: flex-end;
     padding: 0 52px 56px; border-bottom: 1px solid rgba(232,224,212,0.08);
     position: relative; overflow: hidden;
-    background-image: url('assets/img/w89g2g-black4.jpg');
-    background-size: cover; background-position: center 30%;
+    background-image: url('assets/img/zfwkw4-black1.jpg');
+    background-size: cover; background-position: center 40%;
   }
   .hero::before {
     content: ''; position: absolute; inset: 0;
@@ -73,6 +73,9 @@
   .tile-meta { position: relative; z-index: 2; }
   .tile-num { font-size: 10px; letter-spacing: 0.12em; color: rgba(232,224,212,0.45); margin-bottom: 4px; }
   .tile-name { font-size: 19px; font-weight: 500; color: #f5f0e8; line-height: 1.2; font-family: 'Lora', serif; }
+  .tile-mat { font-size: 10px; letter-spacing: 0.06em; color: rgba(232,224,212,0.5); margin-top: 6px; }
+  .lb-mat { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(232,224,212,0.4); margin: -18px 0 28px; }
+  .section.archive { background: rgba(232,224,212,0.015); }
   .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: start; }
   .about-grid p { font-family: 'Lora', serif; font-size: 17px; line-height: 1.88; color: rgba(232,224,212,0.5); margin-bottom: 20px; }
   .about-grid p em { color: rgba(232,224,212,0.8); font-style: italic; }
@@ -151,11 +154,58 @@
 <script type="text/babel">
 const { useState, useEffect } = React;
 
-// ── PIECES — slug opens the lightbox with the piece's full story ──
+// ── NEW WORK — each piece carries its own copy and image set ──
+const P = 'assets/img/sc/';
+const NEW_WORK = [
+  { id:'01', name:'Drift Totem', mat:'Carved hardwood',
+    text:['A standing form cut from a single length of salvaged hardwood, carved top to bottom in overlapping bands that shift direction as they climb.','The surface reads as current: every band is a separate pass with the grinder, and where two runs meet the wood keeps the seam.'],
+    images:['drift-totem-1','drift-totem-2','drift-totem-close'] },
+  { id:'02', name:'Ship', mat:'Carved wood, acrylic, copper',
+    text:['A white hull riding a green sea, both cut from the same block. The water is carved in stacked scallops that wrap the full height of the piece.','The railing is bent copper wire, soldered and set into the deck.'],
+    images:['boat-far','boat-close-1','boat-close-2'] },
+  { id:'03', name:'Lookout', mat:'Steel rod, cherry, maple, walnut',
+    text:['A lookout tower built at desk scale. The frame is welded steel rod; the cabin and stair treads are cut from cherry and maple offcuts.','It sits on a turned walnut base, roughly the height of a set of car keys.'],
+    images:['firehouse-far','firehouse-close-1','firehouse-close-2','firehouse-close-3','firehouse-close-4'] },
+  { id:'04', name:'Cliff Dwelling', mat:'Carved sandstone, copper, walnut',
+    text:['A river stone carved into a cliff face with a single house at the summit and a stair cut down the exposed side.','It floats on a soldered copper truss set into a faceted walnut base. The whole piece stands about as tall as a wristwatch is wide.'],
+    images:['rock2-far','rock2-close-1','rock2-close-3','rock2-close-4','rock2-close-5','rock2-close-6'] },
+  { id:'05', name:'Beacon', mat:'Carved sandstone, copper, walnut',
+    text:['The second stone in the series. Two structures instead of one, set at different heights, with the stair running between them.','The stone was left raw everywhere the carving did not need to go.'],
+    images:['rock3','rock3-close-1','rock3-close-2','rock3-close-3'] },
+  { id:'06', name:'Lighthouse', mat:'Turned walnut, stone, copper, lichen',
+    text:['A turned walnut tower and a small dark keeper\'s house on a wedge of broken stone, held up by a copper truss.','The green is preserved lichen, set along the edge where the rock breaks away.'],
+    images:['lighthouse-far','lighthouse-close-1','lighthouse-close-2'] },
+  { id:'07', name:'Arches', mat:'Wood, acrylic',
+    text:['Five nested arches cut in receding depth, each one painted a step cooler than the last until the innermost opening turns pink.','Flat and white from the front, a tunnel from any other angle.'],
+    images:['arch-1','arch-2','arch-close'] },
+  { id:'08', name:'Balance', mat:'Carved hardwood',
+    text:['A long horizontal form resting on a single narrow foot, carved in broad sweeping ribs that fan out from the point of contact.','The openings through the face are voids from the center of the log, left where they fell.'],
+    images:['balance-white','balance-white-close'] },
+  { id:'09', name:'Night Mission II', mat:'Carved hardwood, black finish',
+    text:['The same problem worked in reverse: a heavier mass, a shorter foot, the whole thing blacked out so only the ridgelines read.'],
+    images:['balance-black'] },
+  { id:'10', name:'Stone Pattern', mat:'Carved river stone, copper, walnut',
+    text:['A flat river stone carved with interlocking wave rings, the cuts breaking through the weathered skin into the pale grain underneath.','Pinned with copper rod to a walnut base so it can be read from both sides.'],
+    images:['stone-pattern-1','stone-pattern-2','stone-pattern-3'] },
+  { id:'11', name:'Converge', mat:'Carved maple, brass, walnut',
+    text:['A U-form ribbed at opposing diagonals so the two halves meet in a seam down the center.','Raised on brass posts above a shaped walnut base.'],
+    images:['converge'] },
+  { id:'12', name:'Lego', mat:'Cherry',
+    text:['A minifigure scaled up and cut from solid cherry. Head, arms, hands, and legs all move.','Every joint is turned or cut to fit without hardware.'],
+    images:['lego-2','lego-1','lego-3'] },
+  { id:'13', name:'Rocking Elephant', mat:'Oak, steel pins',
+    text:['An elephant reduced to two masses and a raised trunk, standing on steel pins over a carved rocker.'],
+    images:['elephant-3','elephant-1','elephant-2'] },
+  { id:'14', name:'Bird', mat:'Walnut, brass, stone',
+    text:['A single wing-sweep cut from walnut, balanced on a brass rod set into a rough block of stone.'],
+    images:['bird'] },
+].map(p => ({ ...p, images: p.images.map(s => P + s + '.jpg'), src: P + p.images[0] + '.jpg' }));
+
+// ── ARCHIVE — slug opens the lightbox with the piece's full story ──
 const PIECES = [
   { id:'01', name:'Night Mission',   src:'assets/img/zfwkw4-black1.jpg', slug:'nightmission' },
   { id:'02', name:'Barley Tusk',     src:'assets/img/ek91p8-barleytusk.jpg', slug:'barleytusk' },
-  { id:'03', name:'A-Frame',         src:'assets/img/9sjzb0-aframeport.jpg' },
+  { id:'03', name:'A-Frame',         src:P+'a-frame-1.jpg', mat:'Carved hardwood', text:['A leaning A cut from a single slab, ribbed in three directions that break against each other across the face.'], images:[P+'a-frame-1.jpg', P+'a-frame-2.jpg', 'assets/img/9sjzb0-aframeport.jpg'] },
   { id:'04', name:'Water Totem',     src:'assets/img/71rpgj-holly1.jpg', slug:'water-totem' },
   { id:'05', name:'Sun Salutation',  src:'assets/img/3bbcl1-sunsalutation1.jpg', slug:'sunsalutation' },
   { id:'06', name:'Water Totem II',  src:'assets/img/9gmssl-peach1.jpg', slug:'water-totem-2' },
@@ -167,6 +217,11 @@ const PIECES = [
   { id:'12', name:'Broken Vessel',   src:'assets/img/2lqyu3-broken1.jpg', slug:'broken-vessel' },
 ];
 
+const ORDER = ['Drift Totem','Cliff Dwelling','Night Mission','Lego','Water Totem','Arches','Barley Tusk','Lookout','Balance','Stone Pattern','Water Totem II','Bird','Broken Vessel','Lighthouse','Converge','Rocking Elephant','Water Block','Beacon','Black Crescent','Ship','Sun Salutation','Water Totem III','A-Frame','Night Mission II','Water Type','Barley Twist'];
+const ALL = [...NEW_WORK, ...PIECES]
+  .sort((a, b) => ORDER.indexOf(a.name) - ORDER.indexOf(b.name))
+  .map((p, i) => ({ ...p, id: String(i + 1).padStart(2, '0') }));
+
 function Lightbox({ piece, onClose }) {
   useEffect(() => {
     const onKey = e => { if (e.key === 'Escape') onClose(); };
@@ -174,14 +229,14 @@ function Lightbox({ piece, onClose }) {
     document.body.style.overflow = 'hidden';
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
   }, []);
-  const detail = piece.slug ? window.SCULPTURE_DETAILS[piece.slug] : null;
+  const detail = piece.text ? piece : (piece.slug ? window.SCULPTURE_DETAILS[piece.slug] : null);
   return ReactDOM.createPortal(
     <div className="lb-backdrop" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <button className="lb-close" onClick={onClose} aria-label="Close">✕</button>
       <div className="lb-inner">
         <div className="lb-cat">Sculpture · {piece.id}</div>
         <div className="lb-title">{piece.name}</div>
-        {detail && detail.text.map((t, i) => <p className="lb-text" key={i}>{t}</p>)}
+        {piece.mat && <div className="lb-mat">{piece.mat}</div>}
         <div className="lb-imgs">
           {(detail && detail.images.length ? detail.images : [piece.src]).map((src, i) => <img src={src} key={i} loading="lazy" alt="" />)}
         </div>
@@ -205,14 +260,15 @@ function App() {
 
       <section className="section">
         <div className="section-label">Selected pieces</div>
-        <h2>Twelve pieces, twelve second chances</h2>
+        <h2>Twenty-six pieces,<br/>twenty-six second chances</h2>
         <div className="work-grid">
-          {PIECES.map(p => (
+          {ALL.map(p => (
             <div key={p.id} className="work-tile" onClick={() => setOpen(p)} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') setOpen(p); }}>
               <img src={p.src} alt={p.name} loading="lazy" />
               <div className="tile-meta">
                 <div className="tile-num">{p.id}</div>
                 <div className="tile-name">{p.name}</div>
+                {p.mat && <div className="tile-mat">{p.mat}</div>}
               </div>
             </div>
           ))}
