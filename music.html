@@ -278,6 +278,11 @@
   .band p{font-family:'Lora',serif;font-size:16px;line-height:1.85;color:rgba(232,224,212,0.5);max-width:560px;margin-bottom:8px}
   .band p em{color:rgba(232,224,212,0.8)}
   .band-art{width:100%;aspect-ratio:1;object-fit:cover;display:block;border:1px solid rgba(232,224,212,0.1)}
+  .band-credits{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:10px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase}
+  .band-credits li{display:flex;justify-content:space-between;gap:16px;padding-bottom:10px;border-bottom:1px solid rgba(232,224,212,0.08)}
+  .band-credits span:first-child{color:#e8e0d4}
+  .band-credits span:last-child{color:rgba(232,224,212,0.55);text-align:right}
+  .band-credits .rec{display:block;border:0;padding-top:4px;color:rgba(232,224,212,0.55);line-height:1.7}
   .band-artph{width:100%;aspect-ratio:1;background:rgba(232,224,212,0.03);border:1px solid rgba(232,224,212,0.1);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.16em;color:rgba(232,224,212,0.22);text-transform:uppercase;text-align:center;padding:20px}
 
   @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
@@ -451,12 +456,12 @@ function HazzzePlayer() {
       a.src = blobUrl; a.load();
       a.addEventListener('loadedmetadata', () => {
         const target = pos>0 ? pos : (saved>0 && saved<a.duration-2 ? saved : 0);
-        if (target>0) a.currentTime = target;
+        if (target>0 && isFinite(target)) a.currentTime = target;
         if (wasPlaying) a.play().catch(()=>{});
       }, { once: true });
     }).catch(()=>{});
     const onMeta = () => {
-      if (!isFinite(a.duration)) { a.currentTime = 1e101; return; }
+      if (!isFinite(a.duration)) { try { a.currentTime = 1e101; } catch(e){} return; }
       setDur(a.duration); if (saved>0 && saved<a.duration-2) a.currentTime=saved;
     };
     const onDur = () => {
@@ -629,11 +634,20 @@ function App() {
         <div className="band-split">
           <div>
             <div className="band-name">Penny Pistol</div>
-            <div className="band-meta"><span>Alt / Indie Rock Trio</span><span>Charlottesville, VA</span><span>Bass · Guitar · Backing Vox</span></div>
-            <p><em>First Light, Second Best</em> still streams everywhere.</p>
+            <div className="band-meta"><span>Alt / Indie Rock Trio</span><span>Charlottesville, VA</span><span>2010–2013</span><span>Bass · Guitar · Backing Vox</span></div>
+            <p>Charlottesville's Penny Pistol spent three years working the jangly middle ground between Wilco and Ryan Adams. James Moore handled guitar and lead vocals and Luke Rabin held down the drums. Wes Webb covered bass and guitar simultaneously on a custom double neck monstrosity the band affectionately named Mary Shelley, and it rarely got through a show without someone asking about it.</p>
+            <p>The trio's approach to recording was simple: get into the rehearsal space as often as possible and put down whatever was ready. Rabin engineered every session himself. The results first came out as two EPs, then were collected as the full-length <em>First Light, Second Best</em>. Ask any of the three about that stretch and the word that comes up is effortless.</p>
             <a href="https://open.spotify.com/artist/5xIIC1xf2mvE03dND25lBz" target="_blank" rel="noreferrer" className="hz-btn outline" style={{display:'inline-block',marginTop:24}}>Listen on Spotify ↗</a>
           </div>
-          <img className="band-art" src="assets/img/penny-pistol-flsb.jpg" alt="Penny Pistol: First Light, Second Best album art" />
+          <div style={{maxWidth:340,width:'100%'}}>
+            <img className="band-art" src="assets/img/penny-pistol-flsb.jpg" alt="Penny Pistol: First Light, Second Best album art" />
+            <ul className="band-credits">
+              <li><span>James Moore</span><span>Guitar, Vocals</span></li>
+              <li><span>Luke Rabin</span><span>Drums, Engineering</span></li>
+              <li><span>Wes Webb</span><span>Bass, Guitar, Backing Vocals</span></li>
+              <li className="rec">Recorded in the band's rehearsal space, Charlottesville, VA</li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -643,11 +657,21 @@ function App() {
         <div className="band-split">
           <div>
             <div className="band-name">Panoramic</div>
-            <div className="band-meta"><span>Instrumental Post-Rock</span><span>Harrisonburg, VA</span><span>Guitar</span></div>
-            <p>Instrumental post-rock from the Shenandoah Valley. Long builds, loud payoffs, zero lyrics.</p>
+            <div className="band-meta"><span>Instrumental Post-Rock</span><span>Harrisonburg, VA</span><span>2003–2005</span><span>Guitar</span></div>
+            <p>Four-piece instrumental post-rock out of the Shenandoah Valley: Joel Mills on drums, Doug Stanford and Wes on guitar, TJ Ill on bass. Swept up in Explosions in the Sky and Caspian, the band chased big builds, huge riffs, and as little traditional song structure as possible. Live, it was as loud as they could make it.</p>
+            <p><em>It's All Too Quiet</em> was recorded in the JMU campus movie theater. The band came back a week early from Christmas break with the keys, set up on stage, and tracked the whole record in two days, then spent four more mixing and mastering in the student events offices on pizza, Burger King, and Halo. One song showed up during a soundcheck before lunch. They arranged it on the spot, recorded it that afternoon, and it became one of their favorites.</p>
             <a href="https://open.spotify.com/artist/1bFnqN81TjC6f0XlSoxoDd" target="_blank" rel="noreferrer" className="hz-btn outline" style={{display:'inline-block',marginTop:24}}>Listen on Spotify ↗</a>
           </div>
-          <img className="band-art" src="assets/img/panoramic-art.jpg" alt="Panoramic: It's All Too Quiet album art" />
+          <div style={{maxWidth:340,width:'100%'}}>
+            <img className="band-art" src="assets/img/panoramic-art.jpg" alt="Panoramic: It's All Too Quiet album art" />
+            <ul className="band-credits">
+              <li><span>Joel Mills</span><span>Drums</span></li>
+              <li><span>Doug Stanford</span><span>Guitar</span></li>
+              <li><span>Wes Webb</span><span>Guitar</span></li>
+              <li><span>TJ Ill</span><span>Bass</span></li>
+              <li className="rec">Recorded in the JMU campus movie theater, Harrisonburg, VA</li>
+            </ul>
+          </div>
         </div>
       </section>
 
