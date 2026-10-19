@@ -30,9 +30,8 @@ button,select,input{font:inherit}
 [hidden]{display:none !important}
 :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .app{max-width:1080px;margin:0 auto;padding:16px 16px 48px}
-header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:8px 0 18px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 0 18px}
 h1{margin:0;font-stretch:125%;font-weight:820;font-size:clamp(32px,8vw,50px);letter-spacing:-0.025em;line-height:.95}
-.sub{color:var(--muted);font-stretch:85%;font-size:14px;margin:8px 0 0;max-width:40ch}
 .transport{display:flex;gap:10px;align-items:center;flex-shrink:0}
 .round{width:58px;height:58px;border-radius:50%;border:1px solid var(--line);background:var(--raise);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
 .round:disabled{opacity:.35;cursor:default}
@@ -65,6 +64,13 @@ h1{margin:0;font-stretch:125%;font-weight:820;font-size:clamp(32px,8vw,50px);let
 .take.show{display:flex}
 .take .name{font-weight:650;font-stretch:95%}
 .take audio{width:100%;height:40px}
+.microw{display:flex;align-items:center;gap:14px}
+.micinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.micrec{width:64px;height:64px;flex-shrink:0}
+.micrec .dot{width:22px;height:22px;border-radius:50%;background:var(--rec);transition:border-radius .15s}
+.micrec.on{border-color:var(--rec);box-shadow:0 0 0 3px color-mix(in srgb,var(--rec) 25%,transparent)}
+.micrec.on .dot{border-radius:5px}
+.srcgain{flex-basis:100%;max-width:420px;--c:var(--ink)}
 .lvl{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
 .lvl i{display:block;height:100%;width:0;background:var(--rec);transition:width .06s linear}
 .decks{display:grid;gap:16px;margin-top:20px}
@@ -114,7 +120,7 @@ select{font-size:14px;padding:7px 10px;border-radius:9px;border:1px solid var(--
 .hint{color:var(--muted);font-size:13px;font-stretch:88%;margin:14px 2px 0}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100% - 32px)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-@media (prefers-reduced-motion:reduce){.toast,#rec .dot{transition:none}}
+@media (prefers-reduced-motion:reduce){.toast,#rec .dot,.micrec .dot{transition:none}}
 @media (max-width:420px){.round{width:52px;height:52px}header.top{align-items:flex-start}}
 </style>
 </head>
@@ -123,7 +129,6 @@ select{font-size:14px;padding:7px 10px;border-radius:9px;border:1px solid var(--
   <header class="top">
     <div>
       <h1>Driftfield</h1>
-      <p class="sub">Four playback windows for pulling texture, rhythm and atmosphere out of a recording.</p>
     </div>
     <div class="transport">
       <span class="rectime" id="recTime" aria-live="polite"></span>
@@ -161,9 +166,14 @@ select{font-size:14px;padding:7px 10px;border-radius:9px;border:1px solid var(--
   </div>
 
   <div class="take" id="micPanel">
-    <div class="row" style="justify-content:space-between"><span class="name">Recording from mic</span><span class="rectime" id="micTime">0 s</span></div>
-    <div class="lvl"><i id="micLvl"></i></div>
-    <div class="row"><button class="btn solid" id="micStop">Stop and use as source</button><button class="btn quiet" id="micCancel">Cancel</button></div>
+    <div class="microw">
+      <button class="round micrec" id="micRec" aria-label="Start recording" aria-pressed="false"><span class="dot"></span></button>
+      <div class="micinfo">
+        <div class="row" style="justify-content:space-between"><span class="name" id="micState">Mic ready</span><span class="rectime" id="micTime"></span></div>
+        <div class="lvl"><i id="micLvl"></i></div>
+      </div>
+    </div>
+    <div class="row"><button class="btn quiet" id="micClose">Close mic</button></div>
   </div>
 
   <div class="take" id="take">
@@ -203,7 +213,8 @@ class DFEngine {
     this.sb=[new Float32Array(32),new Float32Array(32),new Float32Array(32),new Float32Array(32)];
   }
   handle(d){
-    if(d.type==='source') this.src[d.index]={ch:d.chans,sr:d.sr,n:d.chans[0].length};
+    if(d.type==='source') this.src[d.index]={ch:d.chans,sr:d.sr,n:d.chans[0].length,gain:d.gain===undefined?1:d.gain,gs:d.gain===undefined?1:d.gain};
+    else if(d.type==='srcGain'){ if(this.src[d.index]) this.src[d.index].gain=d.gain; }
     else if(d.type==='voice'){ const v=this.v[d.i]; if(d.p.src!==undefined&&d.p.src!==v.p.src){ v.b=undefined; v.q=0; } Object.assign(v.p,d.p); }
     else if(d.type==='removeSource') this.src.splice(d.index,1);
     else if(d.type==='fx') Object.assign(this.fx,d.p);
@@ -224,6 +235,7 @@ class DFEngine {
       const sb=this.sb; for(let j=0;j<len;j++){sb[0][j]=0;sb[1][j]=0;sb[2][j]=0;sb[3][j]=0;}
       const g0=this.pg, tg=this.playing?1:0, g1=g0+(tg-g0)*(1-Math.exp(-dt/0.03)); this.pg=g1;
       const kk0=1-Math.exp(-dt/0.025);
+      for(const S of this.src) if(S) S.gs+=(S.gain-S.gs)*kk0;
       for(let vi=0;vi<4&&voicesOn;vi++){
         const v=this.v[vi], p=v.p, s=this.src[p.src]; if(!s) continue;
         const sd=p.sendD||0, sv=p.sendR||0;
@@ -245,6 +257,7 @@ class DFEngine {
         const dir=p.dir, X=dir===2?0:Math.min(p.xf*W,W*0.5);
         const c0=s.ch[0], c1=s.ch[1]||s.ch[0];
         const ic=v.ic, ft=p.ftype;
+        const sgn0=s.gs;
         let q=v.q, sg=v.sign, b=v.b, ob=v.ob, df=v.df;
         if(!(q>=0&&q<W)) { q=((q%W)+W)%W; if(!(q>=0)) q=0; }
         for(let j=0;j<len;j++){
@@ -257,6 +270,7 @@ class DFEngine {
             sl=ga*sl+gb*this.rd(c0,b+x2,N); sr2=ga*sr2+gb*this.rd(c1,b+x2,N);
           }
           if(df>0){ const go=df/DC; sl+=(this.rd(c0,ob+x,N)-sl)*go; sr2+=(this.rd(c1,ob+x,N)-sr2)*go; df--; }
+          sl*=sgn0; sr2*=sgn0;
           if(wet>0){ sl+=(Math.tanh(sl*pre)*comp-sl)*wet; sr2+=(Math.tanh(sr2*pre)*comp-sr2)*wet; }
           let v3=sl-ic[1], v1=a1*ic[0]+a2*v3, v2=ic[1]+a2*ic[0]+a3*v3; ic[0]=2*v1-ic[0]; ic[1]=2*v2-ic[1];
           const oL=ft===0?v2:ft===1?k*v1:sl-k*v1-v2;
@@ -364,7 +378,7 @@ function post(msg,transfer){
 }
 function postSource(i){
   const s=state.sources[i]; const chans=s.chans.map(c=>c.slice());
-  const m={type:'source',index:i,sr:s.sr,chans};
+  const m={type:'source',index:i,sr:s.sr,chans,gain:s.gain};
   if(mode==='worklet') node.port.postMessage(m,chans.map(c=>c.buffer)); else if(engine) engine.handle(m);
 }
 function sendVoice(i){ const v=state.voices[i]; v.src=clamp(v.src,0,Math.max(0,state.sources.length-1)); post({type:'voice',i,p:{...v}}); }
@@ -426,7 +440,7 @@ function computePeaks(chans){
   return {pk,rm};
 }
 function addSource(name,sr,chans){
-  const s={name,sr,chans,dur:chans[0].length/sr,peaks:computePeaks(chans)};
+  const s={name,sr,chans,gain:1,dur:chans[0].length/sr,peaks:computePeaks(chans)};
   state.sources.push(s); const idx=state.sources.length-1;
   if(audioReady) postSource(idx);
   if(idx===0){ state.voices.forEach((v,i)=>{v.src=0;sendVoice(i);}); }
@@ -601,13 +615,21 @@ function renderSources(){
       armT=setTimeout(()=>renderSources(),3000);
     });
     w.appendChild(b); w.appendChild(x); box.appendChild(w); });
+  const cs=state.sources[cur().src];
+  if(cs){
+    const sg=slider({label:`${cs.name} volume`,min:-30,max:24,step:0.5,bipolar:true,snap:[0],
+      get:()=>20*Math.log10(Math.max(1e-4,cs.gain)),
+      set:v=>{ cs.gain=Math.pow(10,v/20); post({type:'srcGain',index:state.sources.indexOf(cs),gain:cs.gain}); },
+      fmt:v=>(Math.abs(v)<0.25?'0':(v>0?'+':'−')+Math.abs(v).toFixed(1))+' dB'});
+    sg.el.classList.add('srcgain'); box.appendChild(sg.el);
+  }
 }
 
 /* ---------------- Effects deck ---------------- */
 let fxCtl=[], freezeBtn;
 function buildFxDeck(){
   const d=$('#fxDeck');
-  d.insertAdjacentHTML('beforeend','<div class="deck-head"><h2>Effects</h2></div><p class="note">Each window sends to these with its delay and reverb sends.</p>');
+  d.insertAdjacentHTML('beforeend','<div class="deck-head"><h2>Effects</h2></div>');
   const F=state.fx, set=k=>v=>{F[k]=v;sendFx();}, get=k=>()=>F[k];
   const group=(title,items,extra)=>{ const g=document.createElement('div'); g.className='group';
     const hd=document.createElement('div'); hd.className='ghead'; hd.innerHTML=`<h3>${title}</h3>`; if(extra) hd.appendChild(extra); g.appendChild(hd);
@@ -660,7 +682,7 @@ function spans(x,w){ x=((x%W)+W)%W; if(x+w<=W) return [[x,w]]; return [[x,W-x],[
 function draw(){
   if(mode==='sp'&&engine) report=engine.report();
   requestAnimationFrame(draw);
-  if(mic){ $('#micLvl').style.width=Math.min(100,Math.sqrt(mic.peak)*100)+'%'; $('#micTime').textContent=fmtTime(mic.len/ac.sampleRate).replace(/\.\d+ s$/,' s'); }
+  if(mic){ $('#micLvl').style.width=Math.min(100,Math.sqrt(mic.peak)*100)+'%'; if(mic.rec) $('#micTime').textContent=fmtTime(mic.len/ac.sampleRate).replace(/\.\d+ s$/,' s'); }
   if(!W) return;
   g2.setTransform(dpr,0,0,dpr,0,0); g2.clearRect(0,0,W,H);
   if(!state.sources.length) return;
@@ -809,8 +831,8 @@ $('#scatter').addEventListener('click',()=>{
 /* ---------------- Mic input ---------------- */
 let mic=null, micN=0;
 const setSession=t=>{ try{ if(navigator.audioSession) navigator.audioSession.type=t; }catch(e){} };
-async function startMic(){
-  if(mic) return;
+async function openMic(){
+  if(mic){ $('#micPanel').scrollIntoView({block:'nearest',behavior:'smooth'}); return; }
   const ready=ensureAudio();
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ toast("Microphone input isn't available here."); return; }
   setSession('play-and-record');
@@ -820,35 +842,52 @@ async function startMic(){
   if(!(await ready)){ stream.getTracks().forEach(t=>t.stop()); return; }
   ac.resume().catch(()=>{});
   const src=ac.createMediaStreamSource(stream), proc=ac.createScriptProcessor(4096,2,2), mute=ac.createGain(); mute.gain.value=0;
-  mic={stream,src,proc,mute,l:[],r:[],len:0,peak:0,t0:performance.now()};
+  mic={stream,src,proc,mute,rec:false,l:[],r:[],len:0,peak:0};
   proc.onaudioprocess=e=>{
-    if(!mic) return; const ib=e.inputBuffer, a=ib.getChannelData(0).slice(), b=ib.numberOfChannels>1?ib.getChannelData(1).slice():a;
-    mic.l.push(a); mic.r.push(b); mic.len+=a.length;
+    if(!mic) return; const ib=e.inputBuffer, a=ib.getChannelData(0), b=ib.numberOfChannels>1?ib.getChannelData(1):a;
     let pk=0; for(let i=0;i<a.length;i+=4){ const v=Math.abs(a[i]); if(v>pk) pk=v; }
     mic.peak=Math.max(pk,mic.peak*0.85);
-    if(mic.len>ac.sampleRate*300){ toast('Mic recordings stop at 5 minutes.'); stopMic(true); }
+    if(!mic.rec) return;
+    mic.l.push(a.slice()); mic.r.push(b===a?mic.l[mic.l.length-1]:b.slice()); mic.len+=a.length;
+    if(mic.len>ac.sampleRate*300){ toast('Mic recordings stop at 5 minutes.'); stopTake(); }
   };
   src.connect(proc); proc.connect(mute); mute.connect(ac.destination);
-  $('#micPanel').classList.add('show'); $('#micBtn').textContent='Stop mic';
+  $('#micPanel').classList.add('show'); $('#micBtn').textContent='Close mic';
+  updateMicUI();
+}
+function startTake(){
+  if(!mic||mic.rec) return;
+  mic.l=[]; mic.r=[]; mic.len=0; mic.rec=true; updateMicUI();
   if(state.playing) toast('Use headphones to keep the speaker out of the recording.');
 }
-function stopMic(keep){
-  if(!mic) return; const m=mic; mic=null;
-  try{ m.src.disconnect(); m.proc.disconnect(); m.mute.disconnect(); }catch(e){}
-  m.stream.getTracks().forEach(t=>t.stop()); setSession('playback');
-  $('#micPanel').classList.remove('show'); $('#micBtn').textContent='Record mic';
-  if(!keep) return;
-  if(m.len<ac.sampleRate*0.25){ toast('That recording was too short to use.'); return; }
-  const join=arr=>{ const out=new Float32Array(m.len); let o=0; for(const c of arr){ out.set(c,o); o+=c.length; } return out; };
-  const L=join(m.l); let R=join(m.r), same=true;
-  for(let i=0;i<m.len;i+=997){ if(L[i]!==R[i]){ same=false; break; } }
+function stopTake(){
+  if(!mic||!mic.rec) return;
+  mic.rec=false; const len=mic.len, ls=mic.l, rs=mic.r; mic.l=[]; mic.r=[]; mic.len=0; updateMicUI();
+  if(len<ac.sampleRate*0.25){ toast('That recording was too short to use.'); return; }
+  const join=arr=>{ const out=new Float32Array(len); let o=0; for(const c of arr){ out.set(c,o); o+=c.length; } return out; };
+  const L=join(ls), R=join(rs); let same=true;
+  for(let i=0;i<len;i+=997){ if(L[i]!==R[i]){ same=false; break; } }
   micN++; addSource(`Mic ${micN}`,ac.sampleRate,same?[L]:[L,R]);
   toast(state.sources.length>1?`Mic ${micN} added. Window ${state.sel+1} now plays it.`:`Mic ${micN} loaded.`);
 }
-$('#micBtn').addEventListener('click',()=>mic?stopMic(true):startMic());
-$('#micEmpty').addEventListener('click',startMic);
-$('#micStop').addEventListener('click',()=>stopMic(true));
-$('#micCancel').addEventListener('click',()=>stopMic(false));
+function closeMic(){
+  if(!mic) return;
+  if(mic.rec) stopTake();
+  const m=mic; mic=null;
+  try{ m.src.disconnect(); m.proc.disconnect(); m.mute.disconnect(); }catch(e){}
+  m.stream.getTracks().forEach(t=>t.stop()); setSession('playback');
+  $('#micPanel').classList.remove('show'); $('#micBtn').textContent='Record mic';
+}
+function updateMicUI(){
+  const on=!!(mic&&mic.rec), b=$('#micRec');
+  b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); b.setAttribute('aria-label',on?'Stop recording':'Start recording');
+  $('#micState').textContent=on?'Recording':'Mic ready';
+  $('#micTime').textContent=on?'0 s':'';
+}
+$('#micBtn').addEventListener('click',()=>mic?closeMic():openMic());
+$('#micEmpty').addEventListener('click',openMic);
+$('#micRec').addEventListener('click',()=>mic&&mic.rec?stopTake():startTake());
+$('#micClose').addEventListener('click',closeMic);
 
 /* ---------------- Misc ---------------- */
 let toastT=null;
