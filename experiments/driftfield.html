@@ -297,7 +297,7 @@ class DFEngine {
       }
       this.effects(L,R,o,len);
       const m=this.master;
-      for(let j=0;j<len;j++){ L[o+j]=Math.tanh(L[o+j]*m); R[o+j]=Math.tanh(R[o+j]*m); }
+      for(let j=0;j<len;j++){ L[o+j]=Math.tanh(L[o+j]*m*2.4); R[o+j]=Math.tanh(R[o+j]*m*2.4); }
     }
   }
   effects(L,R,o,len){
@@ -439,7 +439,14 @@ function computePeaks(chans){
   const sc=top>0?1/top:1; for(let b=0;b<B;b++){pk[b]*=sc;rm[b]*=sc;}
   return {pk,rm};
 }
+function normalize(chans){
+  let pk=0; for(const c of chans) for(let i=0;i<c.length;i++){ const v=c[i]<0?-c[i]:c[i]; if(v>pk) pk=v; }
+  if(!(pk>1e-6)) return;
+  const g=Math.min(100,0.9/pk); if(Math.abs(g-1)<0.01) return;
+  for(const c of chans) for(let i=0;i<c.length;i++) c[i]*=g;
+}
 function addSource(name,sr,chans){
+  normalize(chans);
   const s={name,sr,chans,gain:1,dur:chans[0].length/sr,peaks:computePeaks(chans)};
   state.sources.push(s); const idx=state.sources.length-1;
   if(audioReady) postSource(idx);
