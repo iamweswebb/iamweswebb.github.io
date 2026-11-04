@@ -84,6 +84,8 @@ button:focus-visible,input:focus-visible,[role=slider]:focus-visible{outline:2px
 #rec.on .led{background:#ff5a47;box-shadow:0 0 7px #ff5a47}
 #like.liked{color:var(--v)}
 #like.liked svg{filter:drop-shadow(0 0 4px var(--v))}
+#nope.noped{color:var(--amber)}
+#nope.noped svg{filter:drop-shadow(0 0 4px var(--amber))}
 .play{min-width:84px}
 .sep{width:1px;height:28px;background:#3d3e42;box-shadow:1px 0 0 #1a1b1d;margin:0 4px}
 .vol{display:flex;align-items:center;gap:10px;margin-left:auto;flex:1 1 110px;max-width:190px;min-width:100px;font-size:9px;letter-spacing:2px}
@@ -194,6 +196,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:22px;border:0;border-radiu
         <button class="key" id="next" title="Mix into the next track" aria-label="Next track"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v10M3 3l7 5-7 5z"/></svg></button>
         <span class="sep" aria-hidden="true"></span>
         <button class="key" id="like" title="More like this" aria-label="More like this track"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13.5S2 10 2 6a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 4-6 7.5-6 7.5z"/></svg></button>
+        <button class="key" id="nope" title="Not this: steer away and mix out" aria-label="Not this track"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5.5"/><path d="M4.1 11.9l7.8-7.8"/></svg></button>
         <button class="key" id="rec" title="Record this set" aria-label="Record"><span class="led"></span>REC</button>
         <button class="key" id="shuffle" title="New seed" aria-label="New seed"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5h2.3c1.4 0 2.2.7 3 1.8l1.6 2.6c.8 1.1 1.6 1.8 3 1.8H14M2 11.5h2.3c1 0 1.7-.3 2.3-.9M9.4 5.4c.6-.6 1.4-.9 2.5-.9H14M12 2.5l2 2-2 2M12 9.5l2 2-2 2"/></svg></button>
         <label class="vol" for="vol">LEVEL<input type="range" id="vol" min="0" max="100" value="80" aria-label="Volume"></label>
@@ -365,7 +368,10 @@ function arc(k,t){
 function eff(k){if(k==='evolve')return P.evolve;return clamp(P[k]+P.evolve*.32*drift(k,setTime)+arc(k,setTime))}
 // taste: liked tracks nudge future choices (types, progressions, chord pacing, drums). Filled in by the page.
 let TASTE={arch:{},prog:{},rh:{},kick:{},snare:{}};
-const tw=(cat,key)=>1+Math.min(2,.5*((TASTE[cat]||{})[key]||0));
+// "not this": passed tracks push the same choices down. Progressions and pads hardest, broad things (type, pacing, drums) gently.
+let NOPE={arch:{},prog:{},rh:{},kick:{},snare:{},pad:{}};
+const NOPE_W={arch:.35,prog:.9,rh:.35,kick:.2,snare:.2};
+const tw=(cat,key)=>(1+Math.min(2,.5*((TASTE[cat]||{})[key]||0)))/(1+(NOPE_W[cat]||.5)*Math.min(4,(NOPE[cat]||{})[key]||0));
 
 // ---------- music generation ----------
 function secAt(tr,b){for(const x of tr.secs)if(b<x.start+x.len)return x;return tr.secs[tr.secs.length-1]}
@@ -795,7 +801,9 @@ function blissPad(d,ch,t,dur,bloom){
     const q=['min','min7',r()<.5?'min9':'minadd9',r()<.5?'min11':'min9'][lv];
     const opts=Object.entries(C.pads).filter(([,p])=>p.q===q).sort((a,b)=>a[1].c-b[1].c);
     if(!opts.length)return false;
-    tr.padAnchor=opts[Math.min(opts.length-1,Math.floor(tr.padBright*opts.length))];tr.padName=tr.padAnchor[0]}
+    const want=Math.min(opts.length-1,Math.floor(tr.padBright*opts.length)),np=n=>(NOPE.pad||{})[n]||0;
+    // skip pads you passed on: fewest passes first, then the closest in brightness
+    tr.padAnchor=opts.map((o,i)=>[o,np(o[0])*10+Math.abs(i-want)]).sort((a,b)=>a[1]-b[1])[0][0];tr.padName=tr.padAnchor[0]}
   const p=tr.padAnchor[1];
   const shift=ch.q==='m'?0:(ch.q==='M'||ch.q==='M69')?-3:ch.q==='D'?7:3;
   const rate=Math.pow(2,NEAR(tr.root+ch.r+shift)/12),bufLen=p.buf.duration,off=Math.min(p.a*.45,1.4);
@@ -1364,6 +1372,7 @@ function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 TASTE=Object.assign({arch:{},prog:{},rh:{},kick:{},snare:{}},load('undertow-taste',{}));
 let liked=load('undertow-liked',[]);
+NOPE=Object.assign({arch:{},prog:{},rh:{},kick:{},snare:{},pad:{}},load('undertow-nope',{}));
 
 // ---------- transport ----------
 async function play(){
@@ -1402,11 +1411,16 @@ function updateTransport(){
   $('#state').className='state'+(playing?'':started?' paused':' stopped');
   $('#next').disabled=!started;$('#hold').disabled=!started;
 }
+// cut the playing track to an outro at the next 8-bar line. Returns the bar, 0 if the mix starts soon anyway, null if already mixing
+function mixOut(minBar=32){
+  const d=liveDeck();if(!d||d.spawned)return null;
+  const cur=Math.floor(d.last/16)+1;let B=Math.max(minBar,Math.ceil(cur/8)*8);if(B*16<=d.last+16)B+=8;
+  if(B>=d.tr.outroStart)return 0;
+  cutTo(d.tr,B);sig='';return B+1;
+}
 function nextTrack(){
-  const d=liveDeck();if(!d)return;if(d.spawned)return flash('Already mixing into the next track');
-  const cur=Math.floor(d.last/16)+1;let B=Math.max(32,Math.ceil(cur/8)*8);if(B*16<=d.last+16)B+=8;
-  if(B>=d.tr.outroStart)return flash('The mix starts soon anyway');
-  cutTo(d.tr,B);sig='';flash('Mixing out at bar '+(B+1));
+  if(!liveDeck())return;const r=mixOut();
+  flash(r===null?'Already mixing into the next track':r===0?'The mix starts soon anyway':'Mixing out at bar '+r);
 }
 function hold(){
   const d=liveDeck();if(!d||d.spawned)return flash('Hold works once this mix finishes');
@@ -1426,11 +1440,24 @@ function likeCurrent(){
   $('#like').classList.add('liked');setTimeout(()=>$('#like').classList.remove('liked'),900);
   flash(`Saved to your taste: ${tr.archLabel}, ${tr.progName}`);renderTaste();
 }
+function notThis(){
+  if(!started||!decks.length)return flash('Press play first');
+  const g=nowStep(),d=displayDeck(g),tr=d.tr;
+  const bump=(c,k)=>{if(k==null)return;NOPE[c][k]=(NOPE[c][k]||0)+1};
+  bump('arch',tr.arch);bump('prog',tr.progName);bump('rh',tr.prog.map(x=>x.len).join('-'));bump('kick',tr.kickV);bump('snare',tr.snareV);
+  if(tr.padSound==='bliss'&&tr.padName)bump('pad',tr.padName);
+  save('undertow-nope',NOPE);
+  $('#nope').classList.add('noped');setTimeout(()=>$('#nope').classList.remove('noped'),900);
+  // mix out of it, unless it is the outgoing track of a mix already under way
+  const r=d===liveDeck()?mixOut(16):null;
+  flash(r?`Passed on ${tr.name}. Mixing out at bar ${r}`:`Passed on ${tr.name}. Steering away from it`);renderTaste();
+}
 function renderTaste(){
   const n=Object.values(TASTE.arch).reduce((a,b)=>a+b,0);
-  if(!n){$('#tasteMsg').textContent='No liked tracks yet. Tap ♥ on the player.';return}
+  const nn=Object.values(NOPE.arch).reduce((a,b)=>a+b,0),passed=nn?` ${nn} passed.`:'';
+  if(!n){$('#tasteMsg').textContent=nn?`No liked tracks yet.${passed}`:'No liked tracks yet. Tap the heart on the player.';return}
   const top=(o)=>Object.entries(o).sort((a,b)=>b[1]-a[1])[0][0];
-  $('#tasteMsg').textContent=`${n} liked. Leaning toward ${ARCH[top(TASTE.arch)].label} tracks and ${top(TASTE.prog)}.`;
+  $('#tasteMsg').textContent=`${n} liked. Leaning toward ${ARCH[top(TASTE.arch)].label} tracks and ${top(TASTE.prog)}.${passed}`;
 }
 
 // ---------- recording ----------
@@ -1538,9 +1565,10 @@ $('#stop').addEventListener('click',stop);
 $('#next').addEventListener('click',nextTrack);
 $('#hold').addEventListener('click',hold);
 $('#like').addEventListener('click',likeCurrent);
+$('#nope').addEventListener('click',notThis);
 $('#rec').addEventListener('click',()=>recorder?stopRecording():startRecording());
 $('#rec2').addEventListener('click',()=>recorder?stopRecording():startRecording());
-$('#clearTaste').addEventListener('click',()=>{TASTE={arch:{},prog:{},rh:{},kick:{},snare:{}};liked=[];save('undertow-taste',TASTE);save('undertow-liked',[]);renderTaste()});
+$('#clearTaste').addEventListener('click',()=>{TASTE={arch:{},prog:{},rh:{},kick:{},snare:{}};NOPE={arch:{},prog:{},rh:{},kick:{},snare:{},pad:{}};save('undertow-nope',NOPE);liked=[];save('undertow-taste',TASTE);save('undertow-liked',[]);renderTaste()});
 $('#vol').addEventListener('input',e=>{volume=e.target.value/100;if(FX.vol&&ctx)FX.vol.gain.setTargetAtTime(volume*volume,ctx.currentTime,.05)});
 $('#copy').addEventListener('click',()=>{
   const v=$('#code').value;
