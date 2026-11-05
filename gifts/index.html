@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Webb Family Gift Exchange</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: snowy header with a year dial, then a pile of flip-over gift tags */
+:root{
+  --bg:#E7EEEA; --paper:#FBFDFC; --ink:#13251F; --pine:#1D4A3A; --berry:#B4263A;
+  --gold:#B0821F; --muted:#56695F; --line:#C7D5CE; --tagback:#B4263A; --tagbackink:#FFF7F2;
+  --snow:rgba(255,255,255,.9); --hero:#1D4A3A; --heroink:#F3F8F5;
+  --display:"Shrikhand","Georgia",serif; --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"DM Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D1814; --paper:#16241E; --ink:#E6EFEA; --pine:#86C7AA; --berry:#F0707A;
+  --gold:#E0B65A; --muted:#95A99F; --line:#2A3C34; --tagback:#9E2234; --tagbackink:#FFF1EC;
+  --snow:rgba(255,255,255,.75); --hero:#10261E; --heroink:#EAF3EE; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1814; --paper:#16241E; --ink:#E6EFEA; --pine:#86C7AA; --berry:#F0707A;
+  --gold:#E0B65A; --muted:#95A99F; --line:#2A3C34; --tagback:#9E2234; --tagbackink:#FFF1EC;
+  --snow:rgba(255,255,255,.75); --hero:#10261E; --heroink:#EAF3EE; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+/* Hero */
+.hero{position:relative;background:var(--hero);color:var(--heroink);overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero .wrap{position:relative;padding-block:40px 34px;display:grid;gap:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,7vw,64px);line-height:1.02;margin:0;text-wrap:balance}
+.dial{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dial button.step{width:44px;height:44px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--heroink) 45%,transparent);background:transparent;font-size:20px;line-height:1;color:var(--heroink)}
+.dial button.step:hover{background:color-mix(in srgb,var(--heroink) 12%,transparent)}
+.year{font-family:var(--display);font-size:clamp(56px,13vw,112px);line-height:.9;min-width:3.2ch;text-align:center;color:var(--gold);font-variant-numeric:tabular-nums}
+.status{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:99px;border:1px solid color-mix(in srgb,var(--heroink) 35%,transparent)}
+.today{background:none;border:0;text-decoration:underline;text-underline-offset:3px;color:var(--heroink);opacity:.8;font-size:14px}
+
+/* Tags */
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:40px;padding-block:28px 40px}
+main>section{min-width:0}
+.bar{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;font-size:28px;margin:0;color:var(--pine)}
+.btn{border:1.5px solid var(--pine);background:transparent;color:var(--pine);padding:9px 16px;border-radius:99px;font-weight:600;font-size:15px}
+.btn.solid{background:var(--berry);border-color:var(--berry);color:#fff}
+.btn:hover{filter:brightness(1.06)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.tags{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:22px 18px;margin-top:18px}
+.tag{perspective:900px;background:none;border:0;padding:0;height:128px;text-align:left}
+.tag .inner{position:relative;width:100%;height:100%;transition:transform .7s cubic-bezier(.3,1.4,.5,1);transform-style:preserve-3d}
+.tag.open .inner{transform:rotateY(180deg)}
+.tag:nth-child(odd){transform:rotate(-1.2deg)} .tag:nth-child(3n){transform:rotate(1.4deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  clip-path:polygon(34px 0,100% 0,100% 100%,34px 100%,0 64%,0 36%);
+  padding:16px 16px 14px 48px;display:flex;flex-direction:column;justify-content:space-between}
+.face::before{content:"";position:absolute;left:14px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 2px var(--gold)}
+.front{background:var(--paper);border:0;box-shadow:inset 0 0 0 1.5px var(--line)}
+.back{background:var(--tagback);color:var(--tagbackink);transform:rotateY(180deg)}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.who{font-family:var(--display);font-size:30px;line-height:1.05;overflow-wrap:anywhere}
+.front .who{color:var(--pine)}
+.hint{font-size:13px;color:var(--muted)}
+.last{font-family:var(--mono);font-size:12px;opacity:.9}
+.last.first{color:var(--gold);font-weight:500}
+.back .last.first{color:#FFD98A}
+
+
+@media (prefers-reduced-motion:reduce){.tag .inner{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="eyebrow">Est. 2014 · 10 Webbs</div>
+    <h1>Webb Family Gift Exchange</h1>
+    <div class="dial">
+      <button class="step" id="prev" aria-label="Previous year">‹</button>
+      <div class="year" id="year" aria-live="polite">2026</div>
+      <button class="step" id="next" aria-label="Next year">›</button>
+      <span class="status" id="status">This year</span>
+      <button class="today" id="today" hidden>Back to this year</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+  <section>
+    <div class="bar">
+      <h2 id="tagsTitle">Who's got who</h2>
+      <div class="btns">
+        <button class="btn solid" id="revealAll">Reveal all</button>
+        <button class="btn" id="hideAll">Flip back</button>
+      </div>
+    </div>
+    <div class="tags" id="tags"></div>
+  </section>
+
+
+  <div class="rules">
+    <span>No giving to your spouse</span>
+    <span>Everyone gets each eligible Webb once every 8 years</span>
+    <span>Nobody swaps gifts with the person giving to them</span>
+  </div>
+</main>
+</div>
+
+<script>
+const PEOPLE=["Donna","Lee","Wesley","Ginny","Lee J.","Molly","Reed","Kylie","Lera","Justin"];
+/* Mom's records, 2014 to 2025, as written */
+const HISTORY={
+2014:{"Donna":"Ginny","Lee":"Molly","Wesley":"Donna","Ginny":"Lee J.","Lee J.":"Lera","Molly":"Lee","Lera":"Reed","Reed":"Wesley"},
+2015:{"Donna":"Lee J.","Lee":"Reed","Wesley":"Kylie","Ginny":"Molly","Lee J.":"Lee","Molly":"Donna","Lera":"Wesley","Reed":"Ginny"},
+2016:{"Donna":"Molly","Lee":"Reed","Wesley":"Lee J.","Ginny":"Lera","Lee J.":"Wesley","Molly":"Ginny","Lera":"Kylie","Reed":"Donna","Kylie":"Lee"},
+2017:{"Donna":"Wesley","Lee":"Kylie","Wesley":"Molly","Ginny":"Donna","Lee J.":"Reed","Molly":"Lee","Lera":"Lee J.","Reed":"Lera","Kylie":"Ginny"},
+2018:{"Donna":"Reed","Lee":"Wesley","Wesley":"Lee","Ginny":"Kylie","Lee J.":"Donna","Molly":"Lera","Lera":"Ginny","Reed":"Lee J.","Kylie":"Molly"},
+2019:{"Donna":"Kylie","Lee":"Lee J.","Wesley":"Lera","Ginny":"Lee","Lee J.":"Reed","Molly":"Wesley","Lera":"Molly","Reed":"Ginny","Kylie":"Donna"},
+2020:{"Donna":"Molly","Lee":"Ginny","Wesley":"Reed","Ginny":"Lee J.","Lee J.":"Kylie","Molly":"Donna","Lera":"Wesley","Reed":"Lee","Kylie":"Lera"},
+2021:{"Donna":"Ginny","Lee":"Molly","Wesley":"Donna","Ginny":"Lera","Lee J.":"Lee","Molly":"Kylie","Lera":"Reed","Reed":"Wesley","Kylie":"Lee J."},
+2022:{"Donna":"Ginny","Lee":"Molly","Wesley":"Kylie","Ginny":"Lee J.","Lee J.":"Lera","Molly":"Ginny","Reed":"Donna","Kylie":"Wesley","Lera":"Lee"},
+2023:{"Donna":"Reed","Lee":"Lee J.","Wesley":"Lee","Ginny":"Donna","Lee J.":"Justin","Molly":"Lera","Reed":"Molly","Kylie":"Ginny","Lera":"Kylie","Justin":"Wesley"},
+2024:{"Donna":"Lera","Lee":"Wesley","Wesley":"Kylie","Ginny":"Justin","Lee J.":"Ginny","Molly":"Reed","Reed":"Lee J.","Kylie":"Molly","Lera":"Donna","Justin":"Lee"},
+2025:{"Donna":"Lee J.","Lee":"Kylie","Wesley":"Justin","Ginny":"Molly","Lee J.":"Wesley","Molly":"Lee","Reed":"Lera","Kylie":"Donna","Lera":"Ginny","Justin":"Reed"}
+};
+/* The 8-year rotation, starting 2026, repeating forever */
+const CYCLE_START=2026;
+const CYCLE=[
+{"Donna":"Molly","Lee":"Ginny","Wesley":"Lera","Ginny":"Reed","Lee J.":"Donna","Molly":"Wesley","Reed":"Justin","Kylie":"Lee","Lera":"Lee J.","Justin":"Kylie"},
+{"Donna":"Kylie","Lee":"Lee J.","Wesley":"Reed","Ginny":"Donna","Lee J.":"Lera","Molly":"Ginny","Reed":"Lee","Kylie":"Justin","Lera":"Molly","Justin":"Wesley"},
+{"Donna":"Justin","Lee":"Reed","Wesley":"Donna","Ginny":"Lee","Lee J.":"Kylie","Molly":"Lera","Reed":"Ginny","Kylie":"Molly","Lera":"Wesley","Justin":"Lee J."},
+{"Donna":"Lee J.","Lee":"Lera","Wesley":"Lee","Ginny":"Justin","Lee J.":"Reed","Molly":"Kylie","Reed":"Wesley","Kylie":"Ginny","Lera":"Donna","Justin":"Molly"},
+{"Donna":"Reed","Lee":"Wesley","Wesley":"Kylie","Ginny":"Molly","Lee J.":"Lee","Molly":"Justin","Reed":"Lee J.","Kylie":"Lera","Lera":"Ginny","Justin":"Donna"},
+{"Donna":"Wesley","Lee":"Kylie","Wesley":"Molly","Ginny":"Lera","Lee J.":"Justin","Molly":"Lee","Reed":"Donna","Kylie":"Lee J.","Lera":"Reed","Justin":"Ginny"},
+{"Donna":"Lera","Lee":"Justin","Wesley":"Lee J.","Ginny":"Kylie","Lee J.":"Ginny","Molly":"Donna","Reed":"Molly","Kylie":"Wesley","Lera":"Lee","Justin":"Reed"},
+{"Donna":"Ginny","Lee":"Molly","Wesley":"Justin","Ginny":"Lee J.","Lee J.":"Wesley","Molly":"Reed","Reed":"Lera","Kylie":"Donna","Lera":"Kylie","Justin":"Lee"}
+];
+const FIRST=2014, LASTY=2099;
+function draw(y){ if(y<CYCLE_START) return HISTORY[y]||{}; return CYCLE[((y-CYCLE_START)%CYCLE.length+CYCLE.length)%CYCLE.length]; }
+function lastTime(a,b,y){ for(let k=y-1;k>=FIRST;k--){ if(draw(k)[a]===b) return k; } return null; }
+function exchangeYear(){ const d=new Date(); return (d.getMonth()===11 && d.getDate()>25) ? d.getFullYear()+1 : d.getFullYear(); }
+const NOW=Math.max(CYCLE_START,exchangeYear());
+let year=NOW, focus=null;
+
+const $=id=>document.getElementById(id);
+function givers(y){ const d=draw(y); return PEOPLE.filter(p=>d[p]); }
+
+function renderTags(){
+  const d=draw(year), past=year<NOW, el=$("tags"); el.innerHTML="";
+  givers(year).forEach(p=>{
+    const r=d[p]; const lt=r&&r!=="-"?lastTime(p,r,year):null;
+    const b=document.createElement("button"); b.className="tag"+(past?" open":""); b.type="button";
+    b.setAttribute("aria-label",`From ${p}. Tap to reveal.`);
+    b.innerHTML=`<div class="inner">
+      <div class="face front"><span class="lbl">From</span><span class="who"></span><span class="hint">Tap to open</span></div>
+      <div class="face back"><span class="lbl">To</span><span class="who"></span><span class="last ${lt?"":"first"}">${lt?"Last time: "+lt:"First time!"}</span></div></div>`;
+    b.querySelector(".front .who").textContent=p;
+    b.querySelector(".back .who").textContent=r;
+    b.addEventListener("click",()=>{b.classList.toggle("open"); if(b.classList.contains("open")) b.setAttribute("aria-label",`${p} gives to ${r}`);});
+    el.appendChild(b);
+  });
+}
+function setYear(y){
+  year=Math.min(LASTY,Math.max(FIRST,y));
+  $("year").textContent=year;
+  const s=year===NOW?"This year":year<NOW?"In the books":"Coming up";
+  $("status").textContent=s; $("today").hidden=year===NOW;
+  $("tagsTitle").textContent=year<NOW?"Who had who":"Who's got who";
+  $("prev").disabled=year<=FIRST; $("next").disabled=year>=LASTY;
+  renderTags();
+}
+$("prev").onclick=()=>setYear(year-1);
+$("next").onclick=()=>setYear(year+1);
+$("today").onclick=()=>setYear(NOW);
+$("revealAll").onclick=()=>{document.querySelectorAll(".tag").forEach((t,i)=>setTimeout(()=>t.classList.add("open"),i*90));};
+$("hideAll").onclick=()=>document.querySelectorAll(".tag").forEach(t=>t.classList.remove("open"));
+document.addEventListener("keydown",e=>{ if(e.target.closest("input,textarea"))return; if(e.key==="ArrowLeft")setYear(year-1); if(e.key==="ArrowRight")setYear(year+1); });
+
+setYear(NOW);
+
+/* Snow */
+(function(){
+  const c=$("snow"), x=c.getContext("2d"); let W,H,flakes=[];
+  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function size(){ const r=c.getBoundingClientRect(), d=devicePixelRatio||1; W=r.width; H=r.height; c.width=W*d; c.height=H*d; x.setTransform(d,0,0,d,0,0);
+    flakes=Array.from({length:Math.round(W/9)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.6,s:Math.random()*.5+.2,w:Math.random()*6}));}
+  function paint(){ x.clearRect(0,0,W,H); x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--snow");
+    flakes.forEach(f=>{x.beginPath(); x.arc(f.x,f.y,f.r,0,Math.PI*2); x.fill();}); }
+  function tick(t){ flakes.forEach(f=>{f.y+=f.s; f.x+=Math.sin(t/1400+f.w)*.25; if(f.y>H+3){f.y=-3; f.x=Math.random()*W;}}); paint(); requestAnimationFrame(tick); }
+  size(); addEventListener("resize",size);
+  if(still) paint(); else requestAnimationFrame(tick);
+})();
+</script>
+
+</body>
+</html>
