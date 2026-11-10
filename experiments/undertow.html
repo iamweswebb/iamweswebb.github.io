@@ -31,8 +31,17 @@ button:focus-visible,input:focus-visible,[role=slider]:focus-visible{outline:2px
 /* ---------- the slab ---------- */
 .slab{background:linear-gradient(180deg,var(--m0),var(--m2));border-radius:6px;box-shadow:inset 0 1px 0 var(--hi),0 30px 60px rgba(0,0,0,.6),0 0 0 1px #0a0a0b;position:relative;z-index:2}
 .face{padding:16px 22px 18px;display:flex;flex-direction:column;gap:16px}
-.brand{display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:3px}
+.brand{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:9px;letter-spacing:3px}
 .brand b{font-weight:500;color:var(--leg-hi)}
+/* input-selector style station buttons */
+.tuner{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tuner .bpm{margin-right:8px}
+.st{height:24px;padding:0 10px;border-radius:3px;display:inline-flex;align-items:center;gap:7px;font-size:9px;letter-spacing:2px;color:var(--leg-hi);
+  background:linear-gradient(180deg,#3b3c40,#2b2c2f);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 1px 0 #121314,0 0 0 1px #151617}
+.st .led{width:5px;height:5px;border-radius:3px;background:#1d2a27}
+.st[aria-checked=true]{color:var(--v);text-shadow:0 0 6px var(--v-glow)}
+.st[aria-checked=true] .led{background:var(--v);box-shadow:0 0 6px var(--v)}
+.vf.na{opacity:.28;pointer-events:none}
 
 /* ---------- VFD ---------- */
 .vfd{background:var(--glass);border-radius:3px;box-shadow:inset 0 2px 12px rgba(0,0,0,.95),0 0 0 1px #090b0b,0 1px 0 var(--hi);padding:14px 18px 12px;color:var(--v);font-family:var(--vfd);position:relative;overflow:hidden}
@@ -72,7 +81,7 @@ button:focus-visible,input:focus-visible,[role=slider]:focus-visible{outline:2px
 
 /* ---------- keys ---------- */
 .keys{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.key{height:42px;min-width:52px;padding:0 14px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;gap:9px;flex:none;
+.key{height:42px;min-width:48px;padding:0 11px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;gap:9px;flex:none;
   background:linear-gradient(180deg,#3b3c40,#2b2c2f);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 2px 0 #121314,0 0 0 1px #151617;color:var(--leg-hi);font-size:10px;letter-spacing:2px}
 .key svg{width:15px;height:15px}
 .key:active{transform:translateY(1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 0 #121314,0 0 0 1px #151617}
@@ -86,7 +95,7 @@ button:focus-visible,input:focus-visible,[role=slider]:focus-visible{outline:2px
 #like.liked svg{filter:drop-shadow(0 0 4px var(--v))}
 #nope.noped{color:var(--amber)}
 #nope.noped svg{filter:drop-shadow(0 0 4px var(--amber))}
-.play{min-width:84px}
+.play{min-width:76px}
 .sep{width:1px;height:28px;background:#3d3e42;box-shadow:1px 0 0 #1a1b1d;margin:0 4px}
 .vol{display:flex;align-items:center;gap:10px;margin-left:auto;flex:1 1 110px;max-width:190px;min-width:100px;font-size:9px;letter-spacing:2px}
 input[type=range]{-webkit-appearance:none;appearance:none;height:24px;background:transparent;margin:0;width:100%}
@@ -164,6 +173,26 @@ input[type=range]::-moz-range-thumb{width:14px;height:22px;border:0;border-radiu
   .sep{display:none}
   .vl{letter-spacing:.3px;font-size:10px}
 }
+
+/* soft phosphor glow on everything lit, a step under the timecode */
+:root{--g1:0 0 4px rgba(124,245,216,.32);--g2:0 0 6px rgba(124,245,216,.42)}
+.marquee,#cBar,#cType,.vl,.info,.screenbox .info,.code,.vf .mute,.vf .fxb,.label{text-shadow:var(--g1)}
+.label{text-shadow:none}
+#cSec{text-shadow:var(--g2)}
+.info b,.vv{text-shadow:var(--g2)}
+#cType.rec{text-shadow:0 0 6px rgba(255,179,92,.55)}
+.vf .mute.off{text-shadow:0 0 5px rgba(255,179,92,.5)}
+#spec{filter:drop-shadow(0 0 3px rgba(124,245,216,.45))}
+.pos .track i{box-shadow:inset 0 0 0 1px var(--v-dim),0 0 4px rgba(124,245,216,.12)}
+.pos .track i b{box-shadow:0 0 7px var(--v-glow)}
+.vt i.on{box-shadow:0 0 6px rgba(124,245,216,.42)}
+.vt i.drift{box-shadow:0 0 5px rgba(124,245,216,.28)}
+.vf .mute,.vf .fxb{box-shadow:inset 0 0 0 1px var(--v-mid),0 0 5px rgba(124,245,216,.15)}
+.vf .fxb:not(.on){box-shadow:inset 0 0 0 1px rgba(124,245,216,.25)}
+.vf .fxb.on{box-shadow:0 0 9px var(--v-glow)}
+.pill.on{text-shadow:var(--g2)}
+.pill .led,.key .led{transition:box-shadow .2s}
+.tabs button[aria-selected=true]{text-shadow:var(--g2)}
 </style>
 
 </head>
@@ -171,7 +200,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:22px;border:0;border-radiu
 <div class="wrap">
   <section class="slab">
     <div class="face">
-      <div class="brand"><b>UNDERTOW</b><span>174 BPM</span></div>
+      <div class="brand"><b>UNDERTOW</b>
+        <div class="tuner" role="radiogroup" aria-label="Station">
+          <span class="bpm" id="stBpm">174 BPM</span>
+          <button class="st" role="radio" data-st="liquid" aria-checked="true"><span class="led"></span>LIQUID</button>
+          <button class="st" role="radio" data-st="light" aria-checked="false"><span class="led"></span>LIGHT</button>
+          <button class="st" role="radio" data-st="dub" aria-checked="false"><span class="led"></span>DUB</button>
+        </div></div>
       <div class="vfd">
         <div class="row1">
           <div class="time"><span class="state stopped" id="state"></span><span id="clock" aria-label="Set time"></span></div>
@@ -259,7 +294,8 @@ const CRATE={"pads":{"Waitlist":{"q":"min","c":485,"a":2.58,"d":"SUQzBAAAAAAAI1R
 <script>
 'use strict';
 // ================= Undertow engine (no DOM) =================
-const BPM=174, STEP=60/BPM/4, BAR=STEP*16;
+let BPM=174, STEP=60/BPM/4, BAR=STEP*16;
+function setTempo(b){BPM=b;STEP=60/b/4;BAR=STEP*16;if(FX.dL){FX.dL.delayTime.value=STEP*3;FX.dR.delayTime.value=STEP*3}}
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
 const mtof=m=>440*Math.pow(2,(m-69)/12);
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -283,7 +319,11 @@ const PROGS={
     {n:'i VI',p:[[0,'m'],[8,'M']]},
     {n:'i iv',p:[[0,'m'],[5,'m']]},
     {n:'i VII',p:[[0,'m'],[10,'M']]},
-    {n:'i III v i VI V',p:[[0,'m',2],[3,'M',2],[7,'m',2],[0,'m',2],[8,'M',4],[7,'D',4]]}
+    {n:'i III v i VI V',p:[[0,'m',2],[3,'M',2],[7,'m',2],[0,'m',2],[8,'M',4],[7,'D',4]]},
+    {n:'i ♭II',p:[[0,'m'],[1,'M']]},
+    {n:'i v',p:[[0,'m'],[7,'m']]},
+    {n:'i iv ♭II i',p:[[0,'m'],[5,'m'],[1,'M'],[0,'m']]},
+    {n:'i ♭II ♭VII i',p:[[0,'m'],[1,'M'],[10,'M'],[0,'m']]}
   ],
   major:[
     {n:'ii V I vi',p:[[2,'m'],[7,'D'],[0,'M'],[9,'m']],jazz:1},
@@ -347,6 +387,86 @@ const SEC={
   mini:{kick:0,snare:0,hats:.55,perc:.4,ride:.7,bass:0,keys:1,pad:.85,lead:.9,atmos:.5,lp:.6}
 };
 
+// ---------- stations ----------
+// Each station is the same engine with its own tempo, track types, part levels and rules. Liquid is the original.
+const AMB={
+  glow:{label:'glow',progs:['I IV','IV I','I vi','vi IV','I iii IV iv','IV V iii vi','i VI','i VII'],
+    keys:[['sustain',1]],bass:[['long',1]],lead:[['top',1]],hats:['8'],kicks:['std'],tamb:['none'],swing:[0,.02],drone:.5,kickBuild:0,trip:0,
+    plans:[[['intro',8],['break',16],['drop',16],['mini',8],['break',8],['drop',16],['outro',8]],
+           [['intro',8],['mini',8],['drop',24],['break',16],['drop',16],['outro',8]]]},
+  haze:{label:'haze',progs:['i VI','i iv','i VII','i IV (dorian)','VI VII i i','i VI III VII','vi IV','IV I'],
+    keys:[['sustain',1]],bass:[['long',1]],lead:[['top',1]],hats:['8'],kicks:['std'],tamb:['none'],swing:[0,.02],drone:.9,kickBuild:0,trip:0,
+    plans:[[['intro',8],['break',24],['drop',16],['break',16],['drop',16],['outro',8]],
+           [['intro',16],['drop',16],['mini',8],['drop',16],['break',16],['outro',8]]]},
+  hymn:{label:'hymn',progs:['I vi IV V','vi IV I V','i iv VI V','IV V iii vi','i VI iv v','I iii IV iv'],
+    keys:[['sustain',1]],bass:[['long',1]],lead:[['top',1]],hats:['8'],kicks:['std'],tamb:['none'],swing:[0,.02],drone:.3,kickBuild:0,trip:0,
+    plans:[[['intro',8],['break',16],['drop',16],['break',8],['drop',24],['outro',8]],
+           [['intro',8],['drop',16],['break',16],['mini',8],['drop',16],['outro',8]]]}
+};
+const SEC_LIGHT={
+  intro:{kick:0,snare:0,hats:0,perc:0,ride:0,bass:0,keys:.55,pad:.9,lead:.35,atmos:0,lp:.5},
+  break:{kick:0,snare:0,hats:0,perc:0,ride:0,bass:.3,keys:1,pad:1,lead:.75,atmos:0,lp:.5},
+  mini:{kick:0,snare:0,hats:0,perc:0,ride:0,bass:0,keys:1,pad:.8,lead:.9,atmos:0,lp:.5},
+  drop:{kick:0,snare:0,hats:0,perc:0,ride:0,bass:.55,keys:1,pad:1,lead:.8,atmos:0,lp:.5},
+  build:{kick:0,snare:0,hats:0,perc:0,ride:0,bass:.4,keys:1,pad:.9,lead:.6,atmos:0,lp:.5},
+  outro:{kick:0,snare:0,hats:0,perc:0,ride:0,bass:.2,keys:.5,pad:.85,lead:.3,atmos:0,lp:.5}
+};
+const DUBA={
+  riddim:{label:'riddim',progs:['i ♭II','i VII','i iv','i VI','i v','i ♭II ♭VII i'],
+    keys:[['skank',1]],bass:[['dub',1]],lead:[['top',1]],hats:['8'],kicks:['std'],tamb:['none'],swing:[.02,.05],drone:.7,kickBuild:0,trip:0,
+    plans:[[['intro',8],['drop',16],['mini',8],['drop',16],['break',8],['drop',16],['outro',8]],
+           [['intro',8],['drop',24],['break',16],['drop',16],['mini',8],['outro',8]]]},
+  signal:{label:'signal',progs:['i ♭II','i iv ♭II i','i VI','i iv','i ♭II ♭VII i'],
+    keys:[['skank',1]],bass:[['dub',1]],lead:[['top',1]],hats:['8'],kicks:['std'],tamb:['none'],swing:[.02,.05],drone:.9,kickBuild:0,trip:0,
+    plans:[[['intro',16],['mini',8],['drop',16],['break',16],['drop',16],['outro',8]],
+           [['intro',8],['drop',16],['mini',16],['drop',16],['break',8],['outro',8]]]},
+  void:{label:'void',progs:['i ♭II','i v','i VII','i iv'],
+    keys:[['skank',1]],bass:[['dub',1]],lead:[['top',1]],hats:['8'],kicks:['std'],tamb:['none'],swing:[.02,.05],drone:1,kickBuild:0,trip:0,
+    plans:[[['intro',8],['break',16],['drop',16],['mini',16],['drop',16],['outro',8]]]}
+};
+const SEC_DUB={
+  intro:{kick:0,snare:0,hats:.6,perc:.3,ride:0,bass:0,keys:.45,pad:.75,lead:.45,atmos:0,lp:.55},
+  drop:{kick:1,snare:1,hats:.9,perc:.6,ride:0,bass:1,keys:1,pad:.45,lead:.8,atmos:0,lp:1},
+  break:{kick:.8,snare:.8,hats:.5,perc:.4,ride:0,bass:.6,keys:.8,pad:.9,lead:1,atmos:0,lp:.7},
+  mini:{kick:1,snare:.9,hats:0,perc:.5,ride:0,bass:1,keys:.45,pad:.3,lead:1,atmos:0,lp:.85},
+  build:{kick:.6,snare:.6,hats:.8,perc:.5,ride:0,bass:.8,keys:.8,pad:.6,lead:.6,atmos:0,lp:.8},
+  outro:{kick:.8,snare:.7,hats:.7,perc:.3,ride:0,bass:.6,keys:.5,pad:.6,lead:.5,atmos:0,lp:.7}
+};
+// a dub bassline: one or two bars of chord-tone hits with rests, repeated like a riddim
+function dubRiff(r){
+  const out=[];for(let v=0;v<2;v++){
+    const slots=[0,3,4,6,8,10,11,12,14].filter((x,i)=>x===0||r()<.5),hits=slots.slice(0,6),deg=['r','r','5','8','3','r','5','lo'];
+    out.push(hits.map((s,i)=>({s,d:i===0?'r':deg[Math.floor(r()*deg.length)],l:Math.max(1.2,((hits[i+1]!=null?hits[i+1]:16)-s)-.6)})))}
+  return out;
+}
+const STATIONS={
+  liquid:{id:'liquid',name:'LIQUID',freq:'87.4',bpm:174,drums:1,archs:null,sec:null,labels:{},vox:1,rhAtt:.03,rhLp:1300,keysPlan:[['out',.25],['cameo',.45],['full',.3]]},
+  light:{id:'light',name:'LIGHT',freq:'96.1',bpm:72,drums:0,archs:AMB,sec:SEC_LIGHT,labels:{drop:'bloom',break:'float',mini:'glide',build:'rise'},vox:.85,
+    keysPlan:[['out',.15],['cameo',.4],['full',.45]],
+    keysW:{brk:[['sustain',.45],['sparse',.35],['arp',.2]],main:[['arp',.4],['sustain',.3],['sparse',.3]]},
+    pads:[['lush',.3],['warm',.25],['glass',.2]],chordSlow:1.5,
+    rhAtt:.03,rhLp:1300,
+    inversions:{drop:.75,mini:.8,break:.45,intro:.2,outro:.2},
+    master:{wash:1,th:-46,knee:18,ratio:12,att:.012,rel:.5,make:.43,hi:.5,rev:1.05}}
+};
+STATIONS.dub={id:'dub',name:'DUB',freq:'101.9',bpm:70,drums:1,drumFn:'dub',drumMul:.2,tailHandoff:1,pingOct:-12,archs:DUBA,sec:SEC_DUB,fam:'minor',labels:{drop:'riddim',break:'version',mini:'dub',build:'rise'},vox:.7,
+  keysPlan:[['out',.1],['cameo',.3],['full',.6]],
+  keysW:{brk:[['skank',.4],['sparse',.4],['sustain',.2]],main:[['skank',.75],['sparse',.25]]},
+  pads:[['warm',.35],['lush',.3],['glass',.15]],chordSlow:1.3,rhAtt:.03,rhLp:1300,
+  keyOct:-12,padOct:-12,bassMul:1.35,keysMul:1.6,reese:.25,drone:1.8,keysDub:1,dubDly:3,throws:2,dubMoves:1,
+  inversions:{drop:.5,break:.5,mini:.4},
+  master:{wash:1,th:-38,knee:14,ratio:4.5,att:.03,rel:.45,make:.36,hi:-1,rev:.92}};
+let STATION=STATIONS.liquid;
+function setStation(id){STATION=STATIONS[id]||STATIONS.liquid;setTempo(STATION.bpm)}
+// per-station master: Light runs everything through a slow heavy compressor, a softer top and more reverb, so it sits washed out
+function applyStationFX(t){
+  if(!FX.wash)return;const m=STATION.master||{};const set=(p,v)=>{p.cancelScheduledValues(t);p.setTargetAtTime(v,t,.05)};
+  set(FX.dry.gain,m.wash?0:1);set(FX.washIn.gain,m.wash?1:0);set(FX.washOut.gain,m.wash?m.make:0);
+  if(m.wash){FX.wash.threshold.value=m.th;FX.wash.knee.value=m.knee;FX.wash.ratio.value=m.ratio;FX.wash.attack.value=m.att;FX.wash.release.value=m.rel}
+  set(FX.mHi.gain,m.hi!=null?m.hi:2.5);set(FX.rout.gain,m.rev!=null?m.rev:.78);
+}
+const SECT=t=>(STATION.sec||SEC)[t]||(STATION.sec||SEC).break;
+
 // ---------- state ----------
 const P={energy:.6,warmth:.55,harmony:.5,mood:.35,evolve:.45};
 const MACROS=[['energy','Energy'],['warmth','Warmth'],['harmony','Harmony'],['mood','Mood'],['evolve','Evolve']];
@@ -387,10 +507,10 @@ function recompute(tr){let s=0;for(const x of tr.secs){x.start=s;s+=x.len}tr.bar
 function cutTo(tr,B){const keep=[];for(const x of tr.secs){if(x.type==='outro')continue;if(x.start>=B)break;keep.push(x);if(x.start+x.len>B)x.len=B-x.start}keep.push({type:'outro',len:16});tr.secs=keep;recompute(tr)}
 
 function makeTrack(idx,prev){
-  const rng=mulberry32(hashStr(seed+':'+idx));
+  const rng=mulberry32(hashStr(seed+':'+idx+(STATION.id==='liquid'?'':':'+STATION.id)));
   const pick=a=>a[Math.floor(rng()*a.length)];
   const E=eff('energy'),H=eff('harmony'),M=eff('mood'),V=eff('evolve');
-  const fam=M<.4?'minor':M>.6?'major':(rng()<.5?'minor':'major');
+  const fam=STATION.fam||(M<.4?'minor':M>.6?'major':(rng()<.5?'minor':'major'));
   const mode=fam==='major'?'ionian':'aeolian';
   let root;
   if(!prev)root=Math.floor(rng()*12);
@@ -401,14 +521,15 @@ function makeTrack(idx,prev){
     root=mode==='ionian'?(minor+3)%12:minor;
   }
   // choose a track type; energy and mood lean it, and the set avoids playing the same type twice in a row
-  const archW=[['roller',.2+E*.45],['soulful',.25+(1-Math.abs(E-.5)*2)*.25],['deep',.12+(1-E)*.5],['uplift',.08+M*.45+E*.1]]
+  const AR=STATION.archs||ARCH;
+  const archW=(STATION.archs?Object.keys(AR).map(k=>[k,1]):[['roller',.2+E*.45],['soulful',.25+(1-Math.abs(E-.5)*2)*.25],['deep',.12+(1-E)*.5],['uplift',.08+M*.45+E*.1]])
     .map(([k,w])=>[k,prev&&prev.arch===k?w*.3:w]);
-  const arch=wpick(rng,archW.map(([k,w])=>[k,w*tw('arch',k)])),A=ARCH[arch];
+  const arch=wpick(rng,archW.map(([k,w])=>[k,w*tw('arch',k)])),A=AR[arch];
   let choices=PROGS[fam].filter(x=>A.progs.includes(x.n)&&(!x.jazz||H>.45));
   if(!choices.length)choices=PROGS[fam].filter(x=>!x.jazz||H>.45);
   let pg=wpick(rng,choices.map(c=>[c,tw('prog',c.n)]));
   if(prev&&pg.n===prev.progName&&choices.length>1)pg=choices[(choices.indexOf(pg)+1)%choices.length];
-  const slow={roller:1.2,soulful:.8,deep:1.6,uplift:1}[arch];
+  const slow={roller:1.2,soulful:.8,deep:1.6,uplift:1}[arch]||STATION.chordSlow||1;
   const RH2=[[[4,4],.35],[[8,8],.35*slow],[[6,2],.15],[[12,4],.15*slow]];
   const RH4=[[[2,2,2,2],.1/slow],[[4,4,4,4],.55*slow],[[6,2,6,2],.25]];
   const tr2=x=>x.map(([l,w])=>[l,w*tw('rh',l.join('-'))]);
@@ -426,11 +547,11 @@ function makeTrack(idx,prev){
     borrow:rng()<.5,
     name:pick(ADJ)+' '+pick(NOUN),
     keysStyle:wpick(rng,A.keys),
-    keysPlan:wpick(mulberry32(hashStr(seed+':'+idx+':kp')),[['out',.25],['cameo',.45],['full',.3]]),
+    keysPlan:wpick(mulberry32(hashStr(seed+':'+idx+':kp')),STATION.keysPlan),station:STATION.id,riff:dubRiff(mulberry32(hashStr(seed+':'+idx+':riff'))),dubDrum:wpick(mulberry32(hashStr(seed+':'+idx+':dd')),[['onedrop',.45],['rockers',.35],['steppers',.2]]),
     bassStyle:wpick(rng,A.bass),
     kickV:wpick(rng,[0,1,2].map(i=>[i,tw('kick',i)])),snareV:wpick(rng,[0,1,2].map(i=>[i,tw('snare',i)])),tambStyle:pick(A.tamb),
-    topLoop:rng()<({roller:.6,soulful:.5,deep:.3,uplift:.45}[arch]),
-    padSound:(()=>{const w={roller:[['lush',.35],['strings',.25],['glass',.2],['warm',.2]],soulful:[['warm',.4],['lush',.35],['strings',.25]],deep:[['lush',.4],['glass',.3],['warm',.3]],uplift:[['strings',.4],['lush',.3],['glass',.3]]}[arch];if(typeof CRATE!=='undefined')w.push(['bliss',.9]);let p=wpick(rng,w);if(prev&&p===prev.padSound)p=wpick(rng,w.filter(x=>x[0]!==p));return p})(),padPhase:rng()*6.28,padBright:rng(),
+    topLoop:rng()<({roller:.6,soulful:.5,deep:.3,uplift:.45}[arch]||0),
+    padSound:(()=>{const w={roller:[['lush',.35],['strings',.25],['glass',.2],['warm',.2]],soulful:[['warm',.4],['lush',.35],['strings',.25]],deep:[['lush',.4],['glass',.3],['warm',.3]],uplift:[['strings',.4],['lush',.3],['glass',.3]]}[arch]||STATION.pads.slice();if(typeof CRATE!=='undefined')w.push(['bliss',.9]);let p=wpick(rng,w);if(prev&&p===prev.padSound)p=wpick(rng,w.filter(x=>x[0]!==p));return p})(),padPhase:rng()*6.28,padBright:rng(),
     droneName:typeof CRATE!=='undefined'?Object.keys(CRATE.drones)[Math.floor(rng()*5)]:null,stabSource:rng()<.55?'piano':'synth',vocals:true,
     percA:typeof CRATE!=='undefined'?['clave','rim','stick','finger','snap'][Math.floor(rng()*5)]:null,percB:typeof CRATE!=='undefined'?['perc','tambo','shaker','stick'][Math.floor(rng()*4)]:null,percRhythm:euclid(3+Math.floor(rng()*3),16,1+Math.floor(rng()*4)),
     swing:A.swing[0]+rng()*(A.swing[1]-A.swing[0]),
@@ -446,12 +567,51 @@ function makeTrack(idx,prev){
     counterRhythm:euclid(pick([3,4,5]),16,Math.floor(rng()*4)),
     hook:pick(hooks).map(([s,k,l])=>({s,k,l})),
     vowel:rng(),
-    padPlan:pick({roller:[[1,0,1,1],[1,1,0,1],[0,1,1,0]],soulful:[[1,1,0,1],[1,1,1,0],[1,0,1,1]],deep:[[1,1,1,0],[1,1,0,1],[1,1,1,1]],uplift:[[1,1,0,1],[1,0,1,1],[1,1,1,1]]}[arch]),
+    padPlan:pick({roller:[[1,0,1,1],[1,1,0,1],[0,1,1,0]],soulful:[[1,1,0,1],[1,1,1,0],[1,0,1,1]],deep:[[1,1,1,0],[1,1,0,1],[1,1,1,1]],uplift:[[1,1,0,1],[1,0,1,1],[1,1,1,1]]}[arch]||[[1,1,1,1]]),
     secs:pick(A.plans).map(([type,len,f])=>Object.assign({type,len},f||{}))
   };
   tr.cycle=tr.prog.reduce((a,c)=>a+c.len,0);
   recompute(tr);
   return tr;
+}
+// same chord, another inversion: k>0 lifts the lowest note an octave k times, k<0 drops the top note.
+// Rejected (falls back to the original) if it would leave the range or create a half-step rub.
+function invert(ns,k){
+  if(!k||!ns||ns.length<2)return ns;
+  const pcs=[];for(const n of ns){const p=((n%12)+12)%12;if(!pcs.includes(p))pcs.push(p)}
+  const avg=ns.reduce((a,b)=>a+b,0)/ns.length,key=a=>a.join(','),orig=key(ns.slice().sort((x,y)=>x-y)),seen=new Set([orig]),cands=[];
+  for(let r=0;r<pcs.length;r++){
+    const rot=pcs.slice(r).concat(pcs.slice(0,r));let a=[rot[0]+48];
+    for(let i=1;i<rot.length;i++){let m=a[i-1]+((rot[i]-a[i-1])%12+12)%12;if(m===a[i-1])m+=12;a.push(m)}
+    for(let g=0;g<4;g++){let ok=true;a.sort((x,y)=>x-y);for(let i=1;i<a.length;i++)if(a[i]-a[i-1]===1){a[i]+=12;ok=false;break}if(ok)break}
+    a.sort((x,y)=>x-y);
+    // place it in the original's register
+    let best=null,bd=1e9;for(const o of [-24,-12,0,12,24]){const b=a.map(x=>x+o),m=b.reduce((p,q)=>p+q,0)/b.length;if(b[0]>=50&&b[b.length-1]<=81&&Math.abs(m-avg)<bd){bd=Math.abs(m-avg);best=b}}
+    // no half steps and no minor ninths anywhere in the voicing
+    const harsh=best&&best.some((x,i)=>best.some((y,j)=>j>i&&(Math.abs(y-x)===1||Math.abs(y-x)===13)));
+    if(best&&!harsh&&bd<=6&&!seen.has(key(best))){seen.add(key(best));cands.push([bd,best])}
+  }
+  if(!cands.length)return ns;
+  cands.sort((x,y)=>x[0]-y[0]);
+  return cands[(Math.abs(k)-1+(k<0?1:0))%cands.length][1];
+}
+// Dub keys: low but clear. Each chord is rebuilt in close position from its own bottom note (so inversions
+// still vary), with the lowest note between A2 and A3, at least a minor third between the bottom two notes,
+// nothing above E4, and no half steps or minor ninths anywhere.
+function lowVoice(ns){
+  if(!STATION.keyOct||!ns||!ns.length)return ns;
+  const srt=ns.slice().sort((a,b)=>a-b),pcs=[];for(const n of srt){const p=((n%12)+12)%12;if(!pcs.includes(p))pcs.push(p)}
+  let n=pcs[0];while(n<45)n+=12;while(n>=57)n-=12;const a=[n];
+  for(let i=1;i<pcs.length;i++){let m=a[i-1]+((pcs[i]-a[i-1])%12+12)%12;if(m===a[i-1])m+=12;a.push(m)}
+  for(let g=0;g<6;g++){a.sort((x,y)=>x-y);let ok=true;
+    if(a.length>1&&a[1]-a[0]<3){a[1]+=12;ok=false}
+    else for(let i=1;i<a.length;i++)if(a[i]-a[i-1]===1){a[i]+=12;ok=false;break}
+    if(ok)break}
+  a.sort((x,y)=>x-y);
+  let out=a.filter(x=>x<=64);
+  const harsh=b=>b.some((x,i)=>b.some((y,j)=>j>i&&(Math.abs(y-x)===1||Math.abs(y-x)===13)));
+  while(out.length>2&&harsh(out))out.pop();
+  return out.length?out:[a[0]];
 }
 function voice(tones,prev){
   const pcs=[];for(const x of tones){const p=((x%12)+12)%12;if(!pcs.includes(p))pcs.push(p)}
@@ -590,17 +750,21 @@ async function initAudio(given){
   const lim=ctx.createDynamicsCompressor();lim.threshold.value=-2.5;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=.002;lim.release.value=.08;
   FX.vol=ctx.createGain();FX.vol.gain.value=1;
   FX.an=ctx.createAnalyser();FX.an.fftSize=2048;FX.an.smoothingTimeConstant=.82;
-  FX.master.connect(mLo);mLo.connect(mSub);mSub.connect(mKick);mKick.connect(mBox);mBox.connect(mMid);mMid.connect(mHi);const mastered=masterBus(mHi);mastered.connect(glue);glue.connect(sat);sat.connect(lim);
+  FX.master.connect(mLo);mLo.connect(mSub);mSub.connect(mKick);mKick.connect(mBox);mBox.connect(mMid);mMid.connect(mHi);const mastered=masterBus(mHi);
+  // station wash: an optional slow, heavy compressor ahead of the glue (Light uses it, Liquid bypasses it)
+  FX.dry=ctx.createGain();FX.washIn=ctx.createGain();FX.washIn.gain.value=0;FX.washOut=ctx.createGain();FX.wash=ctx.createDynamicsCompressor();FX.mHi=mHi;
+  mastered.connect(FX.dry);FX.dry.connect(glue);mastered.connect(FX.washIn);FX.washIn.connect(FX.wash);FX.wash.connect(FX.washOut);FX.washOut.connect(glue);
+  glue.connect(sat);sat.connect(lim);
   const clip=ctx.createWaveShaper();clip.curve=tanhCurve(1.05);lim.connect(clip);clip.connect(FX.vol);FX.vol.connect(FX.an);FX.an.connect(ctx.destination);
   if(!offline&&typeof ctx.createMediaStreamDestination==='function'){FX.rec=ctx.createMediaStreamDestination();FX.an.connect(FX.rec)}
   FX.glue=glue;FX.lim=lim;FX.gain=FX.master;
   // reverb
   FX.rev=ctx.createGain();const conv=ctx.createConvolver();conv.buffer=makeIR(2.6);const rhp=ctx.createBiquadFilter();rhp.type='highpass';rhp.frequency.value=220;
-  const rout=ctx.createGain();rout.gain.value=.78;FX.rev.connect(conv);conv.connect(rhp);rhp.connect(rout);rout.connect(FX.master);
+  const rout=ctx.createGain();rout.gain.value=.78;FX.rout=rout;FX.rev.connect(conv);conv.connect(rhp);rhp.connect(rout);rout.connect(FX.master);
   // ping-pong delay, dotted eighth
   FX.dly=ctx.createGain();FX.dly.channelCount=1;FX.dly.channelCountMode='explicit';
   const dhp=ctx.createBiquadFilter();dhp.type='highpass';dhp.frequency.value=300;
-  const dL=ctx.createDelay(2),dR=ctx.createDelay(2);dL.delayTime.value=STEP*3;dR.delayTime.value=STEP*3;
+  const dL=ctx.createDelay(2),dR=ctx.createDelay(2);dL.delayTime.value=STEP*3;dR.delayTime.value=STEP*3;FX.dL=dL;FX.dR=dR;
   const fb=ctx.createGain();fb.gain.value=.38;const flp=ctx.createBiquadFilter();flp.type='lowpass';flp.frequency.value=2800;
   const mg=ctx.createChannelMerger(2),dout=ctx.createGain();dout.gain.value=.7;
   FX.dly.connect(dhp);dhp.connect(dL);dL.connect(dR);dR.connect(flp);flp.connect(fb);fb.connect(dL);
@@ -735,9 +899,12 @@ function rhodes(d,m,t,dur,v){
     let best=FX.rhRoots[0];for(const r of FX.rhRoots)if(Math.abs(r-m)<Math.abs(best-m))best=r;
     const smp=FX.rh[best+'_'+(v>.58?4:2)],s=ctx.createBufferSource(),g=ctx.createGain();
     s.buffer=smp.buf;s.playbackRate.value=Math.pow(2,(m-best)/12);s.detune.value=smp.c;
-    const pk=v*RH_GAIN;g.gain.setValueAtTime(pk,t);g.gain.setTargetAtTime(0,t+dur,.28);
-    s.connect(g);g.connect(d.keys);s.start(Math.max(0,t-smp.o/s.playbackRate.value));s.stop(t+dur+1.6);
-    s.onended=()=>{try{s.disconnect();g.disconnect()}catch(e){}};
+    // rounded strike: fade in across the hammer click, and a filter that starts dark and opens just after it
+    const pk=v*RH_GAIN,ss=Math.max(0,t-smp.o/s.playbackRate.value),A=STATION.rhAtt||.008,LP=STATION.rhLp||3200;
+    g.gain.setValueAtTime(0,ss);g.gain.linearRampToValueAtTime(pk,t+A);g.gain.setTargetAtTime(0,t+dur,.28);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.Q.value=.5;lp.frequency.setValueAtTime(LP,ss);lp.frequency.exponentialRampToValueAtTime(16000,t+A*2.5+.05);
+    s.connect(lp);lp.connect(g);g.connect(d.keys);s.start(ss);s.stop(t+dur+1.6);
+    s.onended=()=>{try{s.disconnect();lp.disconnect();g.disconnect()}catch(e){}};
     return;
   }
   const f=mtof(m),car=ctx.createOscillator(),mod=ctx.createOscillator(),mi=ctx.createGain();
@@ -816,7 +983,7 @@ function blissPad(d,ch,t,dur,bloom){
     tr.padAnchor=opts.map((o,i)=>[o,np(o[0])*10+Math.abs(i-want)]).sort((a,b)=>a[1]-b[1])[0][0];tr.padName=tr.padAnchor[0]}
   const p=tr.padAnchor[1];
   const shift=ch.q==='m'?0:(ch.q==='M'||ch.q==='M69')?-3:ch.q==='D'?7:3;
-  const rate=Math.pow(2,NEAR(tr.root+ch.r+shift)/12),bufLen=p.buf.duration,off=Math.min(p.a*.45,1.4);
+  const rate=Math.pow(2,(NEAR(tr.root+ch.r+shift)+(STATION.padOct||0))/12),bufLen=p.buf.duration,off=Math.min(p.a*.45,1.4);
   const out=ctx.createGain();out.gain.value=BLISS_GAIN;out.connect(d.pad);
   const voice=(st,fadeIn,until)=>{
     const s=ctx.createBufferSource(),g=ctx.createGain();s.buffer=p.buf;s.playbackRate.value=rate;
@@ -831,6 +998,7 @@ function blissPad(d,ch,t,dur,bloom){
 // Pads: five characters, picked per track. Each chord can also move one inner voice to a neighbour note and back.
 const PAD_GAIN={lush:1,choir:1.12,strings:1.16,glass:.89,warm:.75};
 function padChord(d,notes,t,dur,bloom,pcs){
+  if(STATION.padOct)notes=notes.map(n=>n+STATION.padOct);
   const kind=d.tr.padSound||'lush',W=eff('warmth');
   const cut=(2400-W*1500)*(bloom?1.35:1)*({lush:1,choir:1.1,strings:1.25,glass:1.4,warm:.6}[kind]);
   const f=ctx.createBiquadFilter();f.type='lowpass';f.Q.value=kind==='strings'?.9:.6;
@@ -880,7 +1048,7 @@ function padChord(d,notes,t,dur,bloom,pcs){
 // ---------- deck ----------
 class Deck{
   constructor(tr,start){
-    this.tr=tr;this.start=start;this.done=false;this.spawned=false;this.last=-1;this.voicing=null;this.chord=null;this.sec=SEC.intro;this.secType='intro';this.E=.5;this.ghostP=.4;
+    this.tr=tr;this.start=start;this.done=false;this.spawned=false;this.last=-1;this.voicing=null;this.chord=null;this.sec=SECT('intro');this.secType='intro';this.E=.5;this.ghostP=.4;
     this.rng=mulberry32(hashStr(seed+':'+tr.idx+':run'));
     const c=ctx,now=c.currentTime;
     const G=(v,dest)=>{const g=c.createGain();g.gain.value=v;if(dest)g.connect(dest);return g};
@@ -938,8 +1106,10 @@ class Deck{
     this.applyFX(now);
     // dub echo: dotted-quarter ping-pong, band-limited in the loop so repeats get darker and thinner
     this.dubIn=G(0);lsum.connect(this.dubIn);
+    // dub: the keys also feed the echo, so a skank can be thrown
+    if(STATION.keysDub)this.keysPan.connect(G(STATION.keysDub,this.dubIn));
     {const hp=BQ('highpass',380,.6),dl=c.createDelay(2),dr=c.createDelay(2),fb=G(.58),lp=BQ('lowpass',2400,.6),lp2=BQ('highpass',300,.6),pl=c.createStereoPanner(),pr=c.createStereoPanner(),out=G(.75);
-     dl.delayTime.value=STEP*6;dr.delayTime.value=STEP*6;pl.pan.value=-.12;pr.pan.value=.12;
+     dl.delayTime.value=STEP*(STATION.dubDly||6);dr.delayTime.value=STEP*(STATION.dubDly||6);pl.pan.value=-.12;pr.pan.value=.12;
      this.dubFb=fb;this.dubLp=lp;
      this.dubIn.connect(hp);hp.connect(dl);dl.connect(dr);dr.connect(lp);lp.connect(lp2);lp2.connect(fb);fb.connect(dl);
      dl.connect(pl);dr.connect(pr);pl.connect(out);pr.connect(out);out.connect(this.duck);out.connect(G(.35,this.revBus));out.connect(G(.25,this.cloudBus))}
@@ -964,22 +1134,22 @@ class Deck{
   applyLevels(t){
     const S=this.sec,E=this.E=eff('energy'),L=LAYERS;
     const set=(n,v)=>n.gain.setTargetAtTime(v,t,.35);
-    set(this.drums,1.6*L.drums);set(this.fxHit,2.4*L.drums);
+    set(this.drums,1.6*L.drums*(STATION.drumMul||1));set(this.fxHit,2.4*L.drums*(STATION.drumMul||1));
     const mu=this.music===false?0:1;
-    set(this.bass,1.75*S.bass*(.75+.35*E)*L.bass*mu);
-    set(this.keys,11*S.keys*L.keys*mu);
+    set(this.bass,1.75*S.bass*(.75+.35*E)*L.bass*mu*(STATION.bassMul||1));
+    set(this.keys,11*S.keys*L.keys*mu*(STATION.keysMul||1));
     set(this.pad,5.8*S.pad*(1.1-.3*E)*L.pad*mu*(this.padOn===false?0:1));
     set(this.lead,7*S.lead*(.55+.5*E)*L.lead*LEAD_GAIN[this.tr.leadPatch]*mu);
-    set(this.vox,VOX_LVL*({break:1,mini:.95,drop:.72,build:.8,intro:.6,outro:.5}[this.secType]||0)*L.vox*mu);
+    set(this.vox,VOX_LVL*STATION.vox*({break:1,mini:.95,drop:.72,build:.8,intro:.6,outro:.5}[this.secType]||0)*L.vox*mu);
     set(this.atmos,0);
-    set(this.droneG,(this.tr.drone?({intro:.11,break:.12,mini:.1,build:.07,drop:.05,outro:.08}[this.secType]||0):0)*L.pad*mu);
-    this.rG.gain.setTargetAtTime(this.secType==='break'?0:(this.secType==='drop'?.1+E*.25:.06),t,.4);
+    set(this.droneG,(STATION.drone||1)*(this.tr.drone?({intro:.11,break:.12,mini:.1,build:.07,drop:.05,outro:.08}[this.secType]||0):0)*L.pad*mu);
+    this.rG.gain.setTargetAtTime((this.secType==='break'?0:(this.secType==='drop'?.1+E*.25:.06))*(STATION.reese!=null?STATION.reese:1),t,.4);
     this.rLP.frequency.setTargetAtTime(150+E*230,t,.4);
     this.ghostP=clamp(this.tr.ghost*(.45+.8*E));
   }
   onBar(bar,t){
     const tr=this.tr,sec=secAt(tr,bar);
-    this.secType=sec.type;this.sec=SEC[sec.type];this.curBar=bar;
+    this.secType=sec.type;this.sec=SECT(sec.type);this.curBar=bar;
     const sb0=bar-sec.start;
     // space: pads sit out some 8-bar blocks of the drops, keys carry the harmony, then the pads bloom back in
     const padWas=this.padOn!==false;
@@ -992,10 +1162,20 @@ class Deck{
       const on={out:0,cameo:{break:.65,mini:.55,drop:.3,build:.15,intro:.1}[ty]||0,full:ty==='intro'?.5:ty==='outro'?.4:.92}[tr.keysPlan];
       this.keysOn=kr()<on;
       const brk=ty==='break'||ty==='mini';
-      this.kStyle=wpick(kr,brk?[['sustain',.5],['sparse',.3],['arp',.2]]:[['stab',.4],['arp',.2],['sustain',.15],['sparse',.25]]);
+      const KW=STATION.keysW;this.kStyle=wpick(kr,brk?(KW?KW.brk:[['sustain',.5],['sparse',.3],['arp',.2]]):(KW?KW.main:[['stab',.4],['arp',.2],['sustain',.15],['sparse',.25]]));
       const pool=[[0,6,10],[0,3,10],[0,10],[0,6,12],[2,6,10,14],[0,10,14],[3,6,11],[0,7],[6,14],[0,3,6,10,13],[4,12],[0,11],[0,6],[3,11],[0,4,10]];
-      this.kRh=[pool[Math.floor(kr()*pool.length)],pool[Math.floor(kr()*pool.length)]];this.kArpSkip=kr()<.4}
+      this.kRh=[pool[Math.floor(kr()*pool.length)],pool[Math.floor(kr()*pool.length)]];this.kArpSkip=kr()<.4;
+      // inversions on re-strikes: Light leans on them in its fuller parts
+      this.kInv=kr()<((STATION.inversions||{})[ty]||0)}
     this.applyLevels(t);
+    if(STATION.dubMoves&&this.music!==false&&decks.length===1){const dr=mulberry32(hashStr(seed+':'+tr.idx+':mv'+bar)),ty=sec.type;
+      // drop the bass at a phrase end now and then
+      if((ty==='drop'||ty==='mini')&&sb0%8===7&&dr()<.4)this.bassOut=bar;
+      // high-pass sweep: the whole tune thins out over a bar and a half, then drops back in full
+      if((ty==='drop'||ty==='break')&&sb0%8===4&&dr()<.22){const f=this.hp.frequency;f.cancelScheduledValues(t);f.setValueAtTime(20,t);f.exponentialRampToValueAtTime(340,t+BAR*1.5);f.setValueAtTime(340,t+BAR*1.95);f.exponentialRampToValueAtTime(20,t+BAR*2)}
+      // a rimshot or clave fired into the echo, as an effect rather than a beat
+      if(FX.crate&&FX.crate.perc&&ty!=='intro'&&ty!=='outro'&&dr()<.16){const pk=['rim','clave','stick','snap'][Math.floor(dr()*4)],sm=FX.crate.perc[pk];
+        if(sm){const st2=[6,12,14][Math.floor(dr()*3)];hit(this,sm,t+st2*STEP,.22,{dest:this.lead});this.throwDub(t+st2*STEP)}}}
     const W=eff('warmth'),S=this.sec;
     // pads breathe: a 32-bar swell of the tone, brighter and wider in breakdowns, tucked in for drops
     {const sw=.5+.5*Math.sin(6.2832*bar/32+tr.padPhase),sec_={break:1.5,mini:1.3,intro:1.15,build:1,drop:.82,outro:1}[sec.type]||1;
@@ -1013,11 +1193,11 @@ class Deck{
     }
     this.secObj=sec;this.secBar=bar-sec.start;
     // build: the last 4 bars sweep the drums open and rise into the drop
-    if(sec.type==='build'&&tr.kickBuild&&this.secBar===sec.len-4)this.riser(t);
+    if(STATION.id==='liquid'&&sec.type==='build'&&tr.kickBuild&&this.secBar===sec.len-4)this.riser(t);
     const K=FX.kit;
     const ahead=secAt(tr,bar+2);
-    if(ahead.type==='drop'&&ahead.start===bar+2&&!(sec.type==='build'&&tr.kickBuild))hit(this,K.swell,t+2*BAR-K.swell[0].buf.duration,.35,{dest:this.fxHit,rev:.3});
-    if(sec.type==='drop'&&sec.start===bar)hit(this,K.crash,t,.3,{dest:this.fxHit,rev:.25,pan:-.15});
+    if(STATION.id==='liquid'&&ahead.type==='drop'&&ahead.start===bar+2&&!(sec.type==='build'&&tr.kickBuild))hit(this,K.swell,t+2*BAR-K.swell[0].buf.duration,.35,{dest:this.fxHit,rev:.3});
+    if(STATION.id==='liquid'&&sec.type==='drop'&&sec.start===bar)hit(this,K.crash,t,.3,{dest:this.fxHit,rev:.25,pan:-.15});
   }
   buildChord(ch){
     const tr=this.tr,H=eff('harmony'),lv0=chordLevel(H);
@@ -1065,7 +1245,24 @@ class Deck{
     this.last=ls;
     const bar=ls>>4,s=ls&15;
     if(s===0)this.onBar(bar,t);
-    this.drumStep(bar,s,t);this.bassStep(bar,s,t);this.keysStep(bar,s,t);this.leadStep(bar,s,t);
+    if(STATION.drums)(STATION.drumFn==='dub'?this.dubDrumStep(bar,s,t):this.drumStep(bar,s,t));this.bassStep(bar,s,t);this.keysStep(bar,s,t);this.leadStep(bar,s,t);
+  }
+  // dub drums at 70: one drop (kick and snare together on beat 3), rockers (kick on 1 and 3) or steppers (kick on every beat).
+  // The snare is pitched down and sent long; now and then it is thrown into the echo, Scientist style.
+  dubDrumStep(bar,s,t){
+    const S=this.sec,tr=this.tr,K=FX.kit,r=this.rng,sb=this.secBar||0,st=tr.dubDrum;
+    const tt=t+((s%2)?STEP*(tr.swing+.06):0),kick=K.kick[tr.kickV],sn=K.snare[tr.snareV];
+    const phraseEnd=sb%8===7;
+    if(S.kick){const ks=st==='steppers'?[0,4,8,12]:st==='rockers'?[0,8]:[8];
+      if(ks.includes(s)&&!(phraseEnd&&s===8&&r()<.3)){hit(this,kick,t,(s===8?1.1:.95)*S.kick);this.duckHit(t,.5*S.kick)}}
+    if(S.snare){
+      if(s===8){const thrown=phraseEnd&&r()<.5;hit(this,sn,t,.62*S.snare,{rate:.72,rev:thrown?.2:.42,dest:thrown?this.lead:undefined});if(thrown)this.throwDub(t)}
+      if(st==='rockers'&&(s===4||s===12)&&r()<.7)hit(this,K.rim,t,.2*S.snare,{rev:.25});
+      if(phraseEnd&&s===14&&r()<.35)hit(this,sn,t,.3*S.snare,{rate:.7,rev:.35});
+    }
+    if(S.hats&&s%2===0){const off=s%4===2;hit(this,K.hat[off?1:0],tt+(r()-.5)*.008,(off?.42:.28)*S.hats*(.85+r()*.3),{pan:(r()-.5)*.06});
+      if(s===14&&bar%2===1&&r()<.45)hit(this,K.ohat,tt,.2*S.hats)}
+    if(S.perc&&s%2===1&&r()<.25)hit(this,K.shakerUp,tt,.12*S.perc*(.7+r()*.5));
   }
   drumStep(bar,s,t){
     const S=this.sec,tr=this.tr,K=FX.kit,E=this.E,r=this.rng,sec=this.secObj||{},sb=this.secBar||0;
@@ -1131,6 +1328,12 @@ class Deck{
   bassStep(bar,s,t){
     if(!this.chord||!this.sec.bass)return;
     const tr=this.tr,b=this.chord.bass,style=this.secType==='break'?'long':tr.bassStyle,inDrop=this.secType==='drop';
+    // dub mixer move: the bass drops out for a bar, then slams back in
+    if(this.bassOut===bar){if(s===0)this.bAmp.gain.setTargetAtTime(0,t,.02);return}
+    if(style==='dub'){
+      const R=tr.riff[bar%2],h=R.find(x=>x.s===s);if(!h)return;const ch=this.chordCh||{q:'m'},f=this.chord.fifth;
+      const off={r:0,'5':f,'8':12,'3':(ch.q==='m'||ch.q==='hd')?3:4,lo:f-12}[h.d]||0;
+      this.bassNote(b+off,t,STEP*h.l);return}
     // turnaround: drop out for the last two beats of every 16-bar phrase
     if(inDrop&&bar%16===15&&s>=8){if(s===8)this.bAmp.gain.setTargetAtTime(0,t,.03);return}
     // a short run into the next chord at the end of every other 4-bar phrase
@@ -1147,21 +1350,27 @@ class Deck{
   buildNext(bar){const ca=this.chordAt(bar),pc=((this.tr.root+ca.ch.r)%12+12)%12;return 28+((pc-4+12)%12)}
   keysStep(bar,s,t){
     if(!this.chord||!this.sec.keys)return;
-    const tr=this.tr,ns=this.chord.notes,st=this.kStyle||'sustain',r=this.rng,sec=this.secObj||{};
+    const tr=this.tr,ns=this.chord.notes,st=this.kStyle||'sustain',r=this.rng,sec=this.secObj||{},KV=lowVoice;
     // keys sitting this part out: only cover the harmony when the pads are out too
-    if(this.keysOn===false){if(!this.padOn&&s===0&&bar===this.cStart)ns.forEach((n,i)=>rhodes(this,n,t+i*.015,(this.cLen||1)*BAR,.42));return}
+    if(this.keysOn===false){if(!this.padOn&&s===0&&bar===this.cStart)KV(ns).forEach((n,i)=>rhodes(this,n,t+i*.015,(this.cLen||1)*BAR,.42));return}
     if(sec.tease&&Math.floor((this.secBar||0)/2)%2===1)return;
-    if(this.secType==='drop'&&!this.padOn&&(this.secBar||0)%32>=24){if(s===0&&bar===this.cStart)ns.forEach((n,i)=>rhodes(this,n,t+i*.015,(this.cLen||1)*BAR,.5));return}
+    if(this.secType==='drop'&&!this.padOn&&(this.secBar||0)%32>=24){if(s===0&&bar===this.cStart)KV(ns).forEach((n,i)=>rhodes(this,n,t+i*.015,(this.cLen||1)*BAR,.5));return}
     const cStart=bar===this.cStart,cl=this.cLen||1;
     const inChord=bar-(this.cStart||0);
-    if(st==='sustain'){if(s===0&&inChord%2===0)ns.forEach((n,i)=>rhodes(this,n,t+i*.012,Math.min(2,cl-inChord)*BAR*.96,cStart?.62:.48))}
-    else if(st==='sparse'){if(s===0&&cStart)ns.forEach((n,i)=>rhodes(this,n,t+i*.02,cl*BAR*.95,.46))}
-    else if(st==='stab'){const rh=bar%2?this.kRh[1]:this.kRh[0];if(rh.includes(s)){const v=(s===0?.8:.6)*(.85+r()*.3);ns.forEach((n,i)=>rhodes(this,n,t+i*.006,STEP*(s===0?3.5:2.2),v))}}
+    // re-strikes of a held chord (and later passes through the progression) take a different inversion
+    let vn=ns;if(this.kInv){const j=Math.floor(inChord/2),pass=Math.floor(bar/(tr.cycle||4)),K=[0,1,-1,1,2,-1];vn=invert(ns,K[(j+pass)%K.length])}
+    if(st==='sustain'){if(s===0&&inChord%2===0)KV(vn).forEach((n,i)=>rhodes(this,n,t+i*.012,Math.min(2,cl-inChord)*BAR*.96,cStart?.62:.48))}
+    else if(st==='skank'){
+      // offbeat chops on 2 and 4, some thrown into the echo
+      if(s===4||s===12||(s===14&&bar%4===3&&r()<.5)){KV(vn).forEach((n,i)=>rhodes(this,n,t+i*.004,STEP*1.5,.56*(.9+r()*.2)));if(r()<.22)this.throwDub(t)}}
+    else if(st==='sparse'){if(s===0&&cStart)KV(vn).forEach((n,i)=>rhodes(this,n,t+i*.02,cl*BAR*.95,.46));
+      else if(s===0&&this.kInv&&cl>=4&&inChord===Math.floor(cl/2))KV(invert(ns,inChord%4?-1:1)).forEach((n,i)=>rhodes(this,n,t+i*.03,(cl-inChord)*BAR*.95,.38))}
+    else if(st==='stab'){const rh=bar%2?this.kRh[1]:this.kRh[0];if(rh.includes(s)){const v=(s===0?.8:.6)*(.85+r()*.3);KV(ns).forEach((n,i)=>rhodes(this,n,t+i*.006,STEP*(s===0?3.5:2.2),v))}}
     else if(s%2===0){
       if(this.kArpSkip&&bar%4===3)return;
-      const seq=ns.concat(ns.slice(1,-1).reverse());const i=(bar*8+s/2)%seq.length;
+      const vv=KV(vn),seq=vv.concat(vv.slice(1,-1).reverse());const i=(bar*8+s/2)%seq.length;
       rhodes(this,seq[i],t,STEP*3,.5+(s%8===0?.15:0));
-      if(s===0&&(bar-(this.cStart||0))%2===0)rhodes(this,ns[0]-12,t,2*BAR*.9,.45);
+      if(s===0&&(bar-(this.cStart||0))%2===0)rhodes(this,KV(ns)[0]-(STATION.keyOct?0:12),t,2*BAR*.9,.45);
     }
   }
   // The lead only ever uses the chord's own triad (root, third, fifth), kept in one octave
@@ -1191,7 +1400,7 @@ class Deck{
     {const sec=this.secObj||{},sb=this.secBar||0,since=this.lastBig==null?99:bar-this.lastBig;
      if(since>=24&&s===10&&this.secType!=='intro'&&this.secType!=='outro'){
        const lastBar=sec.len&&sb===sec.len-1,odds=lastBar?.45:(sb%16===15?.12:0);
-       if(odds&&this.rng()<odds*(.7+eff('evolve')*.6)){this.bigThrow(t);return}}}
+       if(odds&&this.rng()<Math.min(.9,odds*(.7+eff('evolve')*.6)*(STATION.throws||1))){this.bigThrow(t);return}}}
     if(this.lastAccent!=null&&bar-this.lastAccent<4)return;
     const base={break:.3,mini:.35,drop:.14,build:.1}[this.secType]||0;
     if(this.rng()>base*(.6+this.E*.6))return;
@@ -1211,7 +1420,7 @@ class Deck{
       }else ns.forEach((n,i)=>leadNote(this,n,t+i*gap,dur,v*(1-i*.08),tr.stabPatch));
     }else{
       const A=this.anchor;if(A==null)return;
-      leadNote(this,A,t,STEP*1.2,v,'glass');
+      leadNote(this,A+(STATION.pingOct||0),t,STEP*1.2,v,'glass');
     }
     this.throwDub(t);
   }
@@ -1220,7 +1429,7 @@ class Deck{
     const core=this.coreNotes(),r=this.rng,ch=this.chordCh,tr=this.tr;
     const near=(m)=>{let b=core[0];for(const n of core)if(Math.abs(n-m)<Math.abs(b-m))b=n;return b};
     const play=(v,when,midiTo,rev,gain)=>{const s=ctx.createBufferSource(),g=ctx.createGain(),hp=ctx.createBiquadFilter();
-      s.buffer=rev?v.rev:v.buf;s.playbackRate.value=Math.pow(2,(midiTo-(v.midi||0))/12);hp.type='highpass';hp.frequency.value=230;
+      s.buffer=rev?v.rev:v.buf;s.playbackRate.value=Math.pow(2,(midiTo-(v.midi||0)+(STATION.voxOct||0))/12);hp.type='highpass';hp.frequency.value=230;
       g.gain.value=VOCAL_GAIN*gain;s.connect(hp);hp.connect(g);g.connect(this.vox);
       s.start(rev?Math.max(0,when-v.buf.duration/s.playbackRate.value*.85):Math.max(0,when-v.o));s.onended=()=>{try{s.disconnect();hp.disconnect();g.disconnect()}catch(e){}}};
     const roll=r();
@@ -1228,7 +1437,7 @@ class Deck{
     if(roll<.22&&phrases.length&&tr.mode!=='ionian'&&ch&&ch.q==='m'&&ch.r===0){
       const opts=phrases.map(p=>[p,NEAR(tr.root-p.root)]).filter(([,sh])=>Math.abs(sh)<=4);
       if(opts.length){const [p,sh]=opts[Math.floor(r()*opts.length)];const s=ctx.createBufferSource(),g=ctx.createGain(),hp=ctx.createBiquadFilter();
-        s.buffer=p.buf;s.playbackRate.value=Math.pow(2,sh/12);hp.type='highpass';hp.frequency.value=230;g.gain.value=VOCAL_GAIN*.9;
+        s.buffer=p.buf;s.playbackRate.value=Math.pow(2,(sh+(STATION.voxOct||0))/12);hp.type='highpass';hp.frequency.value=230;g.gain.value=VOCAL_GAIN*.9;
         s.connect(hp);hp.connect(g);g.connect(this.vox);s.start(Math.max(0,t-p.o));s.onended=()=>{try{s.disconnect();hp.disconnect();g.disconnect()}catch(e){}};
         this.throwDub(t+p.buf.duration*.6);return}
     }
@@ -1318,7 +1527,9 @@ function spawn(prevTrack,gi,ready){
   if(prevTrack){
     tr.keyMove=keySteps(prevTrack,tr);
     const old=decks[decks.length-1];
-    if(tr.keyMove>=2&&!tr.dropSwap){d.bridgeIn=true;d.holdIn=8;if(old)old.cutOut=old.tr.outroStart}
+    // no drums to bridge with: keys hand off on the same bar and the reverb and echo tails carry across
+    if(!STATION.drums||STATION.tailHandoff){if(tr.keyMove>=1){d.holdIn=2;if(old)old.cutOut=old.tr.outroStart+2}}
+    else if(tr.keyMove>=2&&!tr.dropSwap){d.bridgeIn=true;d.holdIn=8;if(old)old.cutOut=old.tr.outroStart}
     else if(tr.keyMove===1){d.holdIn=4;if(old)old.cutOut=old.tr.outroStart+3}
   }
   decks.push(d);
@@ -1334,7 +1545,7 @@ function scheduleStep(gi,t){
   if(!cur||cur.spawned)return;
   const ls=gi-cur.start,os=cur.tr.outroStart;
   // 16 bars before the outro, decide what comes next; same-key tracks can drop-swap
-  if(!cur.pending&&os>=SWAP_MIN&&ls===(os-16)*16&&secAt(cur.tr,os-1).type==='drop'){
+  if(STATION.drums&&!cur.pending&&os>=SWAP_MIN&&ls===(os-16)*16&&secAt(cur.tr,os-1).type==='drop'){
     const nt=makeTrack(trackCount++,cur.tr);cur.pending=nt;
     if(keySteps(cur.tr,nt)===0&&cur.rng()<.5){
       const i=nt.secs.findIndex(x=>x.type==='drop');
@@ -1345,15 +1556,15 @@ function scheduleStep(gi,t){
   if(ls===os*16){
     cur.spawned=true;const nt=cur.pending||null;const nd=spawn(cur.tr,gi,nt);
     if(nd.bridgeIn){nd.tr.transition='drum bridge';transition(cur,nd,t)}
-    else{const m=['blend','bass swap','echo out'][Math.floor(cur.rng()*3)];nd.tr.transition=m;(m==='bass swap'?transitionSwapBass:m==='echo out'?transitionEcho:transition)(cur,nd,t)}
+    else{const opts=STATION.drums?['blend','bass swap','echo out']:['blend','echo out'],m=opts[Math.floor(cur.rng()*opts.length)];nd.tr.transition=m;(m==='bass swap'?transitionSwapBass:m==='echo out'?transitionEcho:transition)(cur,nd,t)}
     nd.step(0,t);
   }
 }
 function startSet(t0){
-  trackCount=0;setList=[];decks=[];stepIndex=0;nextStepTime=t0;
+  trackCount=0;setList=[];decks=[];stepIndex=0;nextStepTime=t0;applyStationFX(t0);
   // the first track opens a different way each set: classic drum intro, pads-only float, straight into a build, or joined mid-track
   const tr=makeTrack(trackCount++,null),orng=mulberry32(hashStr(seed+':open'));
-  const open=wpick(orng,[['classic',.3],['float',.25],['straight',.2],['midway',.25]]);
+  const open=wpick(orng,STATION.drums?[['classic',.3],['float',.25],['straight',.2],['midway',.25]]:[['classic',.5],['midway',.5]]);
   const drops=tr.secs.map((x,i)=>x.type==='drop'?i:-1).filter(i=>i>=0);
   let fade=4;
   if(open==='float')tr.secs=[{type:'break',len:16},{type:'build',len:8}].concat(tr.secs.slice(drops[0]));
@@ -1488,7 +1699,7 @@ function renderTaste(){
   const nn=Object.values(NOPE.arch).reduce((a,b)=>a+b,0),passed=nn?` ${nn} passed.`:'';
   if(!n){$('#tasteMsg').textContent=nn?`No liked tracks yet.${passed}`:'No liked tracks yet. Tap the heart on the player.';return}
   const top=(o)=>Object.entries(o).sort((a,b)=>b[1]-a[1])[0][0];
-  $('#tasteMsg').textContent=`${n} liked. Leaning toward ${ARCH[top(TASTE.arch)].label} tracks and ${top(TASTE.prog)}.${passed}`;
+  const ta=top(TASTE.arch);$('#tasteMsg').textContent=`${n} liked. Leaning toward ${(ARCH[ta]||AMB[ta]||{label:ta}).label} tracks and ${top(TASTE.prog)}.${passed}`;
 }
 
 // ---------- recording ----------
@@ -1514,16 +1725,39 @@ async function offerRecording(){
   catch(e){$('#recMsg').textContent=e&&e.code==='declined'?'Save cancelled. The recording was discarded.':'Could not save the recording here.'}
 }
 
+// ---------- stations ----------
+// switching while playing: everything fades under a second of radio static, then the new station starts
+function syncStation(){
+  document.querySelectorAll('.st').forEach(b=>b.setAttribute('aria-checked',b.dataset.st===STATION.id?'true':'false'));
+  $('#stBpm').textContent=STATION.bpm+' BPM';
+  const df=document.getElementById('f-l-drums');if(df)df.classList.toggle('na',!STATION.drums);
+}
+let tuning=false;
+function tuneTo(id,quiet){
+  if(id===STATION.id||tuning)return;save('undertow-station',id);
+  if(!started||!ctx){setStation(id);syncStation();if(!quiet){refreshCode();refreshPreview()}return}
+  tuning=true;const t=ctx.currentTime;
+  for(const d of decks)ramps(XF(d),g=>{g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(0,t+.9)});
+  const n=ctx.createBufferSource();n.buffer=FX.noise;n.loop=true;const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=2200;bp.Q.value=.6;
+  bp.frequency.setValueAtTime(1400,t);bp.frequency.exponentialRampToValueAtTime(3600,t+1.4);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.06,t+.25);g.gain.setValueAtTime(.06,t+.9);g.gain.linearRampToValueAtTime(0,t+1.6);
+  n.connect(bp);bp.connect(g);g.connect(FX.vol);n.start(t);n.stop(t+1.7);
+  flash('Tuning to '+STATIONS[id].freq+' '+STATIONS[id].name);
+  setTimeout(()=>{const c=ctx;if(!c){tuning=false;return}for(const d of decks)d.finish(c.currentTime);decks=[];
+    setStation(id);syncStation();startSet(c.currentTime+.05);sig='';refreshCode();tuning=false},950);
+}
+document.querySelectorAll('.st').forEach(b=>b.addEventListener('click',()=>tuneTo(b.dataset.st)));
+
 // ---------- set codes ----------
 const pp=v=>String(Math.round(v*99)).padStart(2,'0');
-function setCode(){return `${seed}-e${pp(P.energy)}w${pp(P.warmth)}h${pp(P.harmony)}m${pp(P.mood)}v${pp(P.evolve)}${SHAPE[0]}`}
+function setCode(){return `${seed}-e${pp(P.energy)}w${pp(P.warmth)}h${pp(P.harmony)}m${pp(P.mood)}v${pp(P.evolve)}${SHAPE[0]}${STATION.id==='liquid'?'':'-'+STATION.id}`}
 function parseCode(s){
-  const m=/^([a-z]+-\d{4})(?:-e(\d\d)w(\d\d)h(\d\d)m(\d\d)v(\d\d)([fbw])?)?$/.exec((s||'').trim().toLowerCase());
+  const m=/^([a-z]+-\d{4})(?:-e(\d\d)w(\d\d)h(\d\d)m(\d\d)v(\d\d)([fbw])?)?(?:-([a-z]+))?$/.exec((s||'').trim().toLowerCase());
   if(!m)return null;const o={seed:m[1]};if(m[2])['energy','warmth','harmony','mood','evolve'].forEach((k,i)=>o[k]=parseInt(m[i+2],10)/99);
-  if(m[7])o.shape={f:'flat',b:'build',w:'waves'}[m[7]];return o;
+  if(m[7])o.shape={f:'flat',b:'build',w:'waves'}[m[7]];o.station=STATIONS[m[8]]?m[8]:'liquid';return o;
 }
 let seedFresh=false;
-function applyCode(o){setSeed(o.seed);seedFresh=true;for(const [k] of MACROS)if(o[k]!=null)P[k]=o[k];if(o.shape)SHAPE=o.shape;syncControls();refreshCode();if(!started)refreshPreview()}
+function applyCode(o){if(o.station&&o.station!==STATION.id)tuneTo(o.station,true);setSeed(o.seed);seedFresh=true;for(const [k] of MACROS)if(o[k]!=null)P[k]=o[k];if(o.shape)SHAPE=o.shape;syncControls();refreshCode();if(!started)refreshPreview()}
 function refreshCode(){$('#code').value=setCode();try{history.replaceState(null,'','#'+setCode())}catch(e){}}
 function refreshPreview(){setTime=0;preview=makeTrack(0,null);sig='';updateUI()}
 
@@ -1663,7 +1897,7 @@ function updateUI(){
   const p3=n=>String(n).padStart(3,'0');
   $('#cBar').textContent=live?`${p3(bar+1)}/${p3(tr.bars)}`:`${p3(tr.bars)} BARS`;
   if($('#tName').textContent!==tr.name)$('#tName').textContent=tr.name;
-  $('#cSec').textContent=live?sec.type:'ready';
+  $('#cSec').textContent=live?(STATION.labels[sec.type]||sec.type):'ready';
   if(recorder){const s=(performance.now()-recStart)/1000;$('#cType').textContent='REC '+clockStr(s);$('#cType').classList.add('rec')}
   else{$('#cType').textContent=tr.archLabel;$('#cType').classList.remove('rec')}
   let status='';
@@ -1684,6 +1918,7 @@ function updateUI(){
 // ---------- boot ----------
 (function boot(){
   // always a fresh seed on load; set codes only replay when you paste one into Load
+  setStation(STATIONS[load('undertow-station','liquid')]?load('undertow-station','liquid'):'liquid');syncStation();
   setSeed(newSeed());refreshCode();seedFresh=true;
   syncControls();renderTaste();refreshPreview();updateTransport();requestAnimationFrame(draw);
 })();
