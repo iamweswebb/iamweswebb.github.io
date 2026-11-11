@@ -23,7 +23,7 @@
 :root{
   --bg:#F2F3F4; --card:#F8F9FA; --raise:#FFFFFF; --line:#E0E3E6; --line2:#D0D4D8; --rail:#C7CCD1;
   --ink:#14171A; --text:#2A2F34; --wave:#2A2F34; --dim:#575E65; --faint:#666D74; --ghost:#767D84;
-  --field:#2F7D74; --stretch:#94652F; --tape:#A04B60; --rec:#B23B3B; --thumb:#FFFFFF; --thumb-edge:rgba(20,23,26,.28);
+  --field:#2F7D74; --stretch:#94652F; --tape:#A04B60; --keys:#3D63A6; --kwhite:#FFFFFF; --kblack:#2A2F34; --rec:#B23B3B; --thumb:#FFFFFF; --thumb-edge:rgba(20,23,26,.28);
   --v1:#2F7D74; --v2:#2F7D74; --v3:#2F7D74; --v4:#2F7D74; --muted:#575E65;
   --f-ui:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -33,14 +33,14 @@
   :root:not([data-theme="light"]){
     --bg:#121416; --card:#16191C; --raise:#181B1E; --line:#1F2326; --line2:#2A2F33; --rail:#2E3338;
     --ink:#E6E8EA; --text:#D5D8DB; --wave:#D5D8DB; --dim:#8A9097; --faint:#7E858C; --ghost:#6A7178;
-    --field:#5FA89F; --stretch:#C29563; --tape:#C0798A; --rec:#D06060; --thumb:#E6E8EA; --thumb-edge:rgba(0,0,0,.5);
+    --field:#5FA89F; --stretch:#C29563; --tape:#C0798A; --keys:#7D9FE0; --kwhite:#1D2125; --kblack:#0A0C0E; --rec:#D06060; --thumb:#E6E8EA; --thumb-edge:rgba(0,0,0,.5);
     --v1:#5FA89F; --v2:#5FA89F; --v3:#5FA89F; --v4:#5FA89F; --muted:#8A9097; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#121416; --card:#16191C; --raise:#181B1E; --line:#1F2326; --line2:#2A2F33; --rail:#2E3338;
   --ink:#E6E8EA; --text:#D5D8DB; --wave:#D5D8DB; --dim:#8A9097; --faint:#7E858C; --ghost:#6A7178;
-  --field:#5FA89F; --stretch:#C29563; --tape:#C0798A; --rec:#D06060; --thumb:#E6E8EA; --thumb-edge:rgba(0,0,0,.5);
+  --field:#5FA89F; --stretch:#C29563; --tape:#C0798A; --keys:#7D9FE0; --kwhite:#1D2125; --kblack:#0A0C0E; --rec:#D06060; --thumb:#E6E8EA; --thumb-edge:rgba(0,0,0,.5);
   --v1:#5FA89F; --v2:#5FA89F; --v3:#5FA89F; --v4:#5FA89F; --muted:#8A9097; color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -55,7 +55,7 @@ button,select,input{font:inherit;color:inherit}
 .mark{display:block;margin-bottom:26px;color:var(--ink)}
 .logo{display:block;width:30px;height:auto}
 .mico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round;color:var(--faint)}
-.m-field .mico{color:var(--field)}.m-stretch .mico{color:var(--stretch)}.m-tape .mico{color:var(--tape)}
+.m-field .mico{color:var(--field)}.m-stretch .mico{color:var(--stretch)}.m-tape .mico{color:var(--tape)}.m-keys .mico{color:var(--keys)}
 .rail a:not([aria-current="page"]) .mico{opacity:.7}
 .rail a{width:64px;padding:12px 0;text-decoration:none;color:var(--faint);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;border-radius:10px}
 .rail a[aria-current="page"]{color:var(--ink)}
@@ -74,6 +74,7 @@ button,select,input{font:inherit;color:inherit}
 body{--accent:var(--stretch)}
 body[data-view="tape"]{--accent:var(--tape)}
 body[data-view="field"]{--accent:var(--field)}
+body[data-view="keys"]{--accent:var(--keys)}
 .ib{width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);background:transparent;color:var(--text);display:inline-grid;place-items:center;cursor:pointer;padding:0;flex:none;position:relative;transition:border-color .15s,color .15s}
 .ib svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;display:block}
 .ib:hover{border-color:var(--dim);color:var(--ink)}
@@ -85,7 +86,8 @@ body[data-view="field"]{--accent:var(--field)}
 .ib.to-field{border-color:color-mix(in srgb,var(--field) 70%,transparent);color:var(--field)}
 .ib.to-stretch{border-color:color-mix(in srgb,var(--stretch) 70%,transparent);color:var(--stretch)}
 .ib.to-tape{border-color:color-mix(in srgb,var(--tape) 70%,transparent);color:var(--tape)}
-.ib.to-field:hover,.ib.to-stretch:hover,.ib.to-tape:hover{border-color:currentColor}
+.ib.to-keys{border-color:color-mix(in srgb,var(--keys) 70%,transparent);color:var(--keys)}
+.ib.to-field:hover,.ib.to-stretch:hover,.ib.to-tape:hover,.ib.to-keys:hover{border-color:currentColor}
 .ib.armed{border-color:var(--rec);color:var(--rec)}
 .ib .dot{width:12px;height:12px;border-radius:50%;background:var(--rec);transition:border-radius .15s}
 .ib.on .dot,.ib[aria-pressed="true"] .dot{border-radius:2px}
@@ -111,7 +113,7 @@ label.ib input{display:none}
 .vhead{display:flex;align-items:center;gap:14px 18px;flex-wrap:wrap}
 .grow{flex:1}
 .kdot{width:6px;height:6px;border-radius:50%;flex:none;display:inline-block;box-shadow:inset 0 0 0 1px var(--ghost)}
-.k-field{background:var(--field);box-shadow:none}.k-stretch{background:var(--stretch);box-shadow:none}.k-tape{background:var(--tape);box-shadow:none}
+.k-field{background:var(--field);box-shadow:none}.k-stretch{background:var(--stretch);box-shadow:none}.k-tape{background:var(--tape);box-shadow:none}.k-keys{background:var(--keys);box-shadow:none}
 .tag{font:400 10px var(--f-mono);letter-spacing:.16em;color:var(--ghost);text-transform:uppercase}
 .prov{font-family:var(--f-prov);font-style:italic;font-size:14px;color:var(--faint);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dur{font:400 11px var(--f-mono);color:var(--ghost);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -182,8 +184,11 @@ select{font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--
 @media (pointer:coarse){ .sendto .ib.sm{width:38px;border-radius:10px} }
 /* each row's buttons stay one unit: when space runs out the whole set drops to the next line together */
 .acts{display:inline-flex;align-items:center;gap:8px;flex-wrap:nowrap;margin-left:auto}
+/* rows with many buttons split into a few such units that wrap as wholes */
+.actsw{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;margin-left:auto;min-width:0;max-width:100%}
+.actsw .acts{margin-left:0}
 @media (max-width:640px){
-  .acts{gap:6px}
+  .acts,.actsw{gap:6px}
   .acts .ib{width:34px;height:34px}.acts .ib svg{width:16px;height:16px}
   .acts .ib.sm{width:28px;height:28px}.acts .ib.sm svg{width:14px;height:14px}
   .acts .glyph{width:16px}.acts .glyph svg{width:15px;height:15px}
@@ -415,6 +420,47 @@ body.libdrag .rail a,body.libdrag .strip,body.libdrag .wavebox,body.libdrag .fie
 @media (max-width:900px){ .toast{bottom:calc(92px + env(safe-area-inset-bottom, 0px))} }
 .dropveil{position:fixed;inset:0;pointer-events:none;background:color-mix(in srgb,var(--bg) 85%,transparent);display:grid;place-items:center;z-index:40;font-weight:300;font-size:30px;color:var(--ink);border:1px dashed var(--dim)}
 @media (prefers-reduced-motion:reduce){ .toast,.ib .dot{transition:none} }
+
+/* ---------- Keys ---------- */
+.kbar{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;min-width:0}
+.krange{font:400 11px var(--f-mono);color:var(--faint);min-width:76px;text-align:center;font-variant-numeric:tabular-nums}
+.kmidi{font-size:12px;color:var(--faint);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.keyboard{position:relative;height:180px;touch-action:none;user-select:none;-webkit-user-select:none;border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--kwhite)}
+.key{position:absolute;top:0;bottom:0;background:var(--kwhite);box-shadow:inset -1px 0 0 var(--line2);cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;padding-bottom:12px;transition:background .07s}
+.key:last-child{box-shadow:none}
+.key.black{bottom:40%;background:var(--kblack);box-shadow:none;border-radius:0 0 5px 5px;z-index:2;padding-bottom:9px}
+.key.on{background:color-mix(in srgb,var(--keys) 24%,var(--kwhite))}
+.key.black.on{background:var(--keys)}
+.kl{font:400 10px var(--f-mono);color:var(--ghost)}
+.key.black .kl{color:color-mix(in srgb,var(--kwhite) 55%,transparent)}
+.kn{font:400 9px var(--f-mono);color:var(--faint);letter-spacing:.04em}
+.rd{width:6px;height:6px;border-radius:50%;background:var(--keys)}
+@media (pointer:coarse){ .kl{display:none} }
+@media (max-width:640px){ .keyboard{height:150px} }
+.krack{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;--c:var(--accent);align-items:stretch}
+.krack .col{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px 16px}
+@media (max-width:1180px){ .krack{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:760px){ .krack{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:480px){ .krack{grid-template-columns:minmax(0,1fr)} }
+.chead{display:flex;align-items:center;gap:10px;min-height:20px}
+.chead .ib.sm{margin:-6px 0}
+.kseg{display:flex;gap:6px 12px;flex-wrap:wrap}
+.kseg button{border:0;background:transparent;padding:2px 0 3px;font:400 11px var(--f-mono);color:var(--faint);cursor:pointer;border-bottom:1px solid transparent}
+.kseg button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.kdetect{margin:0;font-size:12px;color:var(--faint)}
+#kRoot{width:auto;min-width:84px}
+#kStartShade{left:0}
+#kBox.gr{height:96px;cursor:crosshair}
+.gwin{position:absolute;top:0;bottom:0;border:1px solid color-mix(in srgb,var(--keys) 75%,transparent);background:color-mix(in srgb,var(--keys) 9%,transparent);border-radius:6px;cursor:grab;touch-action:none}
+.gwin:active{cursor:grabbing}
+.gwin:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
+.gh{position:absolute;top:0;bottom:0;width:14px;cursor:ew-resize}
+.gh::after{content:"";position:absolute;top:30%;bottom:30%;left:50%;width:2px;margin-left:-1px;border-radius:1px;background:var(--keys)}
+.gl{left:-7px}.gr{right:-7px}
+.kgrain{display:flex;flex-direction:column;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px 16px;--c:var(--accent)}
+.kgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 32px}
+@media (max-width:760px){ .kgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px} }
+@media (max-width:480px){ .kgrid{grid-template-columns:minmax(0,1fr)} }
 </style>
 </head>
 <body>
@@ -439,6 +485,7 @@ body.libdrag .rail a,body.libdrag .strip,body.libdrag .wavebox,body.libdrag .fie
     <a href="#stretch" id="tab-stretch" class="m-stretch"><svg class="mico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg>Stretch</a>
     <a href="#tape" id="tab-tape" class="m-tape"><svg class="mico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><circle cx="15.5" cy="11" r="2"/><path d="M10.5 11h3M7 19l1.5-3.5h7L17 19"/></svg>Tape</a>
     <a href="#field" id="tab-field" class="m-field"><svg class="mico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg>Field</a>
+    <a href="#keys" id="tab-keys" class="m-keys"><svg class="mico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M9 13.5V19M15 13.5V19"/><rect x="7.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/><rect x="13.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/></svg>Keys</a>
     <button type="button" class="ib railsess" data-sessions aria-label="Sessions" title="Sessions"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l8.5 4.5L12 13 3.5 8.5z"/><path d="M3.5 12.5L12 17l8.5-4.5M3.5 16.5L12 21l8.5-4.5"/></svg></button>
   </nav>
 
@@ -531,7 +578,7 @@ body.libdrag .rail a,body.libdrag .strip,body.libdrag .wavebox,body.libdrag .fie
           <span class="prov" id="fsProv"></span>
           <span class="dur" id="fsDur"></span>
           <span class="grow"></span>
-          <button type="button" class="ib to-stretch" id="fsStretch" aria-label="Use in Stretch" title="Use in Stretch" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg></button>
+          <button type="button" class="ib to-stretch" id="fsStretch" aria-label="Use in Stretch" title="Use in Stretch" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg></button><button type="button" class="ib to-keys" aria-label="Play on Keys" title="Play on Keys" id="fsKeys" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M9 13.5V19M15 13.5V19"/><rect x="7.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/><rect x="13.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/></svg></button>
           <span class="sendto"><span class="glyph to-tape"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><circle cx="15.5" cy="11" r="2"/><path d="M10.5 11h3M7 19l1.5-3.5h7L17 19"/></svg></span><button type="button" class="ib sm to-tape" data-fs-to="0" aria-label="Send to tape track 1" title="Send to tape track 1" disabled><span class="n">1</span></button><button type="button" class="ib sm to-tape" data-fs-to="1" aria-label="Send to tape track 2" title="Send to tape track 2" disabled><span class="n">2</span></button><button type="button" class="ib sm to-tape" data-fs-to="2" aria-label="Send to tape track 3" title="Send to tape track 3" disabled><span class="n">3</span></button><button type="button" class="ib sm to-tape" data-fs-to="3" aria-label="Send to tape track 4" title="Send to tape track 4" disabled><span class="n">4</span></button></span>
         </div>
       </div>
@@ -546,12 +593,17 @@ body.libdrag .rail a,body.libdrag .strip,body.libdrag .wavebox,body.libdrag .fie
           <span class="wname" id="srcName">No source yet</span>
           <span class="prov" id="srcProv"></span>
           <span class="dur" id="srcDur"></span>
+          <button type="button" class="ib sm" aria-label="Reset source trim" title="Reset source trim" id="iTrimReset" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12a6.5 6.5 0 1 0 2-4.7"/><path d="M5.5 4.5v3.5H9"/></svg></button>
           <span class="grow"></span>
 <button type="button" class="ib" aria-label="Play the source" title="Play the source" id="srcPlay" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M8.5 5.5v13l10-6.5z"/></svg></button>
           <label class="ib" for="file" title="Load audio" aria-label="Load audio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 8a1.5 1.5 0 0 1 1.5-1.5h4l2 2h8A1.5 1.5 0 0 1 20.5 10v7.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z"/></svg></label>
           <input id="file" type="file" accept="audio/*" hidden>
         </div>
-        <div class="wavebox sm" id="srcBox"><canvas id="srcCv"></canvas><div class="empty" id="srcEmpty">Load audio, drop a file here, or pick a sound from the library</div></div>
+        <div class="wavebox sm" id="srcBox"><canvas id="srcCv"></canvas><div class="empty" id="srcEmpty">Load audio, drop a file here, or pick a sound from the library</div>
+          <div class="trimshade" id="iShadeA" hidden></div><div class="trimshade" id="iShadeB" hidden></div>
+          <div class="trim ta" id="iTrimA" role="slider" tabindex="0" aria-label="Source start" hidden><span class="tl" id="iTrimAl"></span></div>
+          <div class="trim tb" id="iTrimB" role="slider" tabindex="0" aria-label="Source end" hidden><span class="tl" id="iTrimBl"></span></div>
+        </div>
       </div>
 
       <div class="stretchcols rack">
@@ -580,7 +632,7 @@ body.libdrag .rail a,body.libdrag .strip,body.libdrag .wavebox,body.libdrag .fie
           <button type="button" class="ib sm" aria-label="Reset trim" title="Reset trim" id="trimReset" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12a6.5 6.5 0 1 0 2-4.7"/><path d="M5.5 4.5v3.5H9"/></svg></button>
           <span class="grow"></span>
 <button type="button" class="ib" aria-label="Play the render" title="Play the render" id="outPlay" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M8.5 5.5v13l10-6.5z"/></svg></button><button type="button" class="ib" aria-label="Export WAV" title="Export WAV" id="exportBtn" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5"/></svg></button><button type="button" class="ib" aria-label="Add to library" title="Add to library" id="outKeep" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h11M4 12h11M4 17h7"/><path d="M18 13.5v7M14.5 17h7"/></svg></button>
-          <button type="button" class="ib to-field" aria-label="Add to Field" title="Add to Field" id="outField" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg></button><span class="sendto" title="To tape"><span class="glyph to-tape"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><circle cx="15.5" cy="11" r="2"/><path d="M10.5 11h3M7 19l1.5-3.5h7L17 19"/></svg></span><button type="button" class="ib sm to-tape" data-send="out" data-to="0" disabled aria-label="Send render to tape track 1" title="Send render to tape track 1"><span class="n">1</span></button><button type="button" class="ib sm to-tape" data-send="out" data-to="1" disabled aria-label="Send render to tape track 2" title="Send render to tape track 2"><span class="n">2</span></button><button type="button" class="ib sm to-tape" data-send="out" data-to="2" disabled aria-label="Send render to tape track 3" title="Send render to tape track 3"><span class="n">3</span></button><button type="button" class="ib sm to-tape" data-send="out" data-to="3" disabled aria-label="Send render to tape track 4" title="Send render to tape track 4"><span class="n">4</span></button></span>
+          <span class="brk"></span><button type="button" class="ib to-field" aria-label="Add to Field" title="Add to Field" id="outField" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg></button><button type="button" class="ib to-keys" aria-label="Play on Keys" title="Play on Keys" id="outKeys" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M9 13.5V19M15 13.5V19"/><rect x="7.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/><rect x="13.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/></svg></button><span class="sendto" title="To tape"><span class="glyph to-tape"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><circle cx="15.5" cy="11" r="2"/><path d="M10.5 11h3M7 19l1.5-3.5h7L17 19"/></svg></span><button type="button" class="ib sm to-tape" data-send="out" data-to="0" disabled aria-label="Send render to tape track 1" title="Send render to tape track 1"><span class="n">1</span></button><button type="button" class="ib sm to-tape" data-send="out" data-to="1" disabled aria-label="Send render to tape track 2" title="Send render to tape track 2"><span class="n">2</span></button><button type="button" class="ib sm to-tape" data-send="out" data-to="2" disabled aria-label="Send render to tape track 3" title="Send render to tape track 3"><span class="n">3</span></button><button type="button" class="ib sm to-tape" data-send="out" data-to="3" disabled aria-label="Send render to tape track 4" title="Send render to tape track 4"><span class="n">4</span></button></span>
         </div>
         <div class="status" id="status"></div>
         <div class="wavebox lg" id="outBox"><canvas id="outCv"></canvas><div class="empty" id="outEmpty">The stretched version appears here</div>
@@ -616,10 +668,96 @@ body.libdrag .rail a,body.libdrag .strip,body.libdrag .wavebox,body.libdrag .fie
           <span class="prov" id="bProv"></span>
           <span class="dur" id="bDur">0:00</span>
           <span class="grow"></span>
-<select id="obLen" aria-label="Offline bounce length" title="Offline bounce length"><option value="60">1 min</option><option value="180" selected>3 min</option><option value="300">5 min</option><option value="600">10 min</option></select><button type="button" class="ib" id="obGo" aria-label="Render a bounce offline" title="Render a bounce offline, faster than real time"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M4 6.5v11l8-5.5zM12.5 6.5v11l8-5.5z"/></svg></button><button type="button" class="ib" aria-label="Play the bounce" title="Play the bounce" id="bPlay" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M8.5 5.5v13l10-6.5z"/></svg></button><button type="button" class="ib" aria-label="Export WAV" title="Export WAV" id="bExport" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5"/></svg></button>
-          <button type="button" class="ib to-field" aria-label="Add to Field" title="Add to Field" id="bField" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg></button><button type="button" class="ib to-stretch" aria-label="Use in Stretch" title="Use in Stretch" id="bStretch" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg></button><span class="sendto" title="To tape"><span class="glyph to-tape"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><circle cx="15.5" cy="11" r="2"/><path d="M10.5 11h3M7 19l1.5-3.5h7L17 19"/></svg></span><button type="button" class="ib sm to-tape" data-send="bounce" data-to="0" disabled aria-label="Send bounce to tape track 1" title="Send bounce to tape track 1"><span class="n">1</span></button><button type="button" class="ib sm to-tape" data-send="bounce" data-to="1" disabled aria-label="Send bounce to tape track 2" title="Send bounce to tape track 2"><span class="n">2</span></button><button type="button" class="ib sm to-tape" data-send="bounce" data-to="2" disabled aria-label="Send bounce to tape track 3" title="Send bounce to tape track 3"><span class="n">3</span></button><button type="button" class="ib sm to-tape" data-send="bounce" data-to="3" disabled aria-label="Send bounce to tape track 4" title="Send bounce to tape track 4"><span class="n">4</span></button></span>
+<select id="obLen" aria-label="Offline bounce length" title="Offline bounce length"><option value="60">1 min</option><option value="180" selected>3 min</option><option value="300">5 min</option><option value="600">10 min</option></select><button type="button" class="ib" id="obGo" aria-label="Render a bounce offline" title="Render a bounce offline, faster than real time"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M4 6.5v11l8-5.5zM12.5 6.5v11l8-5.5z"/></svg></button><span class="brk"></span><button type="button" class="ib" aria-label="Play the bounce" title="Play the bounce" id="bPlay" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M8.5 5.5v13l10-6.5z"/></svg></button><button type="button" class="ib" aria-label="Export WAV" title="Export WAV" id="bExport" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5"/></svg></button>
+          <span class="brk"></span><button type="button" class="ib to-field" aria-label="Add to Field" title="Add to Field" id="bField" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg></button><button type="button" class="ib to-stretch" aria-label="Use in Stretch" title="Use in Stretch" id="bStretch" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg></button><button type="button" class="ib to-keys" aria-label="Play on Keys" title="Play on Keys" id="bKeys" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M9 13.5V19M15 13.5V19"/><rect x="7.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/><rect x="13.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/></svg></button><span class="sendto" title="To tape"><span class="glyph to-tape"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><circle cx="15.5" cy="11" r="2"/><path d="M10.5 11h3M7 19l1.5-3.5h7L17 19"/></svg></span><button type="button" class="ib sm to-tape" data-send="bounce" data-to="0" disabled aria-label="Send bounce to tape track 1" title="Send bounce to tape track 1"><span class="n">1</span></button><button type="button" class="ib sm to-tape" data-send="bounce" data-to="1" disabled aria-label="Send bounce to tape track 2" title="Send bounce to tape track 2"><span class="n">2</span></button><button type="button" class="ib sm to-tape" data-send="bounce" data-to="2" disabled aria-label="Send bounce to tape track 3" title="Send bounce to tape track 3"><span class="n">3</span></button><button type="button" class="ib sm to-tape" data-send="bounce" data-to="3" disabled aria-label="Send bounce to tape track 4" title="Send bounce to tape track 4"><span class="n">4</span></button></span>
         </div>
         <div class="wavebox sm" id="bounceBox"><canvas id="bounceCv"></canvas><div class="empty" id="bEmpty">Press record to capture the master</div></div>
+      </div>
+    </section>
+
+    <!-- KEYS -->
+    <section class="view" id="view-keys" hidden>
+      <div class="wblock">
+        <div class="whead">
+          <span class="tag">Sample</span>
+          <span class="kdot" id="kDot"></span>
+          <span class="wname" id="kName">No sample yet</span>
+          <span class="prov" id="kProv"></span>
+          <span class="dur" id="kDur"></span>
+          <span class="grow"></span>
+          <button type="button" class="ib recb" id="kRec" aria-pressed="false" aria-label="Record a Keys take" title="Record a Keys take"><span class="dot"></span></button>
+          <label class="ib" for="kFile" title="Load a sample" aria-label="Load a sample"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 8a1.5 1.5 0 0 1 1.5-1.5h4l2 2h8A1.5 1.5 0 0 1 20.5 10v7.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z"/></svg></label>
+          <input id="kFile" type="file" accept="audio/*" hidden>
+        </div>
+        <div class="wavebox sm" id="kBox"><canvas id="kCv"></canvas><div class="empty" id="kEmpty">Load audio, drop a file here, or send a sound from the library</div><div class="trimshade" id="kStartShade" hidden></div><div class="gwin" id="kWin" role="slider" tabindex="0" aria-label="Grain window" hidden><span class="gh gl" data-h="l"></span><span class="gh gr" data-h="r"></span></div></div>
+      </div>
+      <div class="kbar">
+        <button type="button" class="ib sm" id="kOctDn" aria-label="Octave down" title="Octave down (Z)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg></button>
+        <span class="krange" id="kRange"></span>
+        <button type="button" class="ib sm" id="kOctUp" aria-label="Octave up" title="Octave up (X)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6.5L15 12l-5.5 5.5"/></svg></button>
+        <div class="kseg" role="group" aria-label="Engine"><button type="button" data-eng="sample">Sample</button><button type="button" data-eng="grains">Grains</button></div>
+        <span class="grow"></span>
+        <span class="kmidi" id="kMidi"></span>
+        <button type="button" class="ib" id="kMidiBtn" aria-pressed="false" aria-label="Connect a MIDI keyboard" title="Connect a MIDI keyboard"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M10.5 18.5h3"/><circle cx="7.6" cy="12.6" r=".9" fill="currentColor" stroke="none"/><circle cx="16.4" cy="12.6" r=".9" fill="currentColor" stroke="none"/><circle cx="9" cy="8.7" r=".9" fill="currentColor" stroke="none"/><circle cx="15" cy="8.7" r=".9" fill="currentColor" stroke="none"/><circle cx="12" cy="7.4" r=".9" fill="currentColor" stroke="none"/></svg></button>
+      </div>
+      <div class="keyboard" id="kb" aria-label="Keyboard"></div>
+      <div class="kgrain rack" id="kGrains" hidden>
+        <span class="tag">Grains</span>
+        <div class="kgrid">
+          <div class="ctl"><label for="kgSize">Size</label><output id="kgSizeOut"></output><input id="kgSize" type="range" min="0" max="1000" step="1"></div>
+          <div class="ctl"><label for="kgDens">Density</label><output id="kgDensOut"></output><input id="kgDens" type="range" min="0" max="1000" step="1"></div>
+          <div class="ctl"><label for="kgScan">Scan</label><output id="kgScanOut"></output><input id="kgScan" type="range" min="0" max="100" step="1"></div>
+          <div class="ctl"><label for="kgSpray">Spray</label><output id="kgSprayOut"></output><input id="kgSpray" type="range" min="0" max="100" step="1"></div>
+          <div class="ctl"><label for="kgFlut">Flutter</label><output id="kgFlutOut"></output><input id="kgFlut" type="range" min="0" max="100" step="1"></div>
+          <div class="ctl"><label for="kgSpread">Spread</label><output id="kgSpreadOut"></output><input id="kgSpread" type="range" min="0" max="100" step="1"></div>
+          <div class="ctl"><label for="kgRev">Reverse</label><output id="kgRevOut"></output><input id="kgRev" type="range" min="0" max="100" step="1"></div>
+          <div class="ctl"><label for="kgDrift">Drift</label><output id="kgDriftOut"></output><input id="kgDrift" type="range" min="0" max="100" step="1"></div>
+        </div>
+      </div>
+      <div class="krack rack">
+        <div class="col">
+          <span class="tag">Pitch</span>
+          <div class="ctl"><label for="kRoot">Root note</label><select id="kRoot"></select></div>
+          <div class="ctl"><label for="kFine">Fine tune</label><output id="kFineOut"></output><input id="kFine" type="range" min="-50" max="50" step="1"></div>
+          <p class="kdetect" id="kDetect"></p>
+        </div>
+        <div class="col">
+          <span class="tag">Envelope</span>
+          <div class="ctl"><label for="kA">Attack</label><output id="kAOut"></output><input id="kA" type="range" min="0" max="1000" step="1"></div>
+          <div class="ctl"><label for="kD">Decay</label><output id="kDOut"></output><input id="kD" type="range" min="0" max="1000" step="1"></div>
+          <div class="ctl"><label for="kS">Sustain</label><output id="kSOut"></output><input id="kS" type="range" min="0" max="100" step="1"></div>
+          <div class="ctl"><label for="kR">Release</label><output id="kROut"></output><input id="kR" type="range" min="0" max="1000" step="1"></div>
+        </div>
+        <div class="col">
+          <div class="chead"><span class="tag">Tone</span><span class="grow"></span><button type="button" class="ib sm" id="kLoop" aria-pressed="false" aria-label="Loop while held" title="Loop while held"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 4.5L19 7l-2.5 2.5"/><path d="M19 7H8.5A4.5 4.5 0 0 0 4 11.5v.5"/><path d="M7.5 19.5L5 17l2.5-2.5"/><path d="M5 17h10.5a4.5 4.5 0 0 0 4.5-4.5V12"/></svg></button></div>
+          <div class="ctl"><label for="kCut">Cutoff</label><output id="kCutOut"></output><input id="kCut" type="range" min="0" max="1000" step="1"></div>
+          <div class="ctl"><label for="kRes">Resonance</label><output id="kResOut"></output><input id="kRes" type="range" min="0" max="100" step="1"></div>
+          <div class="ctl" id="kStartCtl"><label for="kStart">Start</label><output id="kStartOut"></output><input id="kStart" type="range" min="0" max="95" step="1"></div>
+          <div class="ctl"><label for="kVol">Volume</label><output id="kVolOut"></output><input id="kVol" type="range" min="0" max="100" step="1"></div>
+        </div>
+        <div class="col">
+          <span class="tag">Space</span>
+          <div class="kseg" role="group" aria-label="Reverb"><button type="button" data-rev="plate">Plate</button><button type="button" data-rev="hall">Hall</button><button type="button" data-rev="cathedral">Cathedral</button><button type="button" data-rev="bloom">Bloom</button></div>
+          <div class="ctl"><label for="kRevMix">Mix</label><output id="kRevMixOut"></output><input id="kRevMix" type="range" min="0" max="100" step="1"></div>
+        </div>
+        <div class="col">
+          <span class="tag">Echo</span>
+          <div class="kseg" role="group" aria-label="Delay"><button type="button" data-dly="digital">Digital</button><button type="button" data-dly="tape">Tape</button><button type="button" data-dly="ping">Ping-pong</button></div>
+          <div class="ctl"><label for="kDlyTime">Time</label><output id="kDlyTimeOut"></output><input id="kDlyTime" type="range" min="30" max="1500" step="1"></div>
+          <div class="ctl"><label for="kDlyFb">Feedback</label><output id="kDlyFbOut"></output><input id="kDlyFb" type="range" min="0" max="90" step="1"></div>
+          <div class="ctl"><label for="kDlyMix">Mix</label><output id="kDlyMixOut"></output><input id="kDlyMix" type="range" min="0" max="100" step="1"></div>
+        </div>
+      </div>
+      <div class="wblock rule fsend">
+        <div class="whead">
+          <span class="tag">Send</span>
+          <span class="kdot k-keys"></span>
+          <span class="wname" id="ksName">Record a take to send it</span>
+          <span class="prov" id="ksProv"></span>
+          <span class="dur" id="ksDur"></span>
+          <span class="grow"></span>
+          <button type="button" class="ib to-field" id="ksField" aria-label="Add to Field" title="Add to Field" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg></button><button type="button" class="ib to-stretch" id="ksStretch" aria-label="Use in Stretch" title="Use in Stretch" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg></button><span class="sendto" title="To tape"><span class="glyph to-tape"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><circle cx="15.5" cy="11" r="2"/><path d="M10.5 11h3M7 19l1.5-3.5h7L17 19"/></svg></span><button type="button" class="ib sm to-tape" data-ks-to="0" aria-label="Send take to tape track 1" title="Send take to tape track 1" disabled><span class="n">1</span></button><button type="button" class="ib sm to-tape" data-ks-to="1" aria-label="Send take to tape track 2" title="Send take to tape track 2" disabled><span class="n">2</span></button><button type="button" class="ib sm to-tape" data-ks-to="2" aria-label="Send take to tape track 3" title="Send take to tape track 3" disabled><span class="n">3</span></button><button type="button" class="ib sm to-tape" data-ks-to="3" aria-label="Send take to tape track 4" title="Send take to tape track 4" disabled><span class="n">4</span></button></span>
+        </div>
       </div>
     </section>
 
@@ -635,9 +773,9 @@ body.libdrag .rail a,body.libdrag .strip,body.libdrag .wavebox,body.libdrag .fie
         <span class="prov" id="laProv"></span>
         <span class="dur" id="laDur"></span>
         <span class="grow"></span>
-<button type="button" class="ib" aria-label="Play" title="Play" id="laPlay"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M8.5 5.5v13l10-6.5z"/></svg></button><button type="button" class="ib to-field" aria-label="Add to Field" title="Add to Field" id="laField"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg></button><button type="button" class="ib to-stretch" aria-label="Use in Stretch" title="Use in Stretch" id="laStretch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg></button>
+<button type="button" class="ib" aria-label="Play" title="Play" id="laPlay"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M8.5 5.5v13l10-6.5z"/></svg></button><button type="button" class="ib" aria-label="Export WAV" title="Export WAV" id="laExport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5"/></svg></button><button type="button" class="ib" aria-label="Delete from the library" title="Delete from the library" id="laDel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button><span class="brk"></span><button type="button" class="ib to-field" aria-label="Add to Field" title="Add to Field" id="laField"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg></button><button type="button" class="ib to-stretch" aria-label="Use in Stretch" title="Use in Stretch" id="laStretch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg></button><button type="button" class="ib to-keys" aria-label="Play on Keys" title="Play on Keys" id="laKeys"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M9 13.5V19M15 13.5V19"/><rect x="7.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/><rect x="13.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/></svg></button>
         <span class="sendto" title="To tape"><span class="glyph to-tape"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><circle cx="15.5" cy="11" r="2"/><path d="M10.5 11h3M7 19l1.5-3.5h7L17 19"/></svg></span><button type="button" class="ib sm to-tape" data-lib-to="0" aria-label="Load onto tape track 1" title="Load onto tape track 1"><span class="n">1</span></button><button type="button" class="ib sm to-tape" data-lib-to="1" aria-label="Load onto tape track 2" title="Load onto tape track 2"><span class="n">2</span></button><button type="button" class="ib sm to-tape" data-lib-to="2" aria-label="Load onto tape track 3" title="Load onto tape track 3"><span class="n">3</span></button><button type="button" class="ib sm to-tape" data-lib-to="3" aria-label="Load onto tape track 4" title="Load onto tape track 4"><span class="n">4</span></button></span>
-<button type="button" class="ib" aria-label="Export WAV" title="Export WAV" id="laExport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5"/></svg></button><button type="button" class="ib" aria-label="Delete from the library" title="Delete from the library" id="laDel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button>
+
       </div>
     </section>
   </main>
@@ -658,7 +796,7 @@ body.libdrag .rail a,body.libdrag .strip,body.libdrag .wavebox,body.libdrag .fie
 <input type="file" id="presetIn" accept="application/json,.json" hidden>
 
 <script>
-const IC = {"play": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M8.5 5.5v13l10-6.5z\"/></svg>", "pause": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M9 6v12M15 6v12\" stroke-width=\"2.2\"/></svg>", "stop": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect fill=\"currentColor\" stroke=\"none\" x=\"7\" y=\"7\" width=\"10\" height=\"10\" rx=\"1.5\"/></svg>", "zero": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6.5 6v12\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M18 6.5v11L9.5 12z\"/></svg>", "mute": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 9.5h3.5L12 6v12l-4.5-3.5H4z\"/><path d=\"M15.5 9.5l5 5M20.5 9.5l-5 5\"/></svg>", "clear": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6.5 6.5l11 11M17.5 6.5l-11 11\"/></svg>", "load": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 8a1.5 1.5 0 0 1 1.5-1.5h4l2 2h8A1.5 1.5 0 0 1 20.5 10v7.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z\"/></svg>", "export": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5\"/></svg>", "libadd": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 7h11M4 12h11M4 17h7\"/><path d=\"M18 13.5v7M14.5 17h7\"/></svg>", "check": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/></svg>", "trash": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12\"/></svg>", "reset": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5.5 12a6.5 6.5 0 1 0 2-4.7\"/><path d=\"M5.5 4.5v3.5H9\"/></svg>", "shuffle": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 7.5h3c4.5 0 5.5 9 10 9h3M17.5 14l2.5 2.5-2.5 2.5M4 16.5h3c1.6 0 2.7-1.2 3.6-2.8M13.4 10.3c.9-1.6 2-2.8 3.6-2.8h3M17.5 5l2.5 2.5L17.5 10\"/></svg>", "save": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 4.5h10.5l3.5 3.5v11.5H5z\"/><path d=\"M8 4.5v4.5h6.5V4.5M8 19.5v-5.5h8v5.5\"/></svg>", "open": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 8a1.5 1.5 0 0 1 1.5-1.5h4l2 2h8A1.5 1.5 0 0 1 20.5 10v1\"/><path d=\"M3.5 8v9.5A1.5 1.5 0 0 0 5 19h12.5l3-7.5H7.2z\"/></svg>", "mic": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"9\" y=\"3.5\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M6 11a6 6 0 0 0 12 0M12 17v3.5\"/></svg>", "spark": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3.5v4M12 16.5v4M3.5 12h4M16.5 12h4M6 6l2.8 2.8M15.2 15.2L18 18M18 6l-2.8 2.8M8.8 15.2L6 18\"/></svg>", "power": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3.5v8\"/><path d=\"M7.2 6.6a7 7 0 1 0 9.6 0\"/></svg>", "freeze": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9M9.5 4.5L12 6l2.5-1.5M9.5 19.5L12 18l2.5 1.5\"/></svg>", "stretch": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z\"/></svg>", "tape": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"2.5\" y=\"5\" width=\"19\" height=\"14\" rx=\"2\"/><circle cx=\"8.5\" cy=\"11\" r=\"2\"/><circle cx=\"15.5\" cy=\"11\" r=\"2\"/><path d=\"M10.5 11h3M7 19l1.5-3.5h7L17 19\"/></svg>", "field": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"4\" width=\"12\" height=\"9\" rx=\"1.5\"/><rect x=\"9\" y=\"11\" width=\"12\" height=\"9\" rx=\"1.5\"/></svg>", "wow": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"7\" cy=\"9\" r=\"3\"/><circle cx=\"17\" cy=\"9\" r=\"3\"/><path d=\"M3 18c1.5-1.6 3-1.6 4.5 0s3 1.6 4.5 0 3-1.6 4.5 0 3 1.6 4.5 0\"/></svg>", "breathe": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3 9.5c4.5 0 4.5-4 9-4s4.5 4 9 4M3 14.5c4.5 0 4.5 4 9 4s4.5-4 9-4\"/></svg>", "ffwd": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M4 6.5v11l8-5.5zM12.5 6.5v11l8-5.5z\"/></svg>", "layers": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 4l8.5 4.5L12 13 3.5 8.5z\"/><path d=\"M3.5 12.5L12 17l8.5-4.5M3.5 16.5L12 21l8.5-4.5\"/></svg>"};
+const IC = {"keys": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"1.5\"/><path d=\"M9 13.5V19M15 13.5V19\"/><rect x=\"7.4\" y=\"5\" width=\"3.2\" height=\"8.5\" rx=\".6\" fill=\"currentColor\" stroke=\"none\"/><rect x=\"13.4\" y=\"5\" width=\"3.2\" height=\"8.5\" rx=\".6\" fill=\"currentColor\" stroke=\"none\"/></svg>", "loop": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M16.5 4.5L19 7l-2.5 2.5\"/><path d=\"M19 7H8.5A4.5 4.5 0 0 0 4 11.5v.5\"/><path d=\"M7.5 19.5L5 17l2.5-2.5\"/><path d=\"M5 17h10.5a4.5 4.5 0 0 0 4.5-4.5V12\"/></svg>", "play": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M8.5 5.5v13l10-6.5z\"/></svg>", "pause": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M9 6v12M15 6v12\" stroke-width=\"2.2\"/></svg>", "stop": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect fill=\"currentColor\" stroke=\"none\" x=\"7\" y=\"7\" width=\"10\" height=\"10\" rx=\"1.5\"/></svg>", "zero": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6.5 6v12\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M18 6.5v11L9.5 12z\"/></svg>", "mute": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 9.5h3.5L12 6v12l-4.5-3.5H4z\"/><path d=\"M15.5 9.5l5 5M20.5 9.5l-5 5\"/></svg>", "clear": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6.5 6.5l11 11M17.5 6.5l-11 11\"/></svg>", "load": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 8a1.5 1.5 0 0 1 1.5-1.5h4l2 2h8A1.5 1.5 0 0 1 20.5 10v7.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z\"/></svg>", "export": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5\"/></svg>", "libadd": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 7h11M4 12h11M4 17h7\"/><path d=\"M18 13.5v7M14.5 17h7\"/></svg>", "check": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/></svg>", "trash": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12\"/></svg>", "reset": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5.5 12a6.5 6.5 0 1 0 2-4.7\"/><path d=\"M5.5 4.5v3.5H9\"/></svg>", "shuffle": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 7.5h3c4.5 0 5.5 9 10 9h3M17.5 14l2.5 2.5-2.5 2.5M4 16.5h3c1.6 0 2.7-1.2 3.6-2.8M13.4 10.3c.9-1.6 2-2.8 3.6-2.8h3M17.5 5l2.5 2.5L17.5 10\"/></svg>", "save": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 4.5h10.5l3.5 3.5v11.5H5z\"/><path d=\"M8 4.5v4.5h6.5V4.5M8 19.5v-5.5h8v5.5\"/></svg>", "open": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 8a1.5 1.5 0 0 1 1.5-1.5h4l2 2h8A1.5 1.5 0 0 1 20.5 10v1\"/><path d=\"M3.5 8v9.5A1.5 1.5 0 0 0 5 19h12.5l3-7.5H7.2z\"/></svg>", "mic": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"9\" y=\"3.5\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M6 11a6 6 0 0 0 12 0M12 17v3.5\"/></svg>", "spark": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3.5v4M12 16.5v4M3.5 12h4M16.5 12h4M6 6l2.8 2.8M15.2 15.2L18 18M18 6l-2.8 2.8M8.8 15.2L6 18\"/></svg>", "power": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3.5v8\"/><path d=\"M7.2 6.6a7 7 0 1 0 9.6 0\"/></svg>", "freeze": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9M9.5 4.5L12 6l2.5-1.5M9.5 19.5L12 18l2.5 1.5\"/></svg>", "stretch": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z\"/></svg>", "tape": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"2.5\" y=\"5\" width=\"19\" height=\"14\" rx=\"2\"/><circle cx=\"8.5\" cy=\"11\" r=\"2\"/><circle cx=\"15.5\" cy=\"11\" r=\"2\"/><path d=\"M10.5 11h3M7 19l1.5-3.5h7L17 19\"/></svg>", "field": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"4\" width=\"12\" height=\"9\" rx=\"1.5\"/><rect x=\"9\" y=\"11\" width=\"12\" height=\"9\" rx=\"1.5\"/></svg>", "wow": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"7\" cy=\"9\" r=\"3\"/><circle cx=\"17\" cy=\"9\" r=\"3\"/><path d=\"M3 18c1.5-1.6 3-1.6 4.5 0s3 1.6 4.5 0 3-1.6 4.5 0 3 1.6 4.5 0\"/></svg>", "breathe": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3 9.5c4.5 0 4.5-4 9-4s4.5 4 9 4M3 14.5c4.5 0 4.5 4 9 4s4.5-4 9-4\"/></svg>", "ffwd": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M4 6.5v11l8-5.5zM12.5 6.5v11l8-5.5z\"/></svg>", "layers": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 4l8.5 4.5L12 13 3.5 8.5z\"/><path d=\"M3.5 12.5L12 17l8.5-4.5M3.5 16.5L12 21l8.5-4.5\"/></svg>"};
 </script>
 <script>
 /* Shared library: every tool adds to it and pulls from it. Items hold raw channel data. */
@@ -1937,7 +2075,7 @@ function foldable(deck,key){
   let COLS = {};
   function readCols() {
     const cs = getComputedStyle(document.documentElement), g = (k) => cs.getPropertyValue(k).trim();
-    COLS = { wave: g("--wave"), line: g("--line2"), ink: g("--ink"), field: g("--field"), stretch: g("--stretch"), tape: g("--tape") };
+    COLS = { wave: g("--wave"), line: g("--line2"), ink: g("--ink"), field: g("--field"), stretch: g("--stretch"), tape: g("--tape"), keys: g("--keys") };
   }
   readCols();
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readCols(); draw(); });
@@ -1952,7 +2090,7 @@ function foldable(deck,key){
   function chansFromBuf(b) { const c = [b.getChannelData(0).slice()]; if (b.numberOfChannels > 1) c.push(b.getChannelData(1).slice()); return c; }
 
   // ---------- range painting ----------
-  const RANGE_SEL = "#view-stretch input[type=range], #view-tape input[type=range]";
+  const RANGE_SEL = "#view-stretch input[type=range], #view-tape input[type=range], #view-keys input[type=range]";
   function paintRange(el) {
     const mn = +el.min, mx = +el.max, f = (+el.value - mn) / (mx - mn) * 100;
     let tr;
@@ -1964,7 +2102,7 @@ function foldable(deck,key){
   document.addEventListener("input", (e) => { if (e.target.matches && e.target.matches(RANGE_SEL)) paintRange(e.target); });
 
   // ---------- state ----------
-  let src = null, srcTitle = "", srcItem = null;
+  let src = null, srcTitle = "", srcItem = null, itrim = { a: 0, b: 1 }, itrimCache = null;
   let out = null, outItem = null;
   const peaks = {};
   const bufs = { src: () => src, out: () => out, bounce: () => bounce && bounce.buf, lib: () => libBuf };
@@ -1980,7 +2118,7 @@ function foldable(deck,key){
   }
   function refreshReadouts() {
     const p = params(), sr = src ? src.sampleRate : 44100;
-    const outSec = src ? src.duration * p.stretch : 0;
+    const outSec = src ? (itrim.b - itrim.a) * src.duration * p.stretch : 0;
     $("stretchOut").textContent = "×" + stTxt(p.stretch) + "  →  " + fmt(outSec);
     $("smearOut").textContent = (Math.pow(2, 12 + p.smear) / sr).toFixed(2) + " s";
     $("shimmerOut").textContent = p.shimmer === 0 ? "off" : Math.round(p.shimmer * 100) + "%";
@@ -2063,15 +2201,15 @@ function foldable(deck,key){
     $("renderBtn").setAttribute("aria-label", busy ? "Cancel render" : "Render"); $("renderBtn").title = busy ? "Cancel render" : "Render";
   }
   const renderName = (o) => o._src + " ×" + stTxt(o._p.stretch);
-  const renderProv = (o) => { const p = o._p; return "pressed ×" + stTxt(p.stretch) + " from " + o._src  + (o === out && isTrimmed() ? ", trimmed" : ""); };
+  const renderProv = (o) => { const p = o._p; return "pressed ×" + stTxt(p.stretch) + " from " + o._src + (o._sel ? " " + o._sel : "") + (o === out && isTrimmed() ? ", trimmed" : ""); };
 
   function render() {
     if (rendering) { worker && worker.terminate(); worker = null; rendering = false; setProgress(0, "Render"); setStatus("Render canceled."); return; }
     if (!src) return;
-    const p = params(), sr = src.sampleRate, N = Math.pow(2, 12 + p.smear);
-    const outLen = Math.round(src.length * p.stretch);
+    const S0 = srcSel(), p = params(), sr = S0.sampleRate, N = Math.pow(2, 12 + p.smear);
+    const outLen = Math.round(S0.length * p.stretch), sel = isITrimmed() ? "(" + fmtPrecise(itrim.a * src.duration) + " to " + fmtPrecise(itrim.b * src.duration) + ")" : "";
     if (outLen / sr > MAX_SEC) { refreshReadouts(); return; }
-    const c0 = src.getChannelData(0).slice(), c1 = src.numberOfChannels > 1 ? src.getChannelData(1).slice() : c0.slice();
+    const c0 = S0.getChannelData(0).slice(), c1 = S0.numberOfChannels > 1 ? S0.getChannelData(1).slice() : c0.slice();
     const mask = buildMask(N, sr, p), title = srcTitle;
     rendering = true; setProgress(0, "Cancel"); setStatus("Stretching");
     worker = new Worker(workerURL);
@@ -2084,10 +2222,10 @@ function foldable(deck,key){
       setStatus(p.space > 0 ? "Adding space" : "Finishing"); setProgress(0.9, "Cancel");
       try { b = await applySpace(b, p); } catch (err) { setStatus("Space failed: " + err.message, true); }
       if (!rendering) return;
-      out = finish(b, p); rendering = false; out._p = p; out._src = title; outItem = null; trim = { a: 0, b: 1 }; trimCache = null;
+      out = finish(b, p); rendering = false; out._p = p; out._src = title; out._sel = sel; outItem = null; trim = { a: 0, b: 1 }; trimCache = null;
       peaks.out = null; $("outEmpty").hidden = true;
       $("outName").textContent = renderName(out); $("outProv").textContent = renderProv(out); layoutTrim();
-      $("outPlay").disabled = false; $("exportBtn").disabled = false; $("outField").disabled = false; setKeep(false);
+      $("outPlay").disabled = false; $("exportBtn").disabled = false; $("outField").disabled = false; $("outKeys").disabled = false; setKeep(false);
       document.querySelectorAll('[data-send="out"]').forEach(b => b.disabled = false);
       setProgress(0, "Render"); setStatus("Ready.");
       draw();
@@ -2126,7 +2264,7 @@ function foldable(deck,key){
       for (let i = 0; i < fo; i++) d[n - 1 - i] *= 0.5 - 0.5 * Math.cos(Math.PI * i / fo);
       nb.copyToChannel(d, c);
     }
-    nb._p = out._p; nb._src = out._src;
+    nb._p = out._p; nb._src = out._src; nb._sel = out._sel;
     return (trimCache = nb);
   }
   function playOut(fromFrac) {
@@ -2176,12 +2314,74 @@ function foldable(deck,key){
     });
   }
   $("trimReset").addEventListener("click", () => setTrim(0, 1));
+  // ---------- source trim: only the chosen part gets stretched ----------
+  const isITrimmed = () => !!src && (itrim.a > 0.0005 || itrim.b < 0.9995);
+  function srcSel() {
+    if (!isITrimmed()) return src;
+    if (itrimCache) return itrimCache;
+    const len = src.length, s0 = Math.round(itrim.a * len), s1 = Math.round(itrim.b * len), n = Math.max(1, s1 - s0), sr = src.sampleRate, chs = src.numberOfChannels;
+    const nb = new AudioBuffer({ numberOfChannels: chs, length: n, sampleRate: sr }), q = Math.min(n >> 2, Math.round(sr * 0.008));
+    // 8 ms at each moved edge so the cut doesn't click; the render adds its own soft fades
+    const fi = itrim.a > 0.0005 ? q : 0, fo = itrim.b < 0.9995 ? q : 0;
+    for (let c = 0; c < chs; c++) {
+      const d = src.getChannelData(c).slice(s0, s1);
+      for (let i = 0; i < fi; i++) d[i] *= 0.5 - 0.5 * Math.cos(Math.PI * i / fi);
+      for (let i = 0; i < fo; i++) d[n - 1 - i] *= 0.5 - 0.5 * Math.cos(Math.PI * i / fo);
+      nb.copyToChannel(d, c);
+    }
+    return (itrimCache = nb);
+  }
+  function layoutITrim() {
+    const show = !!src;
+    for (const id of ["iTrimA", "iTrimB", "iShadeA", "iShadeB"]) $(id).hidden = !show;
+    $("iTrimReset").hidden = !isITrimmed();
+    if (!show) { $("srcDur").textContent = ""; return; }
+    const A = itrim.a * 100, B = itrim.b * 100;
+    $("iTrimA").style.left = A + "%"; $("iTrimB").style.left = B + "%";
+    $("iShadeA").style.left = "0"; $("iShadeA").style.width = A + "%";
+    $("iShadeB").style.left = B + "%"; $("iShadeB").style.width = (100 - B) + "%";
+    const d = src.duration, ta = fmtPrecise(itrim.a * d), tb = fmtPrecise(itrim.b * d);
+    $("iTrimAl").textContent = itrim.a > 0.0005 ? ta : ""; $("iTrimBl").textContent = itrim.b < 0.9995 ? tb : "";
+    $("iTrimA").setAttribute("aria-valuetext", ta); $("iTrimB").setAttribute("aria-valuetext", tb);
+    $("srcDur").textContent = (srcItem && srcItem.note ? srcItem.note.name + "  " : "") + fmt((itrim.b - itrim.a) * d) + (isITrimmed() ? " of " + fmt(d) : "");
+  }
+  function setITrim(a, b) {
+    if (!src) return;
+    const gap = Math.min(0.5, Math.max(0.01, 0.25 / src.duration));
+    a = Math.max(0, Math.min(a, 1 - gap)); b = Math.min(1, Math.max(b, a + gap));
+    if (a === itrim.a && b === itrim.b) return;
+    itrim = { a, b }; itrimCache = null;
+    if (player.which === "src") stopAll();
+    layoutITrim(); refreshReadouts();
+  }
+  for (const side of ["A", "B"]) {
+    const hd = $("iTrim" + side), isA = side === "A";
+    let dragging = false;
+    const at = (e) => { const r = $("srcBox").getBoundingClientRect(); return (e.clientX - r.left) / r.width; };
+    hd.addEventListener("pointerdown", (e) => { e.stopPropagation(); e.preventDefault(); dragging = true; hd.setPointerCapture(e.pointerId); hd.focus(); });
+    hd.addEventListener("pointermove", (e) => { if (!dragging) return; const f = at(e); if (isA) setITrim(f, itrim.b); else setITrim(itrim.a, f); });
+    const end = () => { dragging = false; };
+    hd.addEventListener("pointerup", end); hd.addEventListener("pointercancel", end);
+    hd.addEventListener("click", (e) => e.stopPropagation());
+    hd.addEventListener("keydown", (e) => {
+      const step = (e.shiftKey ? 1 : 0.1) / Math.max(0.1, src ? src.duration : 1);
+      let d = 0; if (e.key === "ArrowLeft") d = -step; else if (e.key === "ArrowRight") d = step; else if (e.key === "Home") d = -1; else if (e.key === "End") d = 1; else return;
+      e.preventDefault(); if (isA) setITrim(itrim.a + d, itrim.b); else setITrim(itrim.a, itrim.b + d);
+    });
+  }
+  $("iTrimReset").addEventListener("click", () => setITrim(0, 1));
+  function playSrc(fromFrac) {
+    if (!src) return;
+    const sb = srcSel(), off = Math.max(0, (fromFrac - itrim.a) * src.duration);
+    play("src", sb, Math.min(off, sb.duration - 0.01), { a: itrim.a, b: itrim.b });
+  }
+
 
   // ---------- source ----------
   function setSource(b, title, item) {
     if (player.which === "src") stopAll();
-    src = b; srcTitle = title; srcItem = item; peaks.src = null;
-    $("srcName").textContent = title; $("srcDur").textContent = (item && item.note ? item.note.name + "  " : "") + fmt(b.duration);
+    src = b; srcTitle = title; srcItem = item; peaks.src = null; itrim = { a: 0, b: 1 }; itrimCache = null;
+    $("srcName").textContent = title; layoutITrim();
     $("srcProv").textContent = item ? item.prov : ""; $("srcDot").className = "kdot" + (item ? " k-" + item.kind : "");
     $("srcEmpty").hidden = true; $("srcPlay").disabled = false; $("renderBtn").disabled = false;
     refreshReadouts(); draw();
@@ -2217,14 +2417,18 @@ function foldable(deck,key){
     setPlayIcon($("bPlay"), player.which === "bounce");
     setPlayIcon($("laPlay"), player.which === "lib" && libPlayId === Lib.sel);
   }
-  $("srcPlay").addEventListener("click", () => player.which === "src" ? stopAll() : src && play("src", src, 0));
+  $("srcPlay").addEventListener("click", () => player.which === "src" ? stopAll() : playSrc(itrim.a));
   $("outPlay").addEventListener("click", () => player.which === "out" ? stopAll() : playOut(trim.a));
   $("bPlay").addEventListener("click", () => player.which === "bounce" ? stopAll() : bounce && play("bounce", bounce.buf, 0));
   function seek(which, e) {
     const buf = bufs[which](); if (!buf) return;
     const r = e.currentTarget.getBoundingClientRect(); play(which, buf, Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * buf.duration);
   }
-  $("srcBox").addEventListener("click", (e) => seek("src", e));
+  $("srcBox").addEventListener("click", (e) => {
+    if (!src || e.target.closest(".trim")) return;
+    const r = e.currentTarget.getBoundingClientRect(), f = (e.clientX - r.left) / r.width;
+    playSrc(Math.max(itrim.a, Math.min(itrim.b - 0.001, f)));
+  });
   $("outBox").addEventListener("click", (e) => {
     if (!out || e.target.closest(".trim")) return;
     const r = e.currentTarget.getBoundingClientRect(), f = (e.clientX - r.left) / r.width;
@@ -2274,6 +2478,7 @@ function foldable(deck,key){
     drawWave("out", playerFrac("out"), true, COLS.stretch);
     drawWave("bounce", playerFrac("bounce"), true, COLS.tape);
     for (let i = 0; i < 4; i++) drawWave("t" + i, T[i].buf ? ui.pos[i] : -1, tapePlaying, COLS.tape);
+    if (bufs.k) drawKeysWave();
   }
   let raf = 0;
   function tick() { cancelAnimationFrame(raf); draw(); if (player.which) raf = requestAnimationFrame(tick); }
@@ -2436,7 +2641,7 @@ registerProcessor("hz-tape", HzTape);`;
     bounce = { buf: b, name, prov, item };
     peaks.bounce = null; $("bEmpty").hidden = true;
     $("bName").textContent = name; $("bProv").textContent = prov; $("bDur").textContent = fmt(b.duration);
-    $("bPlay").disabled = false; $("bExport").disabled = false; $("bField").disabled = false; $("bStretch").disabled = false;
+    $("bPlay").disabled = false; $("bExport").disabled = false; $("bField").disabled = false; $("bStretch").disabled = false; $("bKeys").disabled = false;
     document.querySelectorAll('[data-send="bounce"]').forEach(b => b.disabled = false);
     tSay(name + " is in the library.");
     draw();
@@ -2537,14 +2742,14 @@ self.onmessage = (e) => {
     return name;
   }
   function markTracks() {
-    for (let i = 0; i < 4; i++) document.querySelectorAll(`.sendto [data-to="${i}"], .sendto [data-lib-to="${i}"], .sendto [data-fs-to="${i}"]`).forEach(b => b.classList.toggle("has", !!T[i].buf));
+    for (let i = 0; i < 4; i++) document.querySelectorAll(`.sendto [data-to="${i}"], .sendto [data-lib-to="${i}"], .sendto [data-fs-to="${i}"], .sendto [data-ks-to="${i}"]`).forEach(b => b.classList.toggle("has", !!T[i].buf));
   }
   // a track that already holds audio needs a second tap to replace it, so a slip onto the wrong number can't overwrite anything
   let armT = null;
   const disarmSends = () => { clearTimeout(armT); document.querySelectorAll(".sendto .ib.sm.armed").forEach(b => { b.classList.remove("armed"); b.title = b.getAttribute("aria-label"); }); };
   document.addEventListener("click", (e) => {
     const b = e.target.closest && e.target.closest(".sendto .ib.sm"); if (!b || b.disabled) return;
-    const i = +(b.dataset.to ?? b.dataset.libTo ?? b.dataset.fsTo);
+    const i = +(b.dataset.to ?? b.dataset.libTo ?? b.dataset.fsTo ?? b.dataset.ksTo);
     if (!T[i] || !T[i].buf) { disarmSends(); return; }
     if (b.classList.contains("armed")) { disarmSends(); return; }
     e.stopPropagation(); e.preventDefault(); disarmSends();
@@ -2622,6 +2827,411 @@ self.onmessage = (e) => {
 
   async function toField(it) { await ensureAudio(); addSource(it.name, it.sr, it.chans.map(c => c.slice()), "lib", { fromLib: true, libId: it.id }); location.hash = "#field"; toast(it.name + " added to Field."); }
   function toStretch(it) { setSource(bufFromItem(it), it.name, it); location.hash = "#stretch"; setStatus("New source. Press Render."); }
+  // ---------- Keys: a sampler that plays any sound from its detected root ----------
+  const KEYMAP = { a: 0, w: 1, s: 2, e: 3, d: 4, f: 5, t: 6, g: 7, y: 8, h: 9, u: 10, j: 11, k: 12, o: 13, l: 14, p: 15, ";": 16, "'": 17 };
+  const KEYLET = Object.fromEntries(Object.entries(KEYMAP).map(([k, v]) => [v, k.toUpperCase()]));
+  const K = { item: null, buf: null, loopBuf: null, root: 60, detected: null, fine: 0, oct: 0,
+    A: 0.005, D: 0.6, S: 0.85, R: 1.5, cut: 1, res: 0.1, start: 0, loop: false, vol: 0.8,
+    rev: "hall", revMix: 0.35, dly: "tape", dlyTime: 0.42, dlyFb: 0.35, dlyMix: 0.2,
+    engine: "sample", revBuf: null, gPos: 0.2, gWidth: 0.25, gSize: 0.12, gDens: 24, gScan: 0.25, gSpray: 0.35, gFlut: 0.3, gSpread: 0.6, gRev: 0.15, gDrift: 0.3 };
+  const REV = {
+    plate:     { dec: 2.2, pre: 0.006, hiK: 0.55, att: 0 },
+    hall:      { dec: 3.8, pre: 0.02,  hiK: 0.4,  att: 0 },
+    cathedral: { dec: 8,   pre: 0.035, hiK: 0.3,  att: 0 },
+    bloom:     { dec: 6.5, pre: 0.03,  hiK: 0.35, att: 0.7 }
+  };
+  const cutHz = (c) => 60 * Math.pow(300, c);
+  let KG = null, sustain = false, kTap = null, kTakeN = 0, lastKeysTake = null;
+  const voices = new Map(), held = new Set();
+
+  function makeKeysIR(c, type) {
+    const P = REV[type], sr = c.sampleRate, len = Math.ceil(sr * (P.dec * 1.1 + P.pre)), ir = c.createBuffer(2, len, sr), pre = Math.round(P.pre * sr);
+    const a = 1 - Math.exp(-2 * Math.PI * 1800 / sr);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = ir.getChannelData(ch); let lp = 0;
+      for (let i = pre; i < len; i++) {
+        const t = (i - pre) / sr, n = Math.random() * 2 - 1; lp += (n - lp) * a;
+        const lo = lp * Math.exp(-6.9 * t / P.dec), hi = (n - lp) * Math.exp(-6.9 * t / (P.dec * P.hiK)) * 0.6;
+        const att = P.att ? 1 - Math.exp(-3 * t / P.att) : Math.min(1, t * 300);
+        d[i] = (lo + hi) * att;
+      }
+    }
+    return ir;
+  }
+  function keysGraph() {
+    if (KG) return KG;
+    const c = ctx();
+    const bus = c.createGain(), out = c.createGain(), dry = c.createGain(), rvSend = c.createGain(), conv = c.createConvolver(), dIn = c.createGain(), dOut = c.createGain();
+    conv.normalize = true;
+    bus.connect(dry); dry.connect(out); bus.connect(rvSend); rvSend.connect(conv); conv.connect(out); bus.connect(dIn); dOut.connect(out);
+    const mk = (self) => {
+      const d = c.createDelay(2.5), fb = c.createGain(), lp = c.createBiquadFilter(), hp = c.createBiquadFilter();
+      lp.type = "lowpass"; hp.type = "highpass"; d.connect(lp); lp.connect(hp); hp.connect(fb); if (self) fb.connect(d);
+      return { d, fb, lp, hp };
+    };
+    // digital and tape share one stereo line; tape adds a darker loop, saturation and wow
+    const line = mk(false), sat = c.createWaveShaper(), lineIn = c.createGain();
+    line.fb.disconnect(); line.hp.disconnect(); line.hp.connect(sat); sat.connect(line.fb); line.fb.connect(line.d);
+    dIn.connect(lineIn); lineIn.connect(line.d); line.d.connect(dOut);
+    const lfo = c.createOscillator(), lfoG = c.createGain(); lfo.frequency.value = 0.55; lfo.connect(lfoG); lfoG.connect(line.d.delayTime); lfo.start();
+    // ping-pong: mono in, repeats alternate left and right
+    const pL = mk(false), pR = mk(false), ppIn = c.createGain(), merge = c.createChannelMerger(2);
+    ppIn.channelCount = 1; ppIn.channelCountMode = "explicit"; ppIn.channelInterpretation = "speakers";
+    dIn.connect(ppIn); ppIn.connect(pL.d); pL.fb.connect(pR.d); pR.fb.connect(pL.d);
+    pL.d.connect(merge, 0, 0); pR.d.connect(merge, 0, 1); merge.connect(dOut);
+    out.connect(c.destination);
+    KG = { c, bus, out, dry, rvSend, conv, dIn, dOut, line, sat, lineIn, lfoG, pL, pR, ppIn, revType: null };
+    applyKeysFx();
+    return KG;
+  }
+  function applyKeysFx() {
+    if (!KG) return;
+    const G = KG, t = G.c.currentTime, set = (p, v) => p.setTargetAtTime(v, t, 0.03);
+    set(G.out.gain, K.vol); set(G.rvSend.gain, K.revMix); set(G.dry.gain, 1 - 0.3 * K.revMix); set(G.dIn.gain, K.dlyMix);
+    if (G.revType !== K.rev) { G.conv.buffer = makeKeysIR(G.c, K.rev); G.revType = K.rev; }
+    const tape = K.dly === "tape", ping = K.dly === "ping";
+    set(G.lineIn.gain, ping ? 0 : 1); set(G.ppIn.gain, ping ? 1 : 0);
+    for (const n of [G.line, G.pL, G.pR]) { set(n.d.delayTime, K.dlyTime); set(n.fb.gain, K.dlyFb); }
+    set(G.line.lp.frequency, tape ? 3200 : 14000); set(G.line.hp.frequency, tape ? 150 : 40);
+    for (const n of [G.pL, G.pR]) { set(n.lp.frequency, 9000); set(n.hp.frequency, 80); }
+    set(G.lfoG.gain, tape ? 0.0018 : 0);
+    if (tape) { const N = 512, cv = new Float32Array(N); for (let i = 0; i < N; i++) { const x = i / (N - 1) * 2 - 1; cv[i] = Math.tanh(1.6 * x) / Math.tanh(1.6); } G.sat.curve = cv; } else G.sat.curve = null;
+  }
+
+  function noteOn(id, midi, vel) {
+    if (!K.buf) return;
+    const c = ctx(); c.resume(); const G = keysGraph();
+    if (voices.has(id)) noteOff(id, true);
+    if (voices.size >= 16) { const first = voices.keys().next().value; noteOff(first, true); }
+    if (K.engine === "grains") { grainOn(id, midi, vel); return; }
+    const now = c.currentTime, useLoop = K.loop && K.loopBuf, buf = useLoop ? K.loopBuf : K.buf;
+    const src = c.createBufferSource(), flt = c.createBiquadFilter(), env = c.createGain();
+    src.buffer = buf; src.playbackRate.value = Math.pow(2, (midi - K.root) / 12); src.detune.value = -K.fine;
+    const off = Math.min(buf.duration * K.start, Math.max(0, buf.duration - 0.06));
+    if (useLoop) { src.loop = true; src.loopStart = off; src.loopEnd = buf.duration; }
+    flt.type = "lowpass"; flt.frequency.value = Math.min(cutHz(K.cut), c.sampleRate * 0.45); flt.Q.value = 0.5 + K.res * 12;
+    src.connect(flt); flt.connect(env); env.connect(G.bus);
+    const peak = vel == null ? 0.8 : vel, A = Math.max(0.003, K.A);
+    env.gain.setValueAtTime(0, now); env.gain.linearRampToValueAtTime(peak, now + A); env.gain.setTargetAtTime(peak * K.S, now + A, Math.max(0.005, K.D / 4));
+    src.start(now, off);
+    const v = { src, flt, env, midi };
+    src.onended = () => { if (voices.get(id) === v) voices.delete(id); try { env.disconnect(); } catch (e) {} markKeys(); };
+    voices.set(id, v); markKeys();
+  }
+  function noteOff(id, fast) {
+    const v = voices.get(id); if (!v) return;
+    if (!fast && sustain && id.startsWith("m")) { held.add(id); return; }
+    voices.delete(id);
+    const now = ac.currentTime, R = fast ? 0.015 : Math.max(0.01, K.R), g = v.env.gain;
+    if (g.cancelAndHoldAtTime) g.cancelAndHoldAtTime(now); else { g.cancelScheduledValues(now); g.setValueAtTime(g.value, now); }
+    g.setTargetAtTime(0, now, R / 4);
+    if (v.grains) v.until = now + R * 1.6 + 0.05;
+    else { try { v.src.stop(now + R * 1.6 + 0.05); } catch (e) {} }
+    markKeys();
+  }
+  const killAll = () => { for (const id of [...voices.keys()]) noteOff(id, true); held.clear(); };
+  // ---------- grains: each held key runs its own cloud read from the window ----------
+  const gvoices = new Set(), recentG = [];
+  let gClock = 0, kRaf = 0;
+  function grainOn(id, midi, vel) {
+    const c = ac, G = keysGraph(), now = c.currentTime, flt = c.createBiquadFilter(), env = c.createGain();
+    flt.type = "lowpass"; flt.frequency.value = Math.min(cutHz(K.cut), c.sampleRate * 0.45); flt.Q.value = 0.5 + K.res * 12;
+    flt.connect(env); env.connect(G.bus);
+    const peak = vel == null ? 0.8 : vel, A = Math.max(0.003, K.A);
+    env.gain.setValueAtTime(0, now); env.gain.linearRampToValueAtTime(peak, now + A); env.gain.setTargetAtTime(peak * K.S, now + A, Math.max(0.005, K.D / 4));
+    const v = { grains: true, flt, env, midi, rate: Math.pow(2, (midi - K.root) / 12 - K.fine / 1200), next: now + 0.004, last: now, head: Math.random() * 0.02, ph: Math.random() * 100, until: Infinity };
+    gvoices.add(v); voices.set(id, v); markKeys();
+    if (!gClock) gClock = setInterval(grainTick, 25);
+    grainTick(); kAnim();
+  }
+  function grainTick() {
+    const now = ac.currentTime, ahead = now + 0.1;
+    for (const v of [...gvoices]) {
+      if (now > v.until) { gvoices.delete(v); setTimeout(() => { try { v.env.disconnect(); } catch (e) {} }, 400); continue; }
+      if (v.next < now - 0.05) v.next = now; // a throttled tab skips rather than bursting
+      const end = Math.min(ahead, v.until);
+      while (v.next < end) { spawnGrain(v, v.next); v.next += (0.7 + Math.random() * 0.6) / K.gDens; }
+    }
+    if (!gvoices.size) { clearInterval(gClock); gClock = 0; }
+  }
+  function spawnGrain(v, t) {
+    const c = ac, B = K.buf; if (!B) return;
+    const Dur = B.duration, size = K.gSize, wl = Math.max(0.005, K.gWidth);
+    // the window wanders slowly when Drift is up
+    const tt = t + v.ph, drift = K.gDrift * 0.18 * (0.65 * Math.sin(tt * 0.41) + 0.35 * Math.sin(tt * 1.13));
+    const w0 = clamp(K.gPos + drift, 0, 1 - wl);
+    // the read head moves through the window in real time at Scan speed; Spray scatters grains around it
+    v.head = (v.head + K.gScan * Math.max(0, t - v.last) / (wl * Dur)) % 1; v.last = t;
+    let f = v.head + (Math.random() * 2 - 1) * K.gSpray * 0.5; f = ((f % 1) + 1) % 1;
+    const rate = v.rate * Math.pow(2, (Math.random() * 2 - 1) * K.gFlut * 40 / 1200), span = size * rate;
+    const rev = K.revBuf && Math.random() < K.gRev;
+    let off = clamp((w0 + f * wl) * Dur - span / 2, 0, Math.max(0, Dur - span));
+    const mid = off + span / 2;
+    if (rev) off = Math.max(0, Dur - off - span);
+    const src = c.createBufferSource(), g = c.createGain(), pan = c.createStereoPanner();
+    src.buffer = rev ? K.revBuf : B; src.playbackRate.value = rate;
+    const amp = 1 / Math.sqrt(Math.max(1, K.gDens * size)) * (1 - K.gFlut * 0.55 * Math.random()), N = 48, cv = new Float32Array(N);
+    for (let i = 0; i < N; i++) cv[i] = amp * Math.sin(Math.PI * i / (N - 1)) ** 2;
+    g.gain.value = 0; g.gain.setValueCurveAtTime(cv, t, size);
+    pan.pan.value = (Math.random() * 2 - 1) * K.gSpread;
+    src.connect(g); g.connect(pan); pan.connect(v.flt);
+    src.start(t, off, span + 0.01); src.stop(t + size + 0.02);
+    src.onended = () => { try { pan.disconnect(); } catch (e) {} };
+    recentG.push({ x: mid / Dur, t0: t, d: size, y: Math.random() }); if (recentG.length > 400) recentG.splice(0, recentG.length - 400);
+  }
+  function drawKeysWave() {
+    drawWave("k", -1, false);
+    if (K.engine !== "grains" || !recentG.length || !ac) return;
+    const cv = $("kCv"), g = cv.getContext("2d"), w = cv.width, hh = cv.height, now = ac.currentTime, dpr = window.devicePixelRatio || 1;
+    g.fillStyle = COLS.keys;
+    for (const q of recentG) {
+      const p = (now - q.t0) / q.d; if (p < 0 || p > 1) continue;
+      g.globalAlpha = 0.9 * Math.sin(Math.PI * p); g.beginPath(); g.arc(q.x * w, (0.14 + q.y * 0.72) * hh, 2 * dpr, 0, 6.2832); g.fill();
+    }
+    g.globalAlpha = 1;
+  }
+  function kAnim() {
+    if (kRaf) return;
+    const step = () => {
+      kRaf = 0; drawKeysWave();
+      const last = recentG[recentG.length - 1];
+      if (view === "keys" && (gvoices.size || (last && ac.currentTime - last.t0 < last.d + 0.1))) kRaf = requestAnimationFrame(step);
+    };
+    kRaf = requestAnimationFrame(step);
+  }
+
+  // the grain window: drag it, stretch its edges, or tap the waveform to move it there
+  function layoutWin() {
+    const el = $("kWin"); el.hidden = K.engine !== "grains" || !K.buf;
+    el.style.left = (K.gPos * 100) + "%"; el.style.width = (K.gWidth * 100) + "%";
+    el.setAttribute("aria-valuetext", "From " + Math.round(K.gPos * 100) + "% to " + Math.round((K.gPos + K.gWidth) * 100) + "% of the sample");
+  }
+  let wdrag = null;
+  $("kBox").addEventListener("pointerdown", (e) => {
+    if (K.engine !== "grains" || !K.buf) return;
+    const r = $("kBox").getBoundingClientRect(), fx = (e.clientX - r.left) / r.width, hd = e.target.dataset ? e.target.dataset.h : null;
+    if (!e.target.closest(".gwin")) { K.gPos = clamp(fx - K.gWidth / 2, 0, 1 - K.gWidth); layoutWin(); }
+    wdrag = { id: e.pointerId, hd, x0: fx, p0: K.gPos, w0: K.gWidth };
+    $("kBox").setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  $("kBox").addEventListener("pointermove", (e) => {
+    if (!wdrag || wdrag.id !== e.pointerId) return;
+    const r = $("kBox").getBoundingClientRect(), d = (e.clientX - r.left) / r.width - wdrag.x0, { p0, w0 } = wdrag;
+    if (wdrag.hd === "l") { const nl = clamp(p0 + d, 0, p0 + w0 - 0.01); K.gWidth = p0 + w0 - nl; K.gPos = nl; }
+    else if (wdrag.hd === "r") K.gWidth = clamp(w0 + d, 0.01, 1 - p0);
+    else K.gPos = clamp(p0 + d, 0, 1 - w0);
+    layoutWin();
+  });
+  const wEnd = (e) => { if (wdrag && wdrag.id === e.pointerId) wdrag = null; };
+  $("kBox").addEventListener("pointerup", wEnd); $("kBox").addEventListener("pointercancel", wEnd);
+  $("kWin").addEventListener("keydown", (e) => {
+    const s = e.key === "ArrowLeft" ? -0.01 : e.key === "ArrowRight" ? 0.01 : 0; if (!s) return; e.preventDefault();
+    if (e.shiftKey) K.gWidth = clamp(K.gWidth + s, 0.01, 1 - K.gPos); else K.gPos = clamp(K.gPos + s, 0, 1 - K.gWidth);
+    layoutWin();
+  });
+  function syncEngineUI() {
+    const gr = K.engine === "grains";
+    document.querySelectorAll("[data-eng]").forEach(b => b.setAttribute("aria-pressed", b.dataset.eng === K.engine ? "true" : "false"));
+    $("kGrains").hidden = !gr; $("kStartCtl").hidden = gr; $("kLoop").hidden = gr;
+    $("kBox").classList.toggle("gr", gr);
+    $("kStartShade").hidden = gr || !K.item || !K.start;
+    layoutWin(); peaks.k = null; requestAnimationFrame(() => { draw(); paintRanges(); });
+  }
+  document.querySelectorAll("[data-eng]").forEach(b => b.addEventListener("click", () => { if (K.engine === b.dataset.eng) return; killAll(); K.engine = b.dataset.eng; syncEngineUI(); }));
+
+
+  // ---------- on-screen keyboard ----------
+  const kbBase = () => 12 * Math.floor(K.root / 12) + 12 * K.oct;
+  let kbOcts = 2;
+  const octsFor = (w) => !w ? 2 : w >= 1100 ? 3 : w >= 640 ? 2 : 1;
+  function buildKb() {
+    const box = $("kb"); if (!box) return;
+    kbOcts = octsFor(box.clientWidth);
+    const base = kbBase(), n = kbOcts * 12 + 1, W = 100 / (kbOcts * 7 + 1);
+    box.innerHTML = ""; let wi = 0;
+    for (let s = 0; s < n; s++) {
+      const midi = base + s, pc = ((midi % 12) + 12) % 12, black = [1, 3, 6, 8, 10].includes(pc);
+      const el = document.createElement("div"); el.className = "key" + (black ? " black" : ""); el.dataset.midi = midi;
+      if (black) { el.style.left = (wi * W - W * 0.32) + "%"; el.style.width = (W * 0.64) + "%"; }
+      else { el.style.left = (wi * W) + "%"; el.style.width = W + "%"; wi++; }
+      let inner = "";
+      if (midi === K.root) inner += '<span class="rd" title="Root"></span>';
+      if (KEYLET[s] != null) inner += `<span class="kl">${KEYLET[s] === ";" ? ";" : KEYLET[s]}</span>`;
+      if (pc === 0 && !black) inner += `<span class="kn">${noteName(midi)}</span>`;
+      el.innerHTML = inner; box.appendChild(el);
+    }
+    $("kRange").textContent = noteName(base) + " – " + noteName(base + kbOcts * 12);
+    markKeys();
+  }
+  function markKeys() {
+    const on = new Set([...voices.values()].map(v => v.midi));
+    document.querySelectorAll("#kb .key").forEach(k => k.classList.toggle("on", on.has(+k.dataset.midi)));
+  }
+  const kbAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest && el.closest("#kb .key"); };
+  const ptr = new Map();
+  $("kb").addEventListener("pointerdown", (e) => {
+    const k = e.target.closest(".key"); if (!k) return; e.preventDefault();
+    $("kb").setPointerCapture(e.pointerId); const id = "p" + e.pointerId; ptr.set(e.pointerId, +k.dataset.midi); noteOn(id, +k.dataset.midi, 0.8);
+  });
+  $("kb").addEventListener("pointermove", (e) => {
+    if (!ptr.has(e.pointerId)) return; const k = kbAt(e.clientX, e.clientY); if (!k) return;
+    const m = +k.dataset.midi; if (m === ptr.get(e.pointerId)) return;
+    const id = "p" + e.pointerId; noteOff(id, true); ptr.set(e.pointerId, m); noteOn(id, m, 0.8);
+  });
+  const ptrUp = (e) => { if (!ptr.has(e.pointerId)) return; ptr.delete(e.pointerId); noteOff("p" + e.pointerId); };
+  $("kb").addEventListener("pointerup", ptrUp); $("kb").addEventListener("pointercancel", ptrUp);
+  new ResizeObserver(() => { const w = $("kb").clientWidth; if (w && octsFor(w) !== kbOcts) buildKb(); }).observe($("kb"));
+  function shiftOct(d) { K.oct = Math.max(-3, Math.min(3, K.oct + d)); killAll(); buildKb(); }
+  $("kOctDn").addEventListener("click", () => shiftOct(-1)); $("kOctUp").addEventListener("click", () => shiftOct(1));
+
+  // computer keyboard: A to ' plays, Z and X shift octaves
+  document.addEventListener("keydown", (e) => {
+    if (view !== "keys" || e.metaKey || e.ctrlKey || e.altKey) return;
+    const tg = e.target.tagName; if (["INPUT", "SELECT", "TEXTAREA"].includes(tg) && e.target.type !== "range") return;
+    const k = e.key.toLowerCase();
+    if (k === "z" || k === "x") { if (!e.repeat) shiftOct(k === "z" ? -1 : 1); e.preventDefault(); return; }
+    if (KEYMAP[k] == null) return;
+    e.preventDefault(); if (e.repeat) return;
+    noteOn("k" + k, kbBase() + KEYMAP[k], 0.8);
+  });
+  document.addEventListener("keyup", (e) => { const k = e.key.toLowerCase(); if (KEYMAP[k] != null) noteOff("k" + k); });
+  addEventListener("blur", killAll);
+
+  // MIDI keyboards (Chrome and Edge; Safari has no Web MIDI)
+  let midiAccess = null;
+  function onMidi(e) {
+    const [st, d1, d2] = e.data, cmd = st & 0xf0;
+    if (cmd === 0x90 && d2 > 0) noteOn("m" + d1, d1, 0.15 + 0.85 * (d2 / 127));
+    else if (cmd === 0x80 || (cmd === 0x90 && d2 === 0)) noteOff("m" + d1);
+    else if (cmd === 0xb0 && d1 === 1) { K.gFlut = d2 / 127; $("kgFlut").value = Math.round(K.gFlut * 100); $("kgFlutOut").textContent = K.gFlut ? Math.round(K.gFlut * 100) + "%" : "off"; paintRange($("kgFlut")); }
+    else if (cmd === 0xb0 && d1 === 64) { sustain = d2 >= 64; if (!sustain) { for (const id of [...held]) { held.delete(id); noteOff(id); } } }
+  }
+  function syncMidi() {
+    if (!midiAccess) return; const names = [];
+    midiAccess.inputs.forEach(inp => { inp.onmidimessage = onMidi; names.push(inp.name); });
+    $("kMidi").textContent = names.length ? names.join(", ") : "No MIDI keyboard found";
+    $("kMidiBtn").setAttribute("aria-pressed", names.length ? "true" : "false");
+  }
+  if (!navigator.requestMIDIAccess) $("kMidiBtn").hidden = true;
+  $("kMidiBtn").addEventListener("click", async () => {
+    try { midiAccess = await navigator.requestMIDIAccess(); midiAccess.onstatechange = syncMidi; syncMidi(); }
+    catch (e) { $("kMidi").textContent = "MIDI isn't available here"; }
+  });
+
+  // ---------- sample ----------
+  bufs.k = () => K.buf;
+  function setKeysSample(it) {
+    killAll();
+    const b = bufFromItem(it), [L, R] = loopable(b.getChannelData(0), b.getChannelData(1), b.sampleRate);
+    const lb = new AudioBuffer({ numberOfChannels: 2, length: L.length, sampleRate: b.sampleRate }); lb.copyToChannel(L, 0); lb.copyToChannel(R, 1);
+    const rb = new AudioBuffer({ numberOfChannels: 2, length: b.length, sampleRate: b.sampleRate }); for (let ch = 0; ch < 2; ch++) rb.copyToChannel(b.getChannelData(ch).slice().reverse(), ch);
+    const nt = it.note || detectNote(it.chans, it.sr);
+    Object.assign(K, { item: it, buf: b, loopBuf: lb, revBuf: rb, detected: nt, root: nt ? Math.max(24, Math.min(96, Math.round(nt.midi))) : 60, fine: nt ? nt.cents : 0, oct: 0 });
+    peaks.k = null; syncKeysSample(); buildKb(); draw();
+  }
+  function syncKeysSample() {
+    const it = K.item;
+    $("kName").textContent = it ? it.name : "No sample yet"; $("kProv").textContent = it ? it.prov : "";
+    $("kDur").textContent = it ? fmt(it.dur) : ""; $("kDot").className = "kdot" + (it ? " k-" + it.kind : ""); $("kEmpty").hidden = !!it;
+    $("kRoot").value = K.root; $("kFine").value = K.fine;
+    $("kDetect").textContent = !it ? "" : K.detected ? "Detected " + K.detected.name + (K.detected.cents ? (K.detected.cents > 0 ? " +" : " ") + K.detected.cents + " cents" : "") : "No clear pitch, so it starts on C4. Set the root by ear.";
+    $("kStartShade").style.width = (K.start * 100) + "%";
+    readKeys(); syncEngineUI();
+  }
+  async function loadKeysFile(f) {
+    try {
+      const b = await ctx().decodeAudioData(await f.arrayBuffer()), name = f.name.replace(/\.[^.]+$/, "").slice(0, 40);
+      const it = Lib.add({ name, kind: "field", prov: "loaded from a file", sr: b.sampleRate, chans: chansFromBuf(b) });
+      setKeysSample(it);
+    } catch (e) { toast("Couldn't read that file. Try WAV, AIFF, MP3 or M4A."); }
+  }
+  $("kFile").addEventListener("change", (e) => { if (e.target.files[0]) loadKeysFile(e.target.files[0]); e.target.value = ""; });
+  $("kBox").addEventListener("click", () => { if (!K.buf) $("kFile").click(); else if (K.engine === "sample") { noteOn("prev", K.root, 0.8); setTimeout(() => noteOff("prev"), 600); } });
+  function toKeys(it) { setKeysSample(it); location.hash = "#keys"; toast(it.name + " is on the keys."); }
+
+  // root note choices
+  for (let m = 24; m <= 96; m++) { const o = document.createElement("option"); o.value = m; o.textContent = noteName(m); $("kRoot").appendChild(o); }
+
+  // ---------- controls ----------
+  const logMap = (lo, hi) => ({ to: (v) => lo * Math.pow(hi / lo, v / 1000), from: (x) => Math.round(Math.log(x / lo) / Math.log(hi / lo) * 1000) });
+  const mA = logMap(0.001, 4), mD = logMap(0.01, 6), mR = logMap(0.01, 8);
+  const secs = (x) => x < 1 ? Math.round(x * 1000) + " ms" : x.toFixed(x < 10 ? 2 : 1) + " s";
+  const mGS = logMap(0.015, 0.6), mGD = logMap(2, 80), pct = (off) => (x) => !x && off ? off : Math.round(x * 100) + "%";
+  const P100 = [(v) => v / 100, (x) => Math.round(x * 100)];
+  const KCTL = [
+    ["kgSize", "gSize", mGS.to, mGS.from, secs], ["kgDens", "gDens", mGD.to, mGD.from, (x) => (x < 10 ? x.toFixed(1) : Math.round(x)) + " per s"],
+    ["kgScan", "gScan", ...P100, pct("frozen")], ["kgSpray", "gSpray", ...P100, pct("off")], ["kgFlut", "gFlut", ...P100, pct("off")],
+    ["kgSpread", "gSpread", ...P100, pct("center")], ["kgRev", "gRev", ...P100, pct("off")], ["kgDrift", "gDrift", ...P100, pct("still")],
+    ["kA", "A", mA.to, mA.from, secs], ["kD", "D", mD.to, mD.from, secs],
+    ["kS", "S", (v) => v / 100, (x) => Math.round(x * 100), (x) => Math.round(x * 100) + "%"], ["kR", "R", mR.to, mR.from, secs],
+    ["kCut", "cut", (v) => v / 1000, (x) => Math.round(x * 1000), (x) => { const h = cutHz(x); return x >= 0.999 ? "open" : h >= 1000 ? (h / 1000).toFixed(1) + " kHz" : Math.round(h) + " Hz"; }],
+    ["kRes", "res", (v) => v / 100, (x) => Math.round(x * 100), (x) => Math.round(x * 100) + "%"],
+    ["kStart", "start", (v) => v / 100, (x) => Math.round(x * 100), (x) => x ? Math.round(x * 100) + "%" : "from the top"],
+    ["kVol", "vol", (v) => v / 100, (x) => Math.round(x * 100), (x) => Math.round(x * 100) + "%"],
+    ["kRevMix", "revMix", (v) => v / 100, (x) => Math.round(x * 100), (x) => x ? Math.round(x * 100) + "%" : "off"],
+    ["kDlyTime", "dlyTime", (v) => v / 1000, (x) => Math.round(x * 1000), (x) => Math.round(x * 1000) + " ms"],
+    ["kDlyFb", "dlyFb", (v) => v / 100, (x) => Math.round(x * 100), (x) => Math.round(x * 100) + "%"],
+    ["kDlyMix", "dlyMix", (v) => v / 100, (x) => Math.round(x * 100), (x) => x ? Math.round(x * 100) + "%" : "off"]
+  ];
+  function readKeys() {
+    for (const [id, key, , from, f] of KCTL) { $(id).value = from(K[key]); $(id + "Out").textContent = f(K[key]); }
+    $("kFineOut").textContent = (K.fine > 0 ? "+" : "") + K.fine + " cents";
+    document.querySelectorAll("[data-rev]").forEach(b => b.setAttribute("aria-pressed", b.dataset.rev === K.rev ? "true" : "false"));
+    document.querySelectorAll("[data-dly]").forEach(b => b.setAttribute("aria-pressed", b.dataset.dly === K.dly ? "true" : "false"));
+    $("kLoop").setAttribute("aria-pressed", K.loop ? "true" : "false"); $("kLoop").title = K.loop ? "Looping while held" : "Loop while held";
+    paintRanges();
+  }
+  for (const [id, key, to, , f] of KCTL) $(id).addEventListener("input", (e) => {
+    K[key] = to(+e.target.value); $(id + "Out").textContent = f(K[key]); applyKeysFx();
+    if (key === "cut" || key === "res") for (const v of [...voices.values(), ...gvoices]) { v.flt.frequency.setTargetAtTime(Math.min(cutHz(K.cut), ac.sampleRate * 0.45), ac.currentTime, 0.02); v.flt.Q.setTargetAtTime(0.5 + K.res * 12, ac.currentTime, 0.02); }
+    if (key === "start") { $("kStartShade").style.width = (K.start * 100) + "%"; $("kStartShade").hidden = !K.item || !K.start || K.engine === "grains"; }
+  });
+  $("kRoot").addEventListener("change", (e) => { K.root = +e.target.value; killAll(); buildKb(); });
+  $("kFine").addEventListener("input", (e) => { K.fine = +e.target.value; $("kFineOut").textContent = (K.fine > 0 ? "+" : "") + K.fine + " cents"; });
+  document.querySelectorAll("[data-rev]").forEach(b => b.addEventListener("click", () => { K.rev = b.dataset.rev; readKeys(); applyKeysFx(); }));
+  document.querySelectorAll("[data-dly]").forEach(b => b.addEventListener("click", () => { K.dly = b.dataset.dly; readKeys(); applyKeysFx(); }));
+  $("kLoop").addEventListener("click", () => { K.loop = !K.loop; readKeys(); });
+
+  // ---------- record a take ----------
+  function kRecUI(on) { $("kRec").setAttribute("aria-pressed", on ? "true" : "false"); $("kRec").title = on ? "Stop recording" : "Record a Keys take"; }
+  $("kRec").addEventListener("click", () => {
+    if (kTap) { stopKeysTake(); return; }
+    if (!K.buf) { toast("Load a sample first, then record what you play."); return; }
+    const c = ctx(); c.resume(); const G = keysGraph();
+    const sp = c.createScriptProcessor(4096, 2, 2), mute = c.createGain(); mute.gain.value = 0;
+    const sess = { sp, mute, L: [], R: [], n: 0 };
+    sp.onaudioprocess = (e) => { if (kTap !== sess) return; const ib = e.inputBuffer, a = ib.getChannelData(0), b = ib.numberOfChannels > 1 ? ib.getChannelData(1) : a;
+      sess.L.push(a.slice()); sess.R.push(b.slice()); sess.n += a.length; if (sess.n > c.sampleRate * 600) { toast("Keys takes stop at 10 minutes."); stopKeysTake(); } };
+    G.out.connect(sp); sp.connect(mute); mute.connect(c.destination);
+    kTap = sess; kRecUI(true); toast("Recording. Play, then stop when you're done.");
+  });
+  function stopKeysTake() {
+    const s = kTap; if (!s) return; kTap = null; kRecUI(false);
+    try { KG.out.disconnect(s.sp); } catch (e) {} try { s.sp.disconnect(); s.mute.disconnect(); } catch (e) {} s.sp.onaudioprocess = null;
+    if (s.n < ac.sampleRate * 0.25) { toast("Nothing much was captured. Record while you play."); return; }
+    const join = (arr) => { const o = new Float32Array(s.n); let k = 0; for (const c of arr) { o.set(c, k); k += c.length; } return o; };
+    // trim leading silence so the take starts on the first note
+    const L = join(s.L), R = join(s.R); let st = 0; while (st < L.length && Math.abs(L[st]) < 1e-4 && Math.abs(R[st]) < 1e-4) st++;
+    const it = Lib.add({ name: "Keys take " + (++kTakeN), kind: "keys", prov: "played in Keys from " + (K.item ? K.item.name : "a sample"), sr: ac.sampleRate, chans: [L.slice(st), R.slice(st)] });
+    lastKeysTake = it.id; refreshKeysSend(); toast(it.name + " is ready to send.");
+  }
+
+  // ---------- send bar ----------
+  function refreshKeysSend() {
+    const it = lastKeysTake && Lib.get(lastKeysTake);
+    $("ksName").textContent = it ? it.name : "Record a take to send it"; $("ksProv").textContent = it ? it.prov : ""; $("ksDur").textContent = it ? fmt(it.dur) : "";
+    $("ksField").disabled = $("ksStretch").disabled = !it; document.querySelectorAll("[data-ks-to]").forEach(b => b.disabled = !it);
+  }
+  Lib.on(refreshKeysSend);
+  $("ksField").addEventListener("click", () => { const it = Lib.get(lastKeysTake); if (it) toField(it); });
+  $("ksStretch").addEventListener("click", () => { const it = Lib.get(lastKeysTake); if (it) toStretch(it); });
+  document.querySelectorAll("[data-ks-to]").forEach(b => b.addEventListener("click", async () => {
+    const it = Lib.get(lastKeysTake); if (!it) return; const i = +b.dataset.ksTo;
+    await loadTrack(i, bufFromItem(it), it.name, it.kind, it.prov, it.id); location.hash = "#tape"; tSay(it.name + " loaded onto track " + (i + 1) + ".");
+  }));
+
+  $("outKeys").addEventListener("click", () => { const it = keepOut(); if (it) toKeys(it); });
+  $("bKeys").addEventListener("click", () => bounce && toKeys(bounce.item));
   $("bField").addEventListener("click", () => bounce && toField(bounce.item));
   $("bStretch").addEventListener("click", () => bounce && toStretch(bounce.item));
   $("outField").addEventListener("click", () => { const it = keepOut(); if (it) toField(it); });
@@ -2678,6 +3288,7 @@ self.onmessage = (e) => {
     addSource(it.name, it.sr, it.chans.map(c => c.slice()), "lib", { fromLib: true, libId: it.id });
     location.hash = "#field"; toast(it.name + " added to Field.");
   });
+  $("laKeys").addEventListener("click", () => { const it = selItem(); if (it) toKeys(it); });
   $("laStretch").addEventListener("click", () => {
     const it = selItem(); if (!it) return;
     setSource(bufFromItem(it), it.name, it); location.hash = "#stretch"; setStatus("New source. Press Render.");
@@ -2703,7 +3314,7 @@ self.onmessage = (e) => {
   });
 
   // ---------- drag and drop: files or library items onto any mode ----------
-  const MODES = ["stretch", "tape", "field"];
+  const MODES = ["stretch", "tape", "field", "keys"];
   async function dropTo(mode, trackIdx, item, files) {
     if (location.hash !== "#" + mode) location.hash = "#" + mode;
     if (mode === "stretch") {
@@ -2713,6 +3324,9 @@ self.onmessage = (e) => {
       const i = trackIdx >= 0 ? trackIdx : Math.max(0, T.findIndex(t => !t.buf));
       if (item) { await loadTrack(i, bufFromItem(item), item.name, item.kind, item.prov, item.id); tSay(item.name + " loaded onto track " + (i + 1) + "."); }
       else if (files.length) loadTrackFile(i, files[0]);
+    } else if (mode === "keys") {
+      if (item) setKeysSample(item);
+      else if (files.length) loadKeysFile(files[0]);
     } else {
       if (item) { await ensureAudio(); addSource(item.name, item.sr, item.chans.map(c => c.slice()), "lib", { fromLib: true, libId: item.id }); toast(item.name + " added to Field."); }
       else if (files.length) loadFiles(files);
@@ -2760,30 +3374,32 @@ self.onmessage = (e) => {
     $("fsName").textContent = f ? name : (typeof page !== "undefined" && page === "record" ? "Record a take to send it" : "Nothing to send yet");
     $("fsProv").textContent = f ? f.note : "";
     $("fsDur").textContent = f ? fmt(f.it ? f.it.dur : f.src.dur) : "";
-    $("fsStretch").disabled = !f; document.querySelectorAll("[data-fs-to]").forEach(b => b.disabled = !f);
+    $("fsStretch").disabled = $("fsKeys").disabled = !f; document.querySelectorAll("[data-fs-to]").forEach(b => b.disabled = !f);
   }
   setInterval(refreshFieldSend, 400); Lib.on(() => { fsKey = ""; refreshFieldSend(); });
   $("fsStretch").addEventListener("click", () => { const f = fieldItem(); if (f) toStretch(ensureFieldItem(f)); });
+  $("fsKeys").addEventListener("click", () => { const f = fieldItem(); if (f) toKeys(ensureFieldItem(f)); });
   document.querySelectorAll("[data-fs-to]").forEach(b => b.addEventListener("click", async () => {
     const f = fieldItem(); if (!f) return; const it = ensureFieldItem(f), i = +b.dataset.fsTo;
     await loadTrack(i, bufFromItem(it), it.name, "field", it.prov, it.id); location.hash = "#tape"; tSay(it.name + " loaded onto track " + (i + 1) + ".");
   }));
 
   // ---------- views ----------
-  const VIEWS = ["stretch", "tape", "field"];
+  const VIEWS = ["stretch", "tape", "field", "keys"];
   function showView() {
     const h = location.hash.slice(1);
     view = VIEWS.includes(h) ? h : "stretch";
     for (const v of VIEWS) { $("view-" + v).hidden = v !== view; $("tab-" + v).setAttribute("aria-current", v === view ? "page" : "false"); }
     document.body.dataset.view = view;
-    $("mMode").innerHTML = IC[view] + ({ stretch: "Stretch", tape: "Tape", field: "Field" })[view];
+    $("mMode").innerHTML = IC[view] + ({ stretch: "Stretch", tape: "Tape", field: "Field", keys: "Keys" })[view];
+    if (view !== "keys") killAll();
     if (view !== "field" && typeof page !== "undefined" && page === "record") setPage("perform");
     requestAnimationFrame(() => { draw(); drawTapeUI(); paintRanges(); });
   }
   window.addEventListener("hashchange", showView);
   new ResizeObserver(() => draw()).observe(document.querySelector(".main"));
   document.addEventListener("keydown", (e) => {
-    if (e.code !== "Space" || view === "field") return;
+    if (e.code !== "Space" || view === "field" || view === "keys") return;
     const tg = e.target.tagName; if (["INPUT", "SELECT", "BUTTON", "TEXTAREA"].includes(tg)) return;
     e.preventDefault();
     if (view === "tape") { const on = !tapePlaying; T.forEach((t, i) => { if (t.buf) setTrackRun(i, on); }); }
@@ -2792,10 +3408,12 @@ self.onmessage = (e) => {
 
   function groupActions(root) {
     (root || document).querySelectorAll(".whead, .libact").forEach(h => {
-      const g = h.querySelector(":scope > .grow"); if (!g || h.querySelector(":scope > .acts")) return;
-      const acts = document.createElement("span"); acts.className = "acts";
-      let n = g.nextSibling; while (n) { const nx = n.nextSibling; acts.appendChild(n); n = nx; }
-      h.appendChild(acts); g.remove();
+      const g = h.querySelector(":scope > .grow"); if (!g || h.querySelector(":scope > .acts, :scope > .actsw")) return;
+      const mk = () => { const s = document.createElement("span"); s.className = "acts"; return s; }, groups = [mk()];
+      let n = g.nextSibling;
+      while (n) { const nx = n.nextSibling; if (n.nodeType === 1 && n.classList.contains("brk")) { n.remove(); if (groups[groups.length - 1].childElementCount) groups.push(mk()); } else groups[groups.length - 1].appendChild(n); n = nx; }
+      if (groups.length === 1) h.appendChild(groups[0]); else { const w = document.createElement("span"); w.className = "actsw"; w.append(...groups); h.appendChild(w); }
+      g.remove();
     });
   }
   groupActions();
@@ -2823,13 +3441,15 @@ self.onmessage = (e) => {
   let memOK = typeof indexedDB !== "undefined", restoring = false, lastSaved = "", stored = new Set(), sessions = [];
   const soundRec = (it) => ({ id: it.id, name: it.name, kind: it.kind, prov: it.prov, sr: it.sr, chans: it.chans, note: it.note || null });
 
+  const KEEP_K = ["engine", "gPos", "gWidth", "gSize", "gDens", "gScan", "gSpray", "gFlut", "gSpread", "gRev", "gDrift", "root", "fine", "oct", "A", "D", "S", "R", "cut", "res", "start", "loop", "vol", "rev", "revMix", "dly", "dlyTime", "dlyFb", "dlyMix"];
   function snapshot() {
     const p = params();
     return {
       v: 1, view, lib: Lib.items.map(x => x.id), counters: { bounceN, sessN: typeof sessN !== "undefined" ? sessN : 0, micN: typeof micN !== "undefined" ? micN : 0 },
-      stretch: { srcId: srcItem ? srcItem.id : null, amt: +$("stretchAmt").value, smear: p.smear, shimmer: +$("shimmer").value, space: +$("space").value, size: p.size, warmth: +$("warmth").value, edges: p.edges },
+      stretch: { srcId: srcItem ? srcItem.id : null, ia: itrim.a, ib: itrim.b, amt: +$("stretchAmt").value, smear: p.smear, shimmer: +$("shimmer").value, space: +$("space").value, size: p.size, warmth: +$("warmth").value, edges: p.edges },
       tape: { tracks: T.map(t => ({ libId: t.buf ? t.libId || null : null, pitch: t.pitch, stepped: t.stepped, gain: t.gain, mute: t.mute })), glide: +$("glide").value, master: +$("master").value, breathe: breatheOn, breathAmt: +$("breathAmt").value, char: charOn },
-      field: { sources: state.sources.map(x => x.libId || null), voices: state.voices, fx: state.fx, master: state.master, sel: state.sel }
+      field: { sources: state.sources.map(x => x.libId || null), voices: state.voices, fx: state.fx, master: state.master, sel: state.sel },
+      keys: { libId: K.item ? K.item.id : null, ...Object.fromEntries(KEEP_K.map(k => [k, K[k]])), takeN: kTakeN, lastTake: lastKeysTake }
     };
   }
   const referenced = () => { const r = new Set(Lib.items.map(x => x.id)); for (const s of sessions) for (const id of s.state.lib) r.add(id); return r; };
@@ -2859,15 +3479,18 @@ self.onmessage = (e) => {
     try { while (state.sources.length) removeSource(state.sources.length - 1); } finally { window.toast = t0; }
     lastSession = null;
     T.forEach((t, i) => { clearTrack(i); Object.assign(t, { pitch: 0, stepped: true, gain: 0.8, mute: false, run: false }); pushTrack(i); syncStrip(i); });
-    src = null; srcItem = null; srcTitle = ""; out = null; outItem = null; bounce = null; peaks.src = peaks.out = peaks.bounce = null;
+    src = null; srcItem = null; srcTitle = ""; itrim = { a: 0, b: 1 }; itrimCache = null; layoutITrim(); out = null; outItem = null; bounce = null; peaks.src = peaks.out = peaks.bounce = null;
     $("srcName").textContent = "No source yet"; $("srcDur").textContent = ""; $("srcProv").textContent = ""; $("srcDot").className = "kdot";
     $("srcEmpty").hidden = false; $("srcPlay").disabled = true; $("renderBtn").disabled = true;
     $("outName").textContent = "Not rendered yet"; $("outProv").textContent = ""; $("outDur").textContent = "0:00"; $("outEmpty").hidden = false;
-    for (const id of ["outPlay", "exportBtn", "outKeep", "outField"]) $(id).disabled = true;
+    for (const id of ["outPlay", "exportBtn", "outKeep", "outField", "outKeys"]) $(id).disabled = true;
     document.querySelectorAll('[data-send]').forEach(b => b.disabled = true);
     $("bName").textContent = "Nothing recorded yet"; $("bProv").textContent = ""; $("bDur").textContent = "0:00"; $("bEmpty").hidden = false;
-    for (const id of ["bPlay", "bExport", "bField", "bStretch"]) $(id).disabled = true;
+    for (const id of ["bPlay", "bExport", "bField", "bStretch", "bKeys"]) $(id).disabled = true;
     trim = { a: 0, b: 1 }; trimCache = null; layoutTrim();
+    if (kTap) stopKeysTake();
+    killAll(); Object.assign(K, { item: null, buf: null, loopBuf: null, revBuf: null, detected: null, root: 60, fine: 0, oct: 0, start: 0 }); peaks.k = null;
+    lastKeysTake = null; kTakeN = 0; syncKeysSample(); buildKb();
     Lib.items.length = 0; Lib.sel = null; Lib.emit();
     draw();
   }
@@ -2882,7 +3505,7 @@ self.onmessage = (e) => {
       const S = st.stretch;
       if (S) {
         $("stretchAmt").value = S.amt; $("smear").value = S.smear; $("shimmer").value = S.shimmer; $("space").value = S.space; $("size").value = S.size; $("warmth").value = S.warmth; $("edges").checked = !!S.edges;
-        const it = S.srcId && Lib.get(S.srcId); if (it) setSource(bufFromItem(it), it.name, it); else refreshReadouts();
+        const it = S.srcId && Lib.get(S.srcId); if (it) { setSource(bufFromItem(it), it.name, it); if (S.ia != null) setITrim(S.ia, S.ib); } else refreshReadouts();
       }
       const F = st.field;
       if (F) {
@@ -2904,6 +3527,13 @@ self.onmessage = (e) => {
           pushTrack(i); syncStrip(i);
         }
         pushGlobals();
+      }
+      const KS = st.keys;
+      if (KS) {
+        const it = KS.libId && Lib.get(KS.libId); if (it) setKeysSample(it);
+        for (const k of KEEP_K) if (KS[k] != null) K[k] = KS[k];
+        kTakeN = KS.takeN | 0; lastKeysTake = KS.lastTake && Lib.get(KS.lastTake) ? KS.lastTake : null;
+        syncKeysSample(); buildKb(); applyKeysFx(); refreshKeysSend();
       }
       for (const it of items) stored.add(it.id);
     } finally { restoring = false; }
@@ -2972,6 +3602,7 @@ self.onmessage = (e) => {
   // ---------- boot ----------
   applyDefaults();
   readTransport(); syncTransport(); renderLib();
+  syncKeysSample(); buildKb(); refreshKeysSend();
   showView();
   setStatus("Load a sound to begin.");
   tSay("Load audio onto a track, or send one here from Stretch or the library.");
