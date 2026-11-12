@@ -516,6 +516,31 @@ body.perf .ptitle{display:flex;align-items:center;gap:8px;font-size:15px;color:v
 body.perf .ptitle svg{width:20px;height:20px;fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 body.perf .rail a[aria-current]{color:var(--faint)}
 body.perf .rail a::after{display:none}
+
+/* ---------- library manager ---------- */
+.raillib{margin-top:0}
+@media (max-width:1199px){ .raillib{margin-top:auto} .railsess{margin-top:0!important} }
+@media (max-width:900px){ .raillib{display:none!important} }
+.lmbox{max-width:640px;max-height:84vh;--accent:var(--ink)}
+.lmbar{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap}
+.lmseg{gap:4px 12px}
+.lmsel{display:flex;align-items:center;gap:10px;padding:6px 0 2px;border-top:1px solid var(--line)}
+.lmsel input,.lmrow input{width:16px;height:16px;accent-color:var(--ink);margin:0;flex:none}
+.lmwarn{margin:0}
+.lmlist{display:flex;flex-direction:column;overflow:auto;min-height:0;margin:0 -4px}
+.lmrow{display:flex;align-items:center;gap:10px;padding:8px 4px;border-top:1px solid var(--line);cursor:pointer;border-radius:8px;user-select:none;-webkit-user-select:none}
+.lmrow:first-child{border-top:0}
+.lmrow:hover{background:color-mix(in srgb,var(--ink) 4%,transparent)}
+.lmrow.on{background:color-mix(in srgb,var(--ink) 7%,transparent)}
+.lmmeta{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.lmmeta .wname{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lmmeta .prov{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lmuse{display:flex;gap:4px;flex:none}
+.lmuse span{font:400 9px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:999px;border:1px solid currentColor}
+.lmuse .u-stretch{color:var(--stretch)}.lmuse .u-tape{color:var(--tape)}.lmuse .u-field{color:var(--field)}.lmuse .u-keys{color:var(--keys)}.lmuse .u-sess{color:var(--faint)}
+.lmrow .dur{flex:none}
+.lmempty{padding:18px 0;text-align:center}
+@media (max-width:520px){ .lmuse span{padding:2px 4px} .lmrow .ib{width:32px;height:32px} }
 </style>
 </head>
 <body>
@@ -539,6 +564,7 @@ body.perf .rail a::after{display:none}
     <a href="#field" id="tab-field" class="m-field"><svg class="mico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg>Field</a>
     <a href="#keys" id="tab-keys" class="m-keys"><svg class="mico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M9 13.5V19M15 13.5V19"/><rect x="7.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/><rect x="13.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/></svg>Keys</a>
     <button type="button" class="ib railperf" id="perfBtn" aria-pressed="false" aria-label="Performance mode" title="Performance mode: all four on screen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M7.5 4.5v15M12 4.5v15M16.5 4.5v15"/></svg></button>
+    <button type="button" class="ib raillib" data-libman aria-label="Library" title="Library"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/><rect x="4" y="5" width="3" height="3" rx=".8"/><rect x="4" y="10.5" width="3" height="3" rx=".8"/><rect x="4" y="16" width="3" height="3" rx=".8"/></svg></button>
     <button type="button" class="ib railsess" data-sessions aria-label="Sessions" title="Sessions"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l8.5 4.5L12 13 3.5 8.5z"/><path d="M3.5 12.5L12 17l8.5-4.5M3.5 16.5L12 21l8.5-4.5"/></svg></button>
   </nav>
 
@@ -557,6 +583,7 @@ body.perf .rail a::after{display:none}
   </g><path d="M71.6,103v-7.1h0c0-3.7-3-6.6-6.6-6.6-6.8,0-6.8,4-13.5,4s-6.8-4-13.5-4-6.8,4-13.5,4-6.8-4-13.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/></svg>
       <span class="mmode" id="mMode"></span>
       <span class="grow"></span>
+      <button type="button" class="ib" data-libman aria-label="Library" title="Library"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/><rect x="4" y="5" width="3" height="3" rx=".8"/><rect x="4" y="10.5" width="3" height="3" rx=".8"/><rect x="4" y="16" width="3" height="3" rx=".8"/></svg></button>
       <button type="button" class="ib" data-sessions aria-label="Sessions" title="Sessions"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l8.5 4.5L12 13 3.5 8.5z"/><path d="M3.5 12.5L12 17l8.5-4.5M3.5 16.5L12 21l8.5-4.5"/></svg></button>
     </header>
 
@@ -863,6 +890,25 @@ body.perf .rail a::after{display:none}
     <div class="sesssave"><input id="sessName" type="text" aria-label="Name this session" autocomplete="off"><button type="button" class="ib on" id="sessSave" aria-label="Save this session" title="Save this session"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h10.5l3.5 3.5v11.5H5z"/><path d="M8 4.5v4.5h6.5V4.5M8 19.5v-5.5h8v5.5"/></svg></button></div>
     <div class="sesslist" id="sessList"></div>
     <div class="sessfoot"><button type="button" class="ib" id="sessNew" aria-label="Start fresh" title="Start fresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12a6.5 6.5 0 1 0 2-4.7"/><path d="M5.5 4.5v3.5H9"/></svg></button><span class="faint">Start fresh</span></div>
+  </div>
+</div>
+<div class="sesspanel" id="libPanel" hidden role="dialog" aria-modal="true" aria-label="Library">
+  <div class="sessbox lmbox">
+    <div class="sesshead"><span class="tag">Library</span><span class="dur" id="lmCount"></span><span class="grow"></span><button type="button" class="ib sm" id="lmClose" aria-label="Close" title="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button></div>
+    <div class="sesssave"><input id="lmSearch" type="search" placeholder="Search" aria-label="Search the library" autocomplete="off"></div>
+    <div class="lmbar">
+      <div class="kseg lmseg" role="group" aria-label="Show"><button type="button" data-lmk="all">All</button><button type="button" data-lmk="stretch">Stretch</button><button type="button" data-lmk="tape">Tape</button><button type="button" data-lmk="field">Field</button><button type="button" data-lmk="keys">Keys</button><button type="button" data-lmk="unused">Unused</button></div>
+      <span class="grow"></span>
+      <div class="kseg lmseg" role="group" aria-label="Sort"><button type="button" data-lms="new">Newest</button><button type="button" data-lms="name">Name</button><button type="button" data-lms="len">Longest</button></div>
+    </div>
+    <div class="lmsel">
+      <label class="check"><input type="checkbox" id="lmAll"><span id="lmAllL">Select all</span></label>
+      <span class="grow"></span>
+      <span class="dur" id="lmPicked"></span>
+      <button type="button" class="ib" id="lmDel" aria-label="Delete selected" title="Delete selected" disabled></button>
+    </div>
+    <p class="faint lmwarn" id="lmWarn" hidden></p>
+    <div class="lmlist" id="lmList"></div>
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1653,8 +1699,7 @@ function draw(){
     const st=state.playing?report.st[i]:v.start, x0=st*W, w=Math.max(2,v.len*W);
     const top=y+6, hh=lh-12;
     for(const [sx,sw] of spans(x0,w)){
-      const gr=g2.createLinearGradient(0,top,0,top+hh); gr.addColorStop(0,rgba(c,v.on?0.2:0.05)); gr.addColorStop(1,rgba(c,v.on?0.07:0.02));
-      g2.fillStyle=gr; g2.beginPath(); g2.roundRect?g2.roundRect(sx,top,sw,hh,Math.min(6,sw/2)):g2.rect(sx,top,sw,hh); g2.fill();
+      g2.fillStyle=rgba(c,v.on?0.12:0.035); g2.beginPath(); g2.roundRect?g2.roundRect(sx,top,sw,hh,Math.min(6,sw/2)):g2.rect(sx,top,sw,hh); g2.fill();
       g2.setLineDash(v.on?[]:[3,3]); g2.strokeStyle=rgba(c,i===state.sel?0.95:0.55); g2.lineWidth=1;
       g2.beginPath(); g2.roundRect?g2.roundRect(sx+0.5,top+0.5,sw-1,hh-1,Math.min(6,sw/2)):g2.rect(sx+0.5,top+0.5,sw-1,hh-1); g2.stroke();
     }
@@ -3274,7 +3319,7 @@ self.onmessage = (e) => {
 
   // computer keyboard: A to ' plays, Z and X shift octaves
   document.addEventListener("keydown", (e) => {
-    if (!shown("keys") || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!shown("keys") || !$("libPanel").hidden || !$("sessPanel").hidden || e.metaKey || e.ctrlKey || e.altKey) return;
     const tg = e.target.tagName; if (["INPUT", "SELECT", "TEXTAREA"].includes(tg) && e.target.type !== "range") return;
     const k = e.key.toLowerCase();
     if (k === "z" || k === "x") { if (!e.repeat) shiftOct(k === "z" ? -1 : 1); e.preventDefault(); return; }
@@ -3609,7 +3654,7 @@ self.onmessage = (e) => {
   for (const v of VIEWS) $("tab-" + v).addEventListener("click", () => { if (perf) { setPerf(false); requestAnimationFrame(showView); } });
   new ResizeObserver(() => draw()).observe(document.querySelector(".main"));
   document.addEventListener("keydown", (e) => {
-    if (e.code !== "Space" || perf || view === "field" || view === "keys") return;
+    if (e.code !== "Space" || !$("libPanel").hidden || !$("sessPanel").hidden || perf || view === "field" || view === "keys") return;
     const tg = e.target.tagName; if (["INPUT", "SELECT", "BUTTON", "TEXTAREA"].includes(tg)) return;
     e.preventDefault();
     if (view === "tape") { const on = !tapePlaying; T.forEach((t, i) => { if (t.buf) setTrackRun(i, on); }); }
@@ -3803,6 +3848,129 @@ self.onmessage = (e) => {
     catch (e) { sessions.shift(); toast("Couldn't save. This device may be out of room."); }
   });
   armable($("sessNew"), "Tap again to clear everything and start fresh", async () => { clearWorkspace(); await saveNow(); closeSessions(); toast("Fresh start."); });
+
+  // ---------- library manager: find, select and delete many sounds at once ----------
+  let lmKind = "all", lmSort = "new", lmPicked = new Set(), lmLast = -1, lmShown = [];
+  function sessionRefs() { const s = new Set(); for (const ss of sessions) for (const id of ss.state.lib || []) s.add(id); return s; }
+  function usesOf(id) {
+    const u = [];
+    if (srcItem && srcItem.id === id) u.push("stretch");
+    if (T.some(t => t.buf && t.libId === id)) u.push("tape");
+    if (state.sources.some(s => s.libId === id)) u.push("field");
+    if (K.item && K.item.id === id) u.push("keys");
+    return u;
+  }
+  function lmList() {
+    const q = ($("lmSearch").value || "").trim().toLowerCase();
+    let arr = Lib.items.map((it, i) => ({ it, i, uses: usesOf(it.id) }));
+    if (lmKind === "unused") arr = arr.filter(x => !x.uses.length);
+    else if (lmKind !== "all") arr = arr.filter(x => x.it.kind === lmKind);
+    if (q) arr = arr.filter(x => (x.it.name + " " + (x.it.prov || "")).toLowerCase().includes(q));
+    if (lmSort === "new") arr.sort((a, b) => b.i - a.i);
+    else if (lmSort === "name") arr.sort((a, b) => a.it.name.localeCompare(b.it.name, undefined, { numeric: true }));
+    else arr.sort((a, b) => b.it.dur - a.it.dur);
+    return arr;
+  }
+  function renderLibMan() {
+    if ($("libPanel").hidden) return;
+    for (const id of [...lmPicked]) if (!Lib.get(id)) lmPicked.delete(id);
+    const refs = sessionRefs(), box = $("lmList"); lmShown = lmList(); box.innerHTML = "";
+    const total = Lib.items.reduce((s, x) => s + x.dur, 0);
+    $("lmCount").textContent = Lib.items.length + " sound" + (Lib.items.length === 1 ? "" : "s") + "  ·  " + fmt(total);
+    document.querySelectorAll("[data-lmk]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lmk === lmKind ? "true" : "false"));
+    document.querySelectorAll("[data-lms]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lms === lmSort ? "true" : "false"));
+    if (!lmShown.length) { const p = document.createElement("p"); p.className = "faint lmempty"; p.textContent = Lib.items.length ? "Nothing matches." : "The library is empty."; box.appendChild(p); }
+    lmShown.forEach(({ it, uses }, k) => {
+      const row = document.createElement("div"); row.className = "lmrow" + (lmPicked.has(it.id) ? " on" : ""); row.dataset.id = it.id;
+      row.innerHTML = `<input type="checkbox" tabindex="-1" aria-hidden="true"><span class="kdot k-${it.kind}"></span><div class="lmmeta"><span class="wname"></span><span class="prov"></span></div><span class="lmuse"></span><span class="dur"></span>`;
+      row.querySelector("input").checked = lmPicked.has(it.id);
+      row.querySelector(".wname").textContent = it.name; row.querySelector(".prov").textContent = it.prov || "";
+      row.querySelector(".dur").textContent = (it.note ? it.note.name + "  " : "") + fmt(it.dur);
+      const ub = row.querySelector(".lmuse");
+      for (const u of uses) { const s = document.createElement("span"); s.className = "u-" + u; s.textContent = u; s.title = "Loaded in " + u[0].toUpperCase() + u.slice(1); ub.appendChild(s); }
+      if (refs.has(it.id)) { const s = document.createElement("span"); s.className = "u-sess"; s.textContent = "saved"; s.title = "Part of a saved session"; ub.appendChild(s); }
+      const pb = document.createElement("button"); pb.type = "button"; pb.className = "ib sm";
+      const playing = player.which === "lib" && libPlayId === it.id;
+      pb.innerHTML = playing ? IC.stop : IC.play; pb.setAttribute("aria-label", (playing ? "Stop " : "Play ") + it.name); pb.title = playing ? "Stop" : "Play";
+      pb.addEventListener("click", (e) => { e.stopPropagation(); if (player.which === "lib" && libPlayId === it.id) stopAll(); else { libBuf = bufFromItem(it); libPlayId = it.id; play("lib", libBuf, 0); } setTimeout(renderLibMan, 30); });
+      row.appendChild(pb);
+      row.setAttribute("role", "checkbox"); row.setAttribute("aria-checked", lmPicked.has(it.id) ? "true" : "false"); row.tabIndex = 0;
+      const toggle = (e) => {
+        // shift-click selects the run between this row and the last one touched
+        if (e && e.shiftKey && lmLast >= 0 && lmLast < lmShown.length) {
+          const on = !lmPicked.has(it.id), [a, b] = lmLast < k ? [lmLast, k] : [k, lmLast];
+          for (let j = a; j <= b; j++) on ? lmPicked.add(lmShown[j].it.id) : lmPicked.delete(lmShown[j].it.id);
+        } else lmPicked.has(it.id) ? lmPicked.delete(it.id) : lmPicked.add(it.id);
+        lmLast = k; disarmLm(); renderLibMan();
+      };
+      row.addEventListener("click", toggle);
+      row.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(e); requestAnimationFrame(() => { const r = $("lmList").querySelector(`[data-id="${it.id}"]`); if (r) r.focus(); }); } });
+      box.appendChild(row);
+    });
+    const shownPicked = lmShown.filter(x => lmPicked.has(x.it.id)).length;
+    $("lmAll").checked = !!lmShown.length && shownPicked === lmShown.length; $("lmAll").indeterminate = shownPicked > 0 && shownPicked < lmShown.length;
+    $("lmAll").disabled = !lmShown.length;
+    const picked = [...lmPicked].map(id => Lib.get(id)).filter(Boolean), pd = picked.reduce((s, x) => s + x.dur, 0);
+    $("lmPicked").textContent = picked.length ? picked.length + " selected  ·  " + fmt(pd) : "";
+    $("lmDel").disabled = !picked.length;
+    const inUse = picked.filter(x => usesOf(x.id).length).length, inSess = picked.filter(x => refs.has(x.id)).length;
+    const notes = [];
+    if (inUse) notes.push((inUse === 1 ? "1 of these is" : inUse + " of these are") + " loaded in a mode and will be cleared from it.");
+    if (inSess) notes.push("Saved sessions keep their own copies, so " + (inSess === 1 ? "that one stays" : "those stay") + " on this device until the session is deleted.");
+    $("lmWarn").textContent = notes.join(" "); $("lmWarn").hidden = !notes.length;
+  }
+  $("lmDel").innerHTML = IC.trash;
+  let lmT = null;
+  function disarmLm() { clearTimeout(lmT); $("lmDel").classList.remove("armed"); $("lmDel").title = "Delete selected"; $("lmDel").setAttribute("aria-label", "Delete selected"); }
+  $("lmDel").addEventListener("click", () => {
+    const ids = [...lmPicked].filter(id => Lib.get(id)); if (!ids.length) return;
+    if (!$("lmDel").classList.contains("armed")) {
+      const m = "Tap again to delete " + ids.length + " sound" + (ids.length === 1 ? "" : "s");
+      $("lmDel").classList.add("armed"); $("lmDel").title = m; $("lmDel").setAttribute("aria-label", m); toast(m + ".");
+      lmT = setTimeout(disarmLm, 4000); return;
+    }
+    disarmLm(); deleteSounds(ids); lmPicked.clear(); renderLibMan();
+    toast(ids.length + " sound" + (ids.length === 1 ? "" : "s") + " deleted.");
+  });
+  // remove sounds from the library and from anywhere they're loaded, so nothing points at a missing sound
+  function deleteSounds(ids) {
+    const gone = new Set(ids);
+    if (player.which === "lib" && gone.has(libPlayId)) stopAll();
+    const t0 = window.toast; window.toast = () => {};
+    try {
+      for (let k = state.sources.length - 1; k >= 0; k--) if (gone.has(state.sources[k].libId)) removeSource(k);
+      T.forEach((t, i) => { if (t.buf && gone.has(t.libId)) clearTrack(i); });
+      if (srcItem && gone.has(srcItem.id)) {
+        if (player.which === "src") stopAll();
+        src = null; srcItem = null; srcTitle = ""; itrim = { a: 0, b: 1 }; itrimCache = null; layoutITrim(); peaks.src = null;
+        $("srcName").textContent = "No source yet"; $("srcProv").textContent = ""; $("srcDot").className = "kdot"; $("srcEmpty").hidden = false; $("srcPlay").disabled = true; $("renderBtn").disabled = true;
+      }
+      if (outItem && gone.has(outItem.id)) outItem = null;
+      if (bounce && bounce.item && gone.has(bounce.item.id)) {
+        bounce = null; peaks.bounce = null;
+        $("bName").textContent = "Nothing recorded yet"; $("bProv").textContent = ""; $("bDur").textContent = "0:00"; $("bEmpty").hidden = false;
+        for (const id of ["bPlay", "bExport", "bField", "bStretch", "bKeys"]) $(id).disabled = true;
+      }
+      if (K.item && gone.has(K.item.id)) { killAll(); arpStop(); Object.assign(K, { item: null, buf: null, loopBuf: null, revBuf: null, detected: null }); peaks.k = null; syncKeysSample(); buildKb(); }
+      if (lastKeysTake && gone.has(lastKeysTake)) lastKeysTake = null;
+      for (const id of ids) { const i = Lib.items.findIndex(x => x.id === id); if (i >= 0) Lib.items.splice(i, 1); }
+      if (gone.has(Lib.sel)) Lib.sel = null;
+    } finally { window.toast = t0; }
+    Lib.emit(); markTracks(); draw();
+  }
+  $("lmAll").addEventListener("change", () => {
+    const on = $("lmAll").checked; for (const x of lmShown) on ? lmPicked.add(x.it.id) : lmPicked.delete(x.it.id); disarmLm(); renderLibMan();
+  });
+  document.querySelectorAll("[data-lmk]").forEach(b => b.addEventListener("click", () => { lmKind = b.dataset.lmk; lmLast = -1; renderLibMan(); }));
+  document.querySelectorAll("[data-lms]").forEach(b => b.addEventListener("click", () => { lmSort = b.dataset.lms; lmLast = -1; renderLibMan(); }));
+  $("lmSearch").addEventListener("input", () => { lmLast = -1; renderLibMan(); });
+  function openLibMan() { $("libPanel").hidden = false; lmLast = -1; renderLibMan(); }
+  function closeLibMan() { $("libPanel").hidden = true; disarmLm(); if (player.which === "lib") stopAll(); }
+  document.querySelectorAll("[data-libman]").forEach(b => b.addEventListener("click", openLibMan));
+  $("lmClose").addEventListener("click", closeLibMan);
+  $("libPanel").addEventListener("click", (e) => { if (e.target === $("libPanel")) closeLibMan(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("libPanel").hidden) closeLibMan(); });
+  Lib.on(renderLibMan);
   function openSessions() { $("sessPanel").hidden = false; renderSessions(); setTimeout(() => $("sessName").focus(), 30); }
   function closeSessions() { $("sessPanel").hidden = true; }
   document.querySelectorAll("[data-sessions]").forEach(b => b.addEventListener("click", openSessions));
