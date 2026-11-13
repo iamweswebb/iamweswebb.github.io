@@ -1826,7 +1826,7 @@ $('#scatter').addEventListener('click',()=>{
 
 /* ---------------- Record page ---------------- */
 let mic=null, micN=0, page='perform', countT=null, preview=null;
-const REC_DEF={gain:18,lowCut:0.35,highCut:0,comp:0.3,warmth:0,gate:0,proc:0,monitor:false,autoLevel:true,countIn:0};
+const REC_DEF={gain:18,lowCut:0.35,highCut:0,comp:0.3,warmth:0,gate:0,proc:0,monitor:false,autoLevel:true,countIn:0,device:'',chan:''};
 const rec={...REC_DEF};
 try{ const saved=JSON.parse(localStorage.getItem('driftfield-rec')||'null'); if(saved) Object.assign(rec,saved,{monitor:false}); }catch(e){}
 const saveRec=()=>{ try{ localStorage.setItem('driftfield-rec',JSON.stringify(rec)); }catch(e){} };
@@ -1854,7 +1854,51 @@ function applyRec(){
 }
 async function getStream(){
   const raw=rec.proc===0;
-  return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:!raw,noiseSuppression:!raw,autoGainControl:!raw}});
+  const c={echoCancellation:!raw,noiseSuppression:!raw,autoGainControl:!raw,channelCount:{ideal:raw?8:1},latency:{ideal:0}};
+  if(rec.device){
+    try{ return await navigator.mediaDevices.getUserMedia({audio:{...c,deviceId:{exact:rec.device}}}); }
+    catch(e){ if(e&&e.name==='NotAllowedError') throw e; rec.device=''; saveRec(); toast("That input isn't connected, so the default one is on."); }
+  }
+  return navigator.mediaDevices.getUserMedia({audio:c});
+}
+// the stream can carry every input of an interface: split it and route the chosen one or pair to left and right
+function streamChans(stream){ const t=stream.getAudioTracks()[0], s=t&&t.getSettings?t.getSettings():{}; return Math.max(1,s.channelCount||1); }
+function chanValid(v,n){ const m=/^([sm])(\d+)$/.exec(v||''); if(!m) return false; const k=+m[2]; return m[1]==='s'?k+1<n:k<n; }
+function wireSrc(stream){
+  const n=mic.nodes, cnt=streamChans(stream);
+  for(const k of ['src','split','merge']) if(n[k]){ try{ n[k].disconnect(); }catch(e){} }
+  n.src=ac.createMediaStreamSource(stream);
+  n.split=ac.createChannelSplitter(Math.max(2,cnt)); n.merge=ac.createChannelMerger(2);
+  n.src.connect(n.split); n.merge.connect(n.hp);
+  mic.chans=cnt;
+  if(!chanValid(rec.chan,cnt)) rec.chan=cnt>=2?'s0':'m0';
+  routeIn(); fillInputs();
+}
+function routeIn(){
+  if(!mic) return; const n=mic.nodes; try{ n.split.disconnect(); }catch(e){}
+  const m=/^([sm])(\d+)$/.exec(rec.chan)||['', 'm', '0'], k=+m[2];
+  if(m[1]==='s'){ n.split.connect(n.merge,k,0); n.split.connect(n.merge,k+1,1); }
+  else { n.split.connect(n.merge,k,0); n.split.connect(n.merge,k,1); }
+}
+async function fillInputs(){
+  const sel=$('#recDevice'), ch=$('#recChan'); if(!sel) return;
+  let devs=[]; try{ devs=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audioinput'); }catch(e){}
+  sel.innerHTML='';
+  const named=devs.filter(d=>d.deviceId&&d.deviceId!=='default'&&d.deviceId!=='communications');
+  const add=(v,t)=>{ const o=document.createElement('option'); o.value=v; o.textContent=t; sel.appendChild(o); };
+  add('','Default input');
+  named.forEach((d,i)=>add(d.deviceId,d.label||('Input device '+(i+1))));
+  sel.value=named.some(d=>d.deviceId===rec.device)?rec.device:'';
+  sel.disabled=!mic;
+  const cnt=mic?mic.chans:0; ch.innerHTML='';
+  const addC=(v,t)=>{ const o=document.createElement('option'); o.value=v; o.textContent=t; ch.appendChild(o); };
+  if(!mic) addC('','Turn on the mic first');
+  else {
+    for(let k=0;k+1<cnt;k+=2) addC('s'+k,'Inputs '+(k+1)+' + '+(k+2)+' (stereo)');
+    for(let k=0;k<cnt;k++) addC('m'+k,'Input '+(k+1)+(cnt===1?'':' (mono)'));
+    ch.value=rec.chan;
+  }
+  ch.disabled=!mic||cnt<2;
 }
 async function openMic(){
   if(mic) return true;
@@ -1873,10 +1917,10 @@ async function openMic(){
     comp:new DynamicsCompressorNode(ac,{knee:12,attack:0.005,release:0.2}), makeup:ac.createGain(),
     proc:ac.createScriptProcessor(2048,2,2), mon:ac.createGain()
   };
-  n.src=ac.createMediaStreamSource(stream);
-  n.src.connect(n.hp); n.hp.connect(n.lp); n.lp.connect(n.gain); n.gain.connect(n.shape); n.shape.connect(n.comp); n.comp.connect(n.makeup); n.makeup.connect(n.proc); n.proc.connect(n.mon); n.mon.connect(ac.destination);
+  n.hp.connect(n.lp); n.lp.connect(n.gain); n.gain.connect(n.shape); n.shape.connect(n.comp); n.comp.connect(n.makeup); n.makeup.connect(n.proc); n.proc.connect(n.mon); n.mon.connect(ac.destination);
   mic={stream,nodes:n,rec:false,l:[],r:[],len:0,peak:0,hold:0,holdT:0,genv:0,gg:1,
-    live:new Float32Array(LIVE_N),liveRec:new Uint8Array(LIVE_N),lw:0,acc:0,accN:0};
+    live:new Float32Array(LIVE_N),liveRec:new Uint8Array(LIVE_N),lw:0,acc:0,accN:0,chans:1};
+  wireSrc(stream);
   n.proc.onaudioprocess=e=>{
     if(!mic) return;
     const ib=e.inputBuffer, ob=e.outputBuffer, len=ib.length, sr=ac.sampleRate;
@@ -1910,9 +1954,8 @@ async function reopenStream(){
   if(mic.rec){ toast('Stop recording to change this.'); return; }
   let stream; try{ stream=await getStream(); }catch(e){ toast('Could not reopen the microphone.'); return; }
   if(!mic){ stream.getTracks().forEach(t=>t.stop()); return; }
-  try{ mic.nodes.src.disconnect(); }catch(e){}
   mic.stream.getTracks().forEach(t=>t.stop());
-  mic.stream=stream; mic.nodes.src=ac.createMediaStreamSource(stream); mic.nodes.src.connect(mic.nodes.hp);
+  mic.stream=stream; wireSrc(stream);
 }
 function closeMic(){
   cancelCount();
@@ -1921,8 +1964,9 @@ function closeMic(){
   const m=mic; mic=null;
   try{ m.nodes.src.disconnect(); m.nodes.proc.disconnect(); m.nodes.mon.disconnect(); }catch(e){}
   m.nodes.proc.onaudioprocess=null;
+  try{ m.nodes.split.disconnect(); m.nodes.merge.disconnect(); }catch(e){}
   m.stream.getTracks().forEach(t=>t.stop()); setSession('playback');
-  updateMicUI();
+  updateMicUI(); fillInputs();
 }
 function startTake(){
   if(!mic||mic.rec) return;
@@ -2001,15 +2045,21 @@ function buildRecDecks(){
   const group=(deck,title,items)=>{ const g=document.createElement('div'); g.className='group'; g.innerHTML=`<h3>${title}</h3>`;
     const gr=document.createElement('div'); gr.className='grid'; items.forEach(c=>gr.appendChild(c.el)); g.appendChild(gr); $(deck).appendChild(g); };
   const hz=h=>h>=1000?(h/1000).toFixed(1)+' kHz':Math.round(h)+' Hz';
-  group('#inDeck','Level',[
+  const pick=(label,id)=>{ const el=document.createElement('div'); el.className='ctl full'; el.innerHTML=`<div class="top"><label class="name" for="${id}">${label}</label></div><select id="${id}"></select>`; return {el}; };
+  group('#inDeck','Device',[
+    pick('Input','recDevice'), pick('Channels','recChan'),
     slider({label:'Input gain',full:true,min:0,max:36,step:0.5,get:get('gain'),set:set('gain'),fmt:v=>'+'+v.toFixed(1)+' dB'}),
   ]);
+  $('#recDevice').addEventListener('change',e=>{ if(mic&&mic.rec){ toast('Stop recording to change this.'); fillInputs(); return; } rec.device=e.target.value; rec.chan=''; saveRec(); reopenStream(); });
+  $('#recChan').addEventListener('change',e=>{ rec.chan=e.target.value; saveRec(); routeIn(); });
+  if(navigator.mediaDevices&&navigator.mediaDevices.addEventListener) navigator.mediaDevices.addEventListener('devicechange',()=>fillInputs());
+  fillInputs();
   group('#inDeck','Filter',[
     slider({label:'Low cut',get:get('lowCut'),set:set('lowCut'),min:0,max:1,step:0.005,fmt:v=>{const h=lowCutHz(v);return h?hz(h):'Off';}}),
     slider({label:'High cut',get:get('highCut'),set:set('highCut'),min:0,max:1,step:0.005,fmt:v=>{const h=highCutHz(v);return h?hz(h):'Off';}}),
   ]);
   group('#inDeck','Source',[
-    seg({label:'Phone processing',options:['Raw','Voice cleanup'],get:get('proc'),set:v=>{ if(rec.proc===v) return; rec.proc=v; saveRec(); reopenStream(); }}),
+    seg({label:'Processing',options:['Raw','Voice cleanup'],get:get('proc'),set:v=>{ if(rec.proc===v) return; rec.proc=v; saveRec(); reopenStream(); }}),
     seg({label:'Monitor',options:['Off','Headphones'],get:()=>rec.monitor?1:0,set:v=>{ rec.monitor=v===1; applyRec(); if(rec.monitor) toast('Monitoring is on. Use headphones to avoid feedback.'); }}),
   ]);
   group('#charDeck','Dynamics',[

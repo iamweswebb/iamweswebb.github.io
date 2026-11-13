@@ -1,5 +1,5 @@
 // Driftfield offline cache: serve from cache right away, refresh it from the network in the background.
-const CACHE = "driftfield-v11";
+const CACHE = "driftfield-v12";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE))); self.skipWaiting(); });
 self.addEventListener("activate", (e) => {
