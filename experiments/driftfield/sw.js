@@ -1,7 +1,7 @@
 // Driftfield offline cache.
 // Pages (and this app's manifest) come from the network first, so a push shows up on the next open;
 // the saved copy is only used when offline. Icons and fonts are served from the cache and refreshed in the background.
-const CACHE = "driftfield-v13";
+const CACHE = "driftfield-v21";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 self.addEventListener("install", (e) => {
   // "reload" skips the browser's own HTTP cache so a fresh install never saves an old page
@@ -16,7 +16,7 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url), ours = url.origin === self.location.origin, fonts = /fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
   if (!ours && !fonts) return;
-  const page = req.mode === "navigate" || (ours && /(\/|\.html|\.webmanifest)$/.test(url.pathname));
+  const page = req.mode === "navigate" || (ours && /(\/|\.html|\.webmanifest|\.json)$/.test(url.pathname));
   if (page) {
     e.respondWith(caches.open(CACHE).then(async (c) => {
       try {

@@ -1,0 +1,48 @@
+DRIFTFIELD SEED PACKS
+
+Packs show up in Driftfield's Library panel, under Seeds (the little sprout button
+in the library strip opens it). Each pack is a folder of audio files plus a few lines
+in seeds.json.
+
+1. Make a folder inside this seeds folder, for example:  d-major-chimes
+2. Put the pack's audio in it (WAV or MP3), for example:  chime-1.wav, chime-2.wav
+3. Add the pack to seeds.json. A free pack looks like this:
+
+{
+  "packs": [
+    {
+      "id": "d-major-chimes",
+      "name": "D Major Chimes",
+      "key": "D major",
+      "about": "Brass chimes on a windy porch",
+      "folder": "d-major-chimes",
+      "sounds": [
+        { "file": "chime-1.wav", "name": "Porch chime 1" },
+        { "file": "chime-2.wav", "name": "Porch chime 2" }
+      ]
+    }
+  ]
+}
+
+To add a second pack, put a comma after the closing } of the first one and add
+another block the same shape.
+
+What each line does
+  id      A short name with no spaces. Keep it the same forever once people have the pack.
+  name    What people see.
+  key     Optional. Shown next to the name.
+  about   Optional one-line description.
+  folder  The folder name from step 1.
+  sounds  One line per file. "name" is optional; without it the file name is used.
+
+Paid packs (for later)
+  Add "store" (a link to the store page) and "price" to a pack, for example:
+      "store": "https://yourstore.example/d-major-chimes",
+      "price": "$5",
+      "preview": "preview.mp3"
+  A pack with a store link shows a Get button that opens the store instead of an Add
+  button. "preview" is an optional short file in the pack folder that people can play
+  first. Buyers get the full files from the store and drop them into Driftfield.
+
+Keep the file names exactly as written in seeds.json (they are case sensitive on the web).
+After editing, Commit and Push origin like any other update.
