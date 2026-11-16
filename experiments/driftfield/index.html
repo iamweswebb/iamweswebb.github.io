@@ -12,6 +12,21 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Driftfield">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="A free ambient studio in your browser: stretch sounds, loop them on tape, build fields and play them on keys.">
+<link rel="canonical" href="https://iamweswebb.com/experiments/driftfield/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Driftfield">
+<meta property="og:title" content="Driftfield">
+<meta property="og:description" content="A free ambient studio in your browser: stretch sounds, loop them on tape, build fields and play them on keys.">
+<meta property="og:url" content="https://iamweswebb.com/experiments/driftfield/">
+<meta property="og:image" content="https://iamweswebb.com/experiments/driftfield/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Driftfield logo on a soft gradient">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Driftfield">
+<meta name="twitter:description" content="A free ambient studio in your browser: stretch sounds, loop them on tape, build fields and play them on keys.">
+<meta name="twitter:image" content="https://iamweswebb.com/experiments/driftfield/og-image.jpg">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
 <title>Driftfield</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -512,7 +527,7 @@ body.libdrag .rail a,body.libdrag .strip,body.libdrag .wavebox,body.libdrag .fie
 .railsess{margin-top:0}
 @media (max-width:1199px){ .railperf{display:none} .railsess{margin-top:auto} }
 body.perf .shell{height:100vh;overflow:hidden}
-body.perf .main{max-width:none;height:100vh;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr) auto;gap:0;padding-block:0;padding-left:0;padding-right:0}
+body.perf .main{max-width:none;height:100vh;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto minmax(0,1fr) auto;gap:0;padding-block:0;padding-left:0;padding-right:0}
 body.perf .main > .view{container:pane/inline-size;overflow-y:auto;overscroll-behavior:contain;padding:0 18px 28px;border-left:1px solid var(--line);gap:18px;scrollbar-width:thin}
 body.perf .main > .view[hidden]{display:flex!important}
 body.perf #view-stretch{order:1;border-left:0;--accent:var(--stretch)}
@@ -593,6 +608,29 @@ body.perf .rail a::after{display:none}
 .cue b{position:absolute;top:0;left:50%;transform:translateX(-50%);width:16px;height:16px;border-radius:50%;border:1px solid var(--tape);color:var(--tape);background:var(--bg);font:400 9px/14px var(--f-mono);text-align:center}
 .cues.edit .cue{cursor:grab}
 .cues.edit .cue:active{cursor:grabbing}
+
+/* ---------- performance mode master recorder ---------- */
+.perfbar{display:none}
+body.perf .perfbar{display:flex;align-items:center;gap:14px;grid-column:1/-1;order:0;padding:10px 18px;border-bottom:1px solid var(--line);min-width:0}
+.pmtime{font:400 20px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink);min-width:5.2em}
+.pmeter{display:flex;flex-direction:column;gap:3px;width:140px;flex:none}
+.pmeter i{display:block;height:4px;border-radius:2px;background:var(--line2);position:relative;overflow:hidden}
+.pmeter i::after{content:"";position:absolute;inset:0;transform-origin:left;transform:scaleX(var(--v,0));background:var(--ink);opacity:.75}
+.pmeter i.hot::after{background:#C4473A;opacity:1}
+#pmSay{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-mix{background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink)}
+
+.lmuse .u-seed{color:var(--ink)}
+.myseeds{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.mslist{display:flex;flex-direction:column}
+.msrow{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--line);min-width:0}
+.msrow:first-child{border-top:0}
+.msrow .wname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.msrow .dur{flex:none}
+.msexport{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.msexport input{flex:1 1 140px;min-width:0;font:400 14px var(--f-ui);color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;height:36px}
+.msexport input:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
+.msempty{margin:0;font-size:12.5px;color:var(--faint)}
 </style>
 </head>
 <body>
@@ -621,6 +659,12 @@ body.perf .rail a::after{display:none}
   </nav>
 
   <main class="main">
+    <div class="perfbar" id="perfBar" aria-label="Master recorder">
+      <button type="button" class="ib recb" id="pmRec" aria-pressed="false" aria-label="Record everything" title="Record everything"><span class="dot"></span></button>
+      <span class="pmtime" id="pmTime">0:00.0</span>
+      <div class="pmeter" aria-hidden="true"><i id="pmL"></i><i id="pmR"></i></div>
+      <span class="status" id="pmSay"></span>
+    </div>
     <header class="mhead">
       <svg class="mlogo" viewBox="9 11 65 146" fill="currentColor" aria-hidden="true"><g>
     <path d="M17,82.4h1.3c3.3,0,5-1.6,5.8-4.1,0,1.5,0,2.7.4,3.4h1.9c-.4-2.4-.4-4.4-.4-6.8V11.9h-2.1v17.5c-1-2.1-2.6-3.4-5.6-3.4h-1.3c-4.4,0-5.7,1.6-5.7,6.4v43.6c0,4.8,1.3,6.4,5.7,6.4ZM13.5,33.3c0-3.8.2-5.3,3.8-5.3h1.7c3.6,0,4.9,2.6,4.9,7v38.6c0,4.4-1.3,7-4.9,7h-1.7c-3.5,0-3.8-1.5-3.8-5.3v-42Z"/>
@@ -930,7 +974,7 @@ body.perf .rail a::after{display:none}
         <span class="prov" id="laProv"></span>
         <span class="dur" id="laDur"></span>
         <span class="grow"></span>
-<button type="button" class="ib" aria-label="Play" title="Play" id="laPlay"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M8.5 5.5v13l10-6.5z"/></svg></button><button type="button" class="ib" aria-label="Make a seamless loop" title="Make a seamless loop copy" id="laLoop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 4.5L19 7l-2.5 2.5"/><path d="M19 7H8.5A4.5 4.5 0 0 0 4 11.5v.5"/><path d="M7.5 19.5L5 17l2.5-2.5"/><path d="M5 17h10.5a4.5 4.5 0 0 0 4.5-4.5V12"/></svg></button><button type="button" class="ib" aria-label="Export WAV" title="Export WAV" id="laExport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5"/></svg></button><button type="button" class="ib" aria-label="Delete from the library" title="Delete from the library" id="laDel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button><span class="brk"></span><button type="button" class="ib to-field" aria-label="Add to Field" title="Add to Field" id="laField"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg></button><button type="button" class="ib to-stretch" aria-label="Use in Stretch" title="Use in Stretch" id="laStretch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg></button><button type="button" class="ib to-keys" aria-label="Play on Keys" title="Play on Keys" id="laKeys"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M9 13.5V19M15 13.5V19"/><rect x="7.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/><rect x="13.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/></svg></button>
+<button type="button" class="ib" aria-label="Play" title="Play" id="laPlay"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M8.5 5.5v13l10-6.5z"/></svg></button><button type="button" class="ib" aria-label="Make a seamless loop" title="Make a seamless loop copy" id="laLoop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 4.5L19 7l-2.5 2.5"/><path d="M19 7H8.5A4.5 4.5 0 0 0 4 11.5v.5"/><path d="M7.5 19.5L5 17l2.5-2.5"/><path d="M5 17h10.5a4.5 4.5 0 0 0 4.5-4.5V12"/></svg></button><button type="button" class="ib" id="laSeed" aria-pressed="false" aria-label="Mark as a seed" title="Mark as a seed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5v-8.5"/><path d="M12 12c0-4.2 2.9-6.6 7-6.6 0 4.2-2.9 6.6-7 6.6z"/><path d="M12 14.6c0-3.1-2.2-5.1-5.4-5.1 0 3.1 2.2 5.1 5.4 5.1z"/></svg></button><button type="button" class="ib" aria-label="Export WAV" title="Export WAV" id="laExport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5"/></svg></button><button type="button" class="ib" aria-label="Delete from the library" title="Delete from the library" id="laDel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button><span class="brk"></span><button type="button" class="ib to-field" aria-label="Add to Field" title="Add to Field" id="laField"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="12" height="9" rx="1.5"/><rect x="9" y="11" width="12" height="9" rx="1.5"/></svg></button><button type="button" class="ib to-stretch" aria-label="Use in Stretch" title="Use in Stretch" id="laStretch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z"/></svg></button><button type="button" class="ib to-keys" aria-label="Play on Keys" title="Play on Keys" id="laKeys"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M9 13.5V19M15 13.5V19"/><rect x="7.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/><rect x="13.4" y="5" width="3.2" height="8.5" rx=".6" fill="currentColor" stroke="none"/></svg></button>
         <span class="sendto" title="To tape"><span class="glyph to-tape"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><circle cx="15.5" cy="11" r="2"/><path d="M10.5 11h3M7 19l1.5-3.5h7L17 19"/></svg></span><button type="button" class="ib sm to-tape" data-lib-to="0" aria-label="Load onto tape track 1" title="Load onto tape track 1"><span class="n">1</span></button><button type="button" class="ib sm to-tape" data-lib-to="1" aria-label="Load onto tape track 2" title="Load onto tape track 2"><span class="n">2</span></button><button type="button" class="ib sm to-tape" data-lib-to="2" aria-label="Load onto tape track 3" title="Load onto tape track 3"><span class="n">3</span></button><button type="button" class="ib sm to-tape" data-lib-to="3" aria-label="Load onto tape track 4" title="Load onto tape track 4"><span class="n">4</span></button></span>
 
       </div>
@@ -966,7 +1010,18 @@ body.perf .rail a::after{display:none}
     <p class="faint lmwarn" id="lmWarn" hidden></p>
     <div class="lmlist" id="lmList"></div>
     </div>
-    <div class="lmpane" id="lmSeeds" hidden><div class="lmlist" id="seedList"></div></div>
+    <div class="lmpane" id="lmSeeds" hidden>
+      <div class="myseeds" id="mySeeds">
+        <div class="sphead"><span class="tag">Your seeds</span><span class="dur" id="msCount"></span><span class="grow"></span></div>
+        <div class="mslist" id="msList"></div>
+        <div class="msexport" id="msExport">
+          <input id="msName" type="text" placeholder="Pack name" aria-label="Pack name" maxlength="40" autocomplete="off">
+          <input id="msKey" type="text" placeholder="Key (optional)" aria-label="Key" maxlength="20" autocomplete="off">
+          <button type="button" class="ib" id="msGo" aria-label="Export as a seed pack" title="Export as a seed pack for your site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5v10M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg></button>
+        </div>
+      </div>
+      <div class="lmlist" id="seedList"></div>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -974,6 +1029,18 @@ body.perf .rail a::after{display:none}
 <input type="file" id="fileIn" accept="audio/*,.wav,.aif,.aiff,.mp3,.m4a,.flac,.ogg,.caf" multiple hidden>
 <input type="file" id="presetIn" accept="application/json,.json" hidden>
 
+<script>
+// Every sound in the studio ends at the live AudioContext's speakers. Route all of those connections through
+// one master bus per context, so performance mode can record exactly what comes out. Offline renders are untouched.
+(() => {
+  const proto = AudioNode.prototype, conn = proto.connect, disc = proto.disconnect, buses = new WeakMap();
+  const isLive = (d) => typeof AudioDestinationNode !== "undefined" && d instanceof AudioDestinationNode && typeof AudioContext !== "undefined" && d.context instanceof AudioContext;
+  window.masterBus = (ctx) => { let b = buses.get(ctx); if (!b) { b = ctx.createGain(); conn.call(b, ctx.destination); buses.set(ctx, b); } return b; };
+  window.rawConnect = (a, b, ...r) => conn.call(a, b, ...r);
+  proto.connect = function (d, ...r) { return isLive(d) && this !== buses.get(d.context) ? conn.call(this, window.masterBus(d.context), ...r) : conn.call(this, d, ...r); };
+  proto.disconnect = function (d, ...r) { if (isLive(d) && this !== buses.get(d.context)) { try { return disc.call(this, window.masterBus(d.context), ...r); } catch (e) { return; } } return disc.call(this, d, ...r); };
+})();
+</script>
 <script>
 const IC = {"reverse": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M8.5 6.5H15a4.5 4.5 0 0 1 0 9H5.5\"/><path d=\"M8.5 12.5l-3 3 3 3\"/></svg>", "keys": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"1.5\"/><path d=\"M9 13.5V19M15 13.5V19\"/><rect x=\"7.4\" y=\"5\" width=\"3.2\" height=\"8.5\" rx=\".6\" fill=\"currentColor\" stroke=\"none\"/><rect x=\"13.4\" y=\"5\" width=\"3.2\" height=\"8.5\" rx=\".6\" fill=\"currentColor\" stroke=\"none\"/></svg>", "loop": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M16.5 4.5L19 7l-2.5 2.5\"/><path d=\"M19 7H8.5A4.5 4.5 0 0 0 4 11.5v.5\"/><path d=\"M7.5 19.5L5 17l2.5-2.5\"/><path d=\"M5 17h10.5a4.5 4.5 0 0 0 4.5-4.5V12\"/></svg>", "play": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M8.5 5.5v13l10-6.5z\"/></svg>", "pause": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M9 6v12M15 6v12\" stroke-width=\"2.2\"/></svg>", "stop": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect fill=\"currentColor\" stroke=\"none\" x=\"7\" y=\"7\" width=\"10\" height=\"10\" rx=\"1.5\"/></svg>", "zero": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6.5 6v12\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M18 6.5v11L9.5 12z\"/></svg>", "mute": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 9.5h3.5L12 6v12l-4.5-3.5H4z\"/><path d=\"M15.5 9.5l5 5M20.5 9.5l-5 5\"/></svg>", "clear": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6.5 6.5l11 11M17.5 6.5l-11 11\"/></svg>", "load": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 8a1.5 1.5 0 0 1 1.5-1.5h4l2 2h8A1.5 1.5 0 0 1 20.5 10v7.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z\"/></svg>", "export": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 4v11M7.5 10.5L12 15l4.5-4.5M5 15.5V19h14v-3.5\"/></svg>", "libadd": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 7h11M4 12h11M4 17h7\"/><path d=\"M18 13.5v7M14.5 17h7\"/></svg>", "check": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/></svg>", "trash": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12\"/></svg>", "reset": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5.5 12a6.5 6.5 0 1 0 2-4.7\"/><path d=\"M5.5 4.5v3.5H9\"/></svg>", "shuffle": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 7.5h3c4.5 0 5.5 9 10 9h3M17.5 14l2.5 2.5-2.5 2.5M4 16.5h3c1.6 0 2.7-1.2 3.6-2.8M13.4 10.3c.9-1.6 2-2.8 3.6-2.8h3M17.5 5l2.5 2.5L17.5 10\"/></svg>", "save": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 4.5h10.5l3.5 3.5v11.5H5z\"/><path d=\"M8 4.5v4.5h6.5V4.5M8 19.5v-5.5h8v5.5\"/></svg>", "open": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 8a1.5 1.5 0 0 1 1.5-1.5h4l2 2h8A1.5 1.5 0 0 1 20.5 10v1\"/><path d=\"M3.5 8v9.5A1.5 1.5 0 0 0 5 19h12.5l3-7.5H7.2z\"/></svg>", "mic": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"9\" y=\"3.5\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M6 11a6 6 0 0 0 12 0M12 17v3.5\"/></svg>", "spark": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3.5v4M12 16.5v4M3.5 12h4M16.5 12h4M6 6l2.8 2.8M15.2 15.2L18 18M18 6l-2.8 2.8M8.8 15.2L6 18\"/></svg>", "power": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3.5v8\"/><path d=\"M7.2 6.6a7 7 0 1 0 9.6 0\"/></svg>", "freeze": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9M9.5 4.5L12 6l2.5-1.5M9.5 19.5L12 18l2.5 1.5\"/></svg>", "stretch": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 5v14Q12 12 20.5 19V5Q12 12 3.5 5Z\"/></svg>", "tape": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"2.5\" y=\"5\" width=\"19\" height=\"14\" rx=\"2\"/><circle cx=\"8.5\" cy=\"11\" r=\"2\"/><circle cx=\"15.5\" cy=\"11\" r=\"2\"/><path d=\"M10.5 11h3M7 19l1.5-3.5h7L17 19\"/></svg>", "field": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"4\" width=\"12\" height=\"9\" rx=\"1.5\"/><rect x=\"9\" y=\"11\" width=\"12\" height=\"9\" rx=\"1.5\"/></svg>", "wow": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"7\" cy=\"9\" r=\"3\"/><circle cx=\"17\" cy=\"9\" r=\"3\"/><path d=\"M3 18c1.5-1.6 3-1.6 4.5 0s3 1.6 4.5 0 3-1.6 4.5 0 3 1.6 4.5 0\"/></svg>", "breathe": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3 9.5c4.5 0 4.5-4 9-4s4.5 4 9 4M3 14.5c4.5 0 4.5 4 9 4s4.5-4 9-4\"/></svg>", "ffwd": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M4 6.5v11l8-5.5zM12.5 6.5v11l8-5.5z\"/></svg>", "layers": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 4l8.5 4.5L12 13 3.5 8.5z\"/><path d=\"M3.5 12.5L12 17l8.5-4.5M3.5 16.5L12 21l8.5-4.5\"/></svg>"};
 </script>
@@ -2351,6 +2418,63 @@ function foldable(deck,key){
     }
     const m = new Float64Array(N / 2); for (let k = 0; k < N / 2; k++) m[k] = Math.hypot(re[k], im[k]); return m;
   }
+  // ---------- chord detection: find the fundamentals in the averaged spectrum, drop their overtones, match what's left to chord shapes ----------
+  const CHORD_Q = [
+    ["maj", [0, 4, 7], ""], ["min", [0, 3, 7], "m"], ["sus2", [0, 2, 7], "sus2"], ["sus4", [0, 5, 7], "sus4"],
+    ["dim", [0, 3, 6], "dim"], ["aug", [0, 4, 8], "aug"], ["maj7", [0, 4, 7, 11], "maj7"], ["7", [0, 4, 7, 10], "7"],
+    ["m7", [0, 3, 7, 10], "m7"], ["add9", [0, 2, 4, 7], "add9"], ["madd9", [0, 2, 3, 7], "m(add9)"], ["6", [0, 4, 7, 9], "6"], ["m6", [0, 3, 7, 9], "m6"]
+  ];
+  const CHORD_SUF = Object.fromEntries(CHORD_Q.map(([q, , s]) => [q, s]).concat([["5", "5"]]));
+  function detectChord(acc, bin) {
+    // spectral peaks between 60 Hz and 2 kHz
+    const lo = Math.max(2, Math.ceil(60 / bin)), hi = Math.min(acc.length - 2, Math.floor(2000 / bin));
+    let mx = 0; for (let k = lo; k <= hi; k++) if (acc[k] > mx) mx = acc[k];
+    if (!(mx > 0)) return null;
+    const peaks = [];
+    for (let k = lo; k <= hi; k++) {
+      const y = acc[k];
+      if (y < mx * 0.06 || y < acc[k - 1] || y < acc[k + 1] || y < acc[k - 2] || y < acc[k + 2]) continue;
+      const y0 = acc[k - 1], y2 = acc[k + 1], d = (y0 - y2) / (2 * (y0 - 2 * y + y2) || 1);
+      peaks.push({ f: (k + (Math.abs(d) < 1 ? d : 0)) * bin, a: y });
+    }
+    if (peaks.length < 2) return null;
+    // a peak that sits on a whole-number multiple of a lower peak is that note's overtone, not a new note
+    const fund = [];
+    for (const p of peaks) {
+      let host = null, harm = false;
+      for (const q of fund) { const r = p.f / q.f, n = Math.round(r); if (n >= 2 && n <= 10 && Math.abs(r - n) / n < 0.012) { harm = true; if (p.a < q.a * 0.9) { host = q; break; } } }
+      // a loud peak on an overtone position might be a real chord tone, or just a note with strong overtones: keep it, but flag it
+      if (host) host.e += p.a * 0.5; else fund.push({ f: p.f, a: p.a, e: p.a, harm });
+    }
+    // pitch-class weights from the fundamentals
+    const w = new Float64Array(12), lowest = new Array(12).fill(Infinity);
+    for (const q of fund) { const m = 69 + 12 * Math.log2(q.f / 440), pc = ((Math.round(m) % 12) + 12) % 12; w[pc] += q.e; if (q.f < lowest[pc]) lowest[pc] = q.f; }
+    const wm = Math.max(...w); if (!(wm > 0)) return null;
+    for (let i = 0; i < 12; i++) w[i] /= wm;
+    const strong = []; for (let i = 0; i < 12; i++) if (w[i] >= 0.22) strong.push(i);
+    if (strong.length < 2 || strong.length > 6) return null;
+    // at least two different notes have to stand on their own, not on another note's overtone positions
+    const own = new Set(fund.filter(q => !q.harm && q.e >= wm * 0.22).map(q => ((Math.round(69 + 12 * Math.log2(q.f / 440)) % 12) + 12) % 12));
+    if (own.size < 2) return null;
+    let best = null;
+    const shapes = strong.length === 2 ? [["5", [0, 7], "5"]] : CHORD_Q;
+    for (let root = 0; root < 12; root++) for (const [q, iv] of shapes) {
+      const pcs = iv.map(x => (root + x) % 12);
+      if (!pcs.every(pc => w[pc] >= 0.12)) continue;               // every chord tone has to be there
+      const inside = pcs.reduce((s, pc) => s + w[pc], 0);
+      let outside = 0; for (const pc of strong) if (!pcs.includes(pc)) outside += w[pc];
+      const score = inside - 1.6 * outside - 0.08 * pcs.length + (w[root] >= 0.5 ? 0.15 : 0) + (lowest[root] <= Math.min(...pcs.map(pc => lowest[pc])) ? 0.2 : 0);
+      if (!best || score > best.score) best = { root, q, score, pcs, outside };
+    }
+    if (!best || best.outside > 0.35) return null;
+    return { root: best.root, q: best.q, name: NOTE_NAMES[best.root] + CHORD_SUF[best.q], pcs: best.pcs, lowF: lowest[best.root] };
+  }
+  function noteLabel(n, s) {
+    if (!n) return "";
+    s = Math.round(s || 0);
+    if (n.chord) return NOTE_NAMES[(((n.chord.root + s) % 12) + 12) % 12] + (CHORD_SUF[n.chord.q] || "");
+    return s ? noteName(n.midi + s) : n.name;
+  }
   function detectNote(chans, sr) {
     try {
       const a = chans[0], b = chans[1] || a, len = a.length, N = 8192;
@@ -2367,6 +2491,9 @@ function foldable(deck,key){
       }
       if (!used) return null;
       const bin = sr / N, lo = Math.ceil(55 / bin), hi = Math.floor(1000 / bin), eps = 1e-9, hps = [];
+      const chord = detectChord(acc, bin);
+      // a chord's note is its root, at the lowest place the root sounds
+      if (chord) { const midi = 69 + 12 * Math.log2(chord.lowF / 440); return { midi, name: noteName(midi), cents: Math.round((midi - Math.round(midi)) * 100), chord: { root: chord.root, q: chord.q, name: chord.name, pcs: chord.pcs }, v: 2 }; }
       for (let k = lo; k <= hi; k++) { let h = 0; for (let r = 1; r <= 4; r++) { const q = k * r; h += Math.log(eps + (q < acc.length ? Math.max(acc[q], acc[q - 1] || 0, acc[q + 1] || 0) : 0)); } hps.push(h); }
       let bi = 0; for (let i = 1; i < hps.length; i++) if (hps[i] > hps[bi]) bi = i;
       const mean = hps.reduce((x, y) => x + y, 0) / hps.length, sd = Math.sqrt(hps.reduce((x, y) => x + (y - mean) ** 2, 0) / hps.length);
@@ -2378,7 +2505,7 @@ function foldable(deck,key){
       if (!(et > 0) || eh / et < 0.25) return null;
       const y0 = acc[k - 1], y1 = acc[k], y2 = acc[k + 1], d = (y0 - y2) / (2 * (y0 - 2 * y1 + y2) || 1);
       const freq = (k + (Math.abs(d) < 1 ? d : 0)) * bin, midi = 69 + 12 * Math.log2(freq / 440);
-      return { midi, name: noteName(midi), cents: Math.round((midi - Math.round(midi)) * 100) };
+      return { midi, name: noteName(midi), cents: Math.round((midi - Math.round(midi)) * 100), chord: null, v: 2 };
     } catch (e) { return null; }
   }
   { const add = Lib.add.bind(Lib); Lib.add = (it) => { const r = add(it); setTimeout(() => { it.note = detectNote(it.chans, it.sr); if (it.note) Lib.emit(); }, 30); return r; }; }
@@ -2672,7 +2799,7 @@ function foldable(deck,key){
     const d = src.duration, ta = fmtPrecise(itrim.a * d), tb = fmtPrecise(itrim.b * d);
     $("iTrimAl").textContent = itrim.a > 0.0005 ? ta : ""; $("iTrimBl").textContent = itrim.b < 0.9995 ? tb : "";
     $("iTrimA").setAttribute("aria-valuetext", ta); $("iTrimB").setAttribute("aria-valuetext", tb);
-    $("srcDur").textContent = (srcItem && srcItem.note ? srcItem.note.name + "  " : "") + fmt((itrim.b - itrim.a) * d) + (isITrimmed() ? " of " + fmt(d) : "");
+    $("srcDur").textContent = (srcItem && srcItem.note ? noteLabel(srcItem.note) + "  " : "") + fmt((itrim.b - itrim.a) * d) + (isITrimmed() ? " of " + fmt(d) : "");
   }
   function setITrim(a, b) {
     if (!src) return;
@@ -3120,9 +3247,13 @@ self.onmessage = (e) => {
   const SCALES = { major: [0, 2, 4, 5, 7, 9, 11], minor: [0, 2, 3, 5, 7, 8, 10], dorian: [0, 2, 3, 5, 7, 9, 10], mixolydian: [0, 2, 4, 5, 7, 9, 10], pentmaj: [0, 2, 4, 7, 9], pentmin: [0, 3, 5, 7, 10] };
   const SCALE_NAMES = { major: "Major", minor: "Minor", dorian: "Dorian", mixolydian: "Mixolydian", pentmaj: "Major pentatonic", pentmin: "Minor pentatonic" };
   // with a detected note, the resulting note must be in the key; without one, the shift itself must be a scale interval
+  const inKey = (pc) => SCALES[KL.scale].includes((((pc - KL.root) % 12) + 12) % 12);
+  // a chord only fits where all of its notes are in the key; if a chord never fits (an augmented chord in a major key, say), its root decides
+  function chordFits(t) { if (!t.note || !t.note.chord) return false; for (let s = 0; s < 12; s++) if (t.note.chord.pcs.every(pc => inKey(pc + s))) return true; return false; }
   function keyOK(i, s) {
     const iv = SCALES[KL.scale], t = T[i];
-    if (t.note) return iv.includes((((Math.round(t.note.midi) + s - KL.root) % 12) + 12) % 12);
+    if (t.note && t.note.chord && chordFits(t)) return t.note.chord.pcs.every(pc => inKey(pc + s));
+    if (t.note) return inKey(Math.round(t.note.midi) + s);
     return iv.includes(((s % 12) + 12) % 12);
   }
   function snapKey(i, v) {
@@ -3151,8 +3282,8 @@ self.onmessage = (e) => {
   function syncStrip(i) {
     const t = T[i], v = t.pitch, el = $("strip" + i);
     $("tpr" + i).textContent = (v > 0 ? "+" : v < 0 ? "−" : "±") + (t.stepped ? Math.abs(Math.round(v)) : Math.abs(v).toFixed(2)) + " st";
-    $("tpi" + i).textContent = intervalName(v) + (t.note ? "  →  " + noteName(t.note.midi + v) : "");
-    $("tnote" + i).textContent = t.note ? t.note.name : "";
+    $("tpi" + i).textContent = intervalName(v) + (t.note ? "  →  " + noteLabel(t.note, v) : "");
+    $("tnote" + i).textContent = t.note ? noteLabel(t.note) : "";
     $("tst" + i).setAttribute("aria-pressed", t.stepped ? "true" : "false");
     $("tfr" + i).setAttribute("aria-pressed", t.stepped ? "false" : "true");
     $("tp" + i).step = t.stepped ? "1" : "0.01"; $("tp" + i).value = v;
@@ -3715,7 +3846,7 @@ self.onmessage = (e) => {
     const b = bufFromItem(it), [L, R] = loopable(b.getChannelData(0), b.getChannelData(1), b.sampleRate);
     const lb = new AudioBuffer({ numberOfChannels: 2, length: L.length, sampleRate: b.sampleRate }); lb.copyToChannel(L, 0); lb.copyToChannel(R, 1);
     const rb = new AudioBuffer({ numberOfChannels: 2, length: b.length, sampleRate: b.sampleRate }); for (let ch = 0; ch < 2; ch++) rb.copyToChannel(b.getChannelData(ch).slice().reverse(), ch);
-    const nt = it.note || detectNote(it.chans, it.sr);
+    const nt = it.note && it.note.v === 2 ? it.note : detectNote(it.chans, it.sr);
     Object.assign(K, { item: it, buf: b, loopBuf: lb, revBuf: rb, detected: nt, root: nt ? Math.max(24, Math.min(96, Math.round(nt.midi))) : 60, fine: nt ? nt.cents : 0, oct: 0 });
     peaks.k = null; syncKeysSample(); buildKb(); draw();
   }
@@ -3724,7 +3855,7 @@ self.onmessage = (e) => {
     $("kName").textContent = it ? it.name : "No sample yet"; $("kProv").textContent = it ? it.prov : "";
     $("kDur").textContent = it ? fmt(it.dur) : ""; $("kDot").className = "kdot" + (it ? " k-" + it.kind : ""); $("kEmpty").hidden = !!it;
     $("kRoot").value = K.root; $("kFine").value = K.fine;
-    $("kDetect").textContent = !it ? "" : K.detected ? "Detected " + K.detected.name + (K.detected.cents ? (K.detected.cents > 0 ? " +" : " ") + K.detected.cents + " cents" : "") : "No clear pitch, so it starts on C4. Set the root by ear.";
+    $("kDetect").textContent = !it ? "" : K.detected ? "Detected " + (K.detected.chord ? K.detected.chord.name + " chord, root " : "") + K.detected.name + (K.detected.cents ? (K.detected.cents > 0 ? " +" : " ") + K.detected.cents + " cents" : "") : "No clear pitch, so it starts on C4. Set the root by ear.";
     $("kStartShade").style.width = (K.start * 100) + "%";
     readKeys(); syncEngineUI();
   }
@@ -3893,7 +4024,7 @@ self.onmessage = (e) => {
       const b = document.createElement("button"); b.type = "button"; b.className = "libitem"; b.draggable = true;
       b.addEventListener("dragstart", (e) => { e.dataTransfer.setData("text/x-driftfield-lib", String(it.id)); e.dataTransfer.effectAllowed = "copy"; document.body.classList.add("libdrag"); });
       b.setAttribute("aria-pressed", Lib.sel === it.id ? "true" : "false"); b.title = it.prov;
-      b.innerHTML = `<span class="kdot k-${it.kind}"></span><span class="ln"></span><span class="dur">${it.note ? it.note.name + "  " : ""}${fmt(it.dur)}</span>`;
+      b.innerHTML = `<span class="kdot k-${it.kind}"></span><span class="ln"></span><span class="dur">${it.note ? noteLabel(it.note) + "  " : ""}${fmt(it.dur)}</span>`;
       b.querySelector(".ln").textContent = it.name;
       b.addEventListener("click", () => {
         const now = performance.now();
@@ -3905,7 +4036,8 @@ self.onmessage = (e) => {
     const it = Lib.get(Lib.sel);
     $("libAct").hidden = !it;
     if (it) {
-      $("laDot").className = "kdot k-" + it.kind; $("laName").textContent = it.name; $("laProv").textContent = it.prov; $("laDur").textContent = (it.note ? it.note.name + "  " : "") + fmt(it.dur);
+      $("laDot").className = "kdot k-" + it.kind; $("laName").textContent = it.name; $("laProv").textContent = it.prov; $("laDur").textContent = (it.note ? noteLabel(it.note) + "  " : "") + fmt(it.dur);
+      $("laSeed").setAttribute("aria-pressed", it.seedMark ? "true" : "false"); $("laSeed").title = it.seedMark ? "One of your seeds" : "Mark as a seed";
       disarmDel(); syncButtons();
     }
   }
@@ -3934,6 +4066,11 @@ self.onmessage = (e) => {
   // any sound can become a seamless loop: the copy crossfades its end into its start, the original stays as it was
   $("laName").addEventListener("dblclick", () => { const it = selItem(); if (it) editName($("laName"), it); });
   $("laName").title = "Double-click to rename";
+  $("laSeed").addEventListener("click", () => {
+    const it = selItem(); if (!it) return;
+    it.seedMark = !it.seedMark; stored.delete(it.id); lastSaved = "";
+    Lib.emit(); toast(it.seedMark ? it.name + " is one of your seeds." : it.name + " is no longer a seed.");
+  });
   $("laLoop").addEventListener("click", () => {
     const it = selItem(); if (!it) return;
     const n = it.chans[0].length;
@@ -4055,7 +4192,59 @@ self.onmessage = (e) => {
     $("perfBtn").setAttribute("aria-pressed", on ? "true" : "false");
     showView(); fsKey = ""; refreshFieldSend();
     requestAnimationFrame(() => { draw(); drawTapeUI(); paintRanges(); buildKb(); });
+    if (on) { if (ac) pmEnsureMeter(); if (!pmRaf) pmTick(); } else if (pm) { pmStop(); toast("Performance mode closed, so the master recording was saved to the library."); }
   }
+
+  // ---------- performance mode: record everything that comes out of the studio ----------
+  let pm = null, pmMeter = null, pmRaf = 0;
+  const PM_MAX = 20 * 60;
+  function pmSay(t) { $("pmSay").textContent = t || ""; }
+  function pmUI() {
+    const on = !!pm; $("pmRec").setAttribute("aria-pressed", on ? "true" : "false");
+    $("pmRec").title = on ? "Stop recording" : "Record everything"; $("pmRec").setAttribute("aria-label", $("pmRec").title);
+  }
+  function pmTick() {
+    pmRaf = 0; if (!perf) return;
+    if (!pmMeter && ac) pmEnsureMeter();
+    if (pmMeter) {
+      for (const [k, an] of [["pmL", pmMeter.l], ["pmR", pmMeter.r]]) {
+        an.getFloatTimeDomainData(pmMeter.buf); let p = 0; for (const v of pmMeter.buf) { const a = v < 0 ? -v : v; if (a > p) p = a; }
+        const db = p > 1e-5 ? 20 * Math.log10(p) : -60, el = $(k);
+        el.style.setProperty("--v", Math.max(0, Math.min(1, (db + 48) / 48)).toFixed(3)); el.classList.toggle("hot", p > 0.95);
+      }
+    }
+    if (pm) { const s = pm.n / ac.sampleRate; $("pmTime").textContent = Math.floor(s / 60) + ":" + (s % 60).toFixed(1).padStart(4, "0"); }
+    pmRaf = requestAnimationFrame(pmTick);
+  }
+  function pmEnsureMeter() {
+    if (pmMeter || !ac) return;
+    const bus = window.masterBus(ac), sp = ac.createChannelSplitter(2), l = ac.createAnalyser(), r = ac.createAnalyser();
+    l.fftSize = r.fftSize = 1024; bus.connect(sp); sp.connect(l, 0); sp.connect(r, 1);
+    pmMeter = { l, r, buf: new Float32Array(1024) };
+  }
+  function pmStart() {
+    ensureAudio(); ac.resume(); pmEnsureMeter();
+    const bus = window.masterBus(ac), sp = ac.createScriptProcessor(4096, 2, 2), mute = ac.createGain(); mute.gain.value = 0;
+    const s = { sp, mute, L: [], R: [], n: 0 };
+    sp.onaudioprocess = (e) => {
+      if (pm !== s) return;
+      const ib = e.inputBuffer, a = ib.getChannelData(0), b = ib.numberOfChannels > 1 ? ib.getChannelData(1) : a;
+      s.L.push(a.slice()); s.R.push(b.slice()); s.n += a.length;
+      if (s.n >= ac.sampleRate * PM_MAX) { pmStop(); toast("Master recordings stop at 20 minutes."); }
+    };
+    bus.connect(sp); sp.connect(mute); window.rawConnect(mute, ac.destination);   // straight to the speakers, never back into the bus
+    pm = s; pmUI(); pmSay("Recording everything you hear"); if (!pmRaf) pmTick();
+  }
+  function pmStop() {
+    const s = pm; if (!s) return; pm = null; pmUI();
+    try { window.masterBus(ac).disconnect(s.sp); } catch (e) {} try { s.sp.disconnect(); s.mute.disconnect(); } catch (e) {} s.sp.onaudioprocess = null;
+    if (s.n < ac.sampleRate * 0.25) { pmSay("Nothing was captured."); return; }
+    const join = (arr) => { const o = new Float32Array(s.n); let k = 0; for (const c of arr) { o.set(c, k); k += c.length; } return o; };
+    let n = 1; for (const it of Lib.items) { const m = /^Performance (\d+)$/.exec(it.name); if (m) n = Math.max(n, +m[1] + 1); }
+    const it = Lib.add({ name: "Performance " + n, kind: "mix", prov: "recorded from the whole studio", sr: ac.sampleRate, chans: [join(s.L), join(s.R)] });
+    Lib.select(it.id); pmSay(it.name + " is in the library, " + fmt(it.dur) + "."); $("pmTime").textContent = "0:00.0";
+  }
+  $("pmRec").addEventListener("click", () => pm ? pmStop() : pmStart());
   function setPerf(on) { perfWanted = on; try { localStorage.setItem("df-perf", on ? "1" : "0"); } catch (e) {} applyPerf(); }
   $("perfBtn").addEventListener("click", () => setPerf(!perf));
   addEventListener("resize", applyPerf);
@@ -4103,7 +4292,24 @@ self.onmessage = (e) => {
     };
   })();
   let memOK = typeof indexedDB !== "undefined", restoring = false, lastSaved = "", stored = new Set(), sessions = [];
-  const soundRec = (it) => ({ id: it.id, name: it.name, kind: it.kind, prov: it.prov, sr: it.sr, chans: it.chans, note: it.note || null, seed: it.seed || null });
+  // older sounds were analysed before chord detection: look at them again, one at a time, in the background
+  function recheckNotes() {
+    const todo = Lib.items.filter(it => !it.note || it.note.v !== 2).slice(0, 300);
+    let changed = false;
+    const step = () => {
+      const it = todo.shift();
+      if (!it) { if (changed) Lib.emit(); return; }
+      if (Lib.get(it.id)) {
+        const n = detectNote(it.chans, it.sr);
+        if (n && (!it.note || !!n.chord !== !!it.note.chord || n.name !== it.note.name)) changed = true;
+        if (n || it.note) { it.note = n; stored.delete(it.id); }
+        T.forEach((t, i) => { if (t.buf && t.libId === it.id && n) { t.note = n; syncStrip(i); } });
+      }
+      setTimeout(step, 40);
+    };
+    setTimeout(step, 1500);
+  }
+  const soundRec = (it) => ({ id: it.id, name: it.name, kind: it.kind, prov: it.prov, sr: it.sr, chans: it.chans, note: it.note || null, seed: it.seed || null, seedMark: !!it.seedMark });
 
   const KEEP_K = ["arp", "arpMode", "arpOct", "arpRate", "arpBpm", "arpGate", "arpLatch", "arpBuild", "eSteps", "ePulses", "eRot", "engine", "gPos", "gWidth", "gSize", "gDens", "gScan", "gSpray", "gFlut", "gSpread", "gRev", "gDrift", "root", "fine", "oct", "A", "D", "S", "R", "cut", "res", "start", "loop", "vol", "rev", "revMix", "dly", "dlyTime", "dlyFb", "dlyMix"];
   function snapshot() {
@@ -4165,6 +4371,7 @@ self.onmessage = (e) => {
       const byId = new Map(sounds.map(s => [s.id, s]));
       const items = (st.lib || []).map(id => byId.get(id)).filter(Boolean).map(s => ({ ...s, dur: s.chans[0].length / s.sr }));
       Lib.restore(items);
+      recheckNotes();
       if (st.counters) { bounceN = st.counters.bounceN || 0; try { sessN = st.counters.sessN || 0; micN = st.counters.micN || 0; } catch (e) {} }
       const S = st.stretch;
       if (S) {
@@ -4276,6 +4483,7 @@ self.onmessage = (e) => {
     const q = ($("lmSearch").value || "").trim().toLowerCase();
     let arr = Lib.items.map((it, i) => ({ it, i, uses: usesOf(it.id) }));
     if (lmKind === "unused") arr = arr.filter(x => !x.uses.length);
+    else if (lmKind === "seed") arr = arr.filter(x => x.it.kind === "seed" || x.it.seedMark);
     else if (lmKind !== "all") arr = arr.filter(x => x.it.kind === lmKind);
     if (q) arr = arr.filter(x => (x.it.name + " " + (x.it.prov || "")).toLowerCase().includes(q));
     if (lmSort === "new") arr.sort((a, b) => b.i - a.i);
@@ -4298,9 +4506,10 @@ self.onmessage = (e) => {
       row.innerHTML = `<input type="checkbox" tabindex="-1" aria-hidden="true"><span class="kdot k-${it.kind}"></span><div class="lmmeta"><span class="wname"></span><span class="prov"></span></div><span class="lmuse"></span><span class="dur"></span>`;
       row.querySelector("input").checked = lmPicked.has(it.id);
       row.querySelector(".wname").textContent = it.name; row.querySelector(".prov").textContent = it.prov || "";
-      row.querySelector(".dur").textContent = (it.note ? it.note.name + "  " : "") + fmt(it.dur);
+      row.querySelector(".dur").textContent = (it.note ? noteLabel(it.note) + "  " : "") + fmt(it.dur);
       const ub = row.querySelector(".lmuse");
       for (const u of uses) { const s = document.createElement("span"); s.className = "u-" + u; s.textContent = u; s.title = "Loaded in " + u[0].toUpperCase() + u.slice(1); ub.appendChild(s); }
+      if (it.seedMark) { const s = document.createElement("span"); s.className = "u-seed"; s.textContent = "seed"; s.title = "One of your seeds"; ub.appendChild(s); }
       if (refs.has(it.id)) { const s = document.createElement("span"); s.className = "u-sess"; s.textContent = "saved"; s.title = "Part of a saved session"; ub.appendChild(s); }
       const pb = document.createElement("button"); pb.type = "button"; pb.className = "ib sm";
       const playing = player.which === "lib" && libPlayId === it.id;
@@ -4408,8 +4617,74 @@ self.onmessage = (e) => {
     const r = await fetch(url); if (!r.ok) throw new Error(r.status);
     return await ctx().decodeAudioData(await r.arrayBuffer());
   }
+
+  // ---------- your seeds: sounds you've marked, exportable as a pack (WAVs plus an updated seeds.json) ----------
+  function renderMySeeds() {
+    const mine = Lib.items.filter(it => it.seedMark), box = $("msList");
+    $("msCount").textContent = mine.length ? mine.length + " sound" + (mine.length === 1 ? "" : "s") + "  ·  " + fmt(mine.reduce((s, x) => s + x.dur, 0)) : "";
+    box.innerHTML = "";
+    if (!mine.length) { const p = document.createElement("p"); p.className = "msempty"; p.textContent = "Mark a sound with the sprout button in the library bar to add it here."; box.appendChild(p); }
+    for (const it of mine) {
+      const r = document.createElement("div"); r.className = "msrow";
+      r.innerHTML = `<span class="kdot k-${it.kind}"></span><span class="wname"></span><span class="dur"></span>`;
+      r.querySelector(".wname").textContent = it.name; r.querySelector(".dur").textContent = (it.note ? noteLabel(it.note) + "  " : "") + fmt(it.dur);
+      const pb = document.createElement("button"); pb.type = "button"; pb.className = "ib sm";
+      const playing = player.which === "lib" && libPlayId === it.id;
+      pb.innerHTML = playing ? IC.stop : IC.play; pb.title = playing ? "Stop" : "Play"; pb.setAttribute("aria-label", pb.title + " " + it.name);
+      pb.addEventListener("click", () => { if (player.which === "lib" && libPlayId === it.id) stopAll(); else { libBuf = bufFromItem(it); libPlayId = it.id; play("lib", libBuf, 0); } setTimeout(renderMySeeds, 30); });
+      const xb = document.createElement("button"); xb.type = "button"; xb.className = "ib sm"; xb.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>'; xb.title = "Not a seed"; xb.setAttribute("aria-label", "Unmark " + it.name);
+      xb.addEventListener("click", () => { it.seedMark = false; stored.delete(it.id); lastSaved = ""; Lib.emit(); });
+      r.append(pb, xb); box.appendChild(r);
+    }
+    $("msExport").hidden = !mine.length;
+    if (!$("msName").value) $("msName").placeholder = "Pack name";
+  }
+  function zipMany(files) {
+    const now = new Date(), dosT = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1), dosD = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+    const parts = [], central = []; let off = 0;
+    for (const f of files) {
+      const nb = new TextEncoder().encode(f.name), crc = crc32(f.data), size = f.data.length, n = nb.length;
+      const lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(10, dosT, true); lh.setUint16(12, dosD, true); lh.setUint32(14, crc, true); lh.setUint32(18, size, true); lh.setUint32(22, size, true); lh.setUint16(26, n, true);
+      const cd = new DataView(new ArrayBuffer(46));
+      cd.setUint32(0, 0x02014b50, true); cd.setUint16(4, 20, true); cd.setUint16(6, 20, true); cd.setUint16(12, dosT, true); cd.setUint16(14, dosD, true); cd.setUint32(16, crc, true); cd.setUint32(20, size, true); cd.setUint32(24, size, true); cd.setUint16(28, n, true); cd.setUint32(42, off, true);
+      parts.push(lh, nb, f.data); central.push(cd, nb); off += 30 + n + size;
+    }
+    const cdSize = central.reduce((s, x) => s + x.byteLength, 0), end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cdSize, true); end.setUint32(16, off, true);
+    return new Blob([...parts, ...central, end], { type: "application/zip" });
+  }
+  $("msGo").addEventListener("click", async () => {
+    const mine = Lib.items.filter(it => it.seedMark); if (!mine.length) return;
+    const name = ($("msName").value || "").trim() || "My Seeds", key = ($("msKey").value || "").trim();
+    const folder = safeName(name).toLowerCase(), used = new Set(), files = [], sounds = [];
+    toast("Writing " + mine.length + " WAV" + (mine.length === 1 ? "" : "s"));
+    await new Promise(r => setTimeout(r, 20));
+    for (const it of mine) {
+      let f = safeName(it.name).toLowerCase() || "sound", k = 2; while (used.has(f)) f = safeName(it.name).toLowerCase() + "-" + k++; used.add(f);
+      files.push({ name: "seeds/" + folder + "/" + f + ".wav", data: wav24(bufFromItem(it)) });
+      sounds.push({ file: f + ".wav", name: it.name });
+    }
+    // fold the new pack into the packs already on the site, replacing an older version of the same pack
+    await loadSeedList();
+    const pack = { id: folder, name, ...(key ? { key } : {}), folder, sounds };
+    const packs = (seedPacks || []).filter(p => (p.id || p.name) !== folder).concat([pack]);
+    files.push({ name: "seeds/seeds.json", data: new TextEncoder().encode(JSON.stringify({ packs }, null, 2) + "\n") });
+    const zip = zipMany(files), fname = folder + "-seed-pack.zip";
+    if (!inArtifact) {
+      const url = URL.createObjectURL(zip), a = document.createElement("a"); a.href = url; a.download = fname; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } else {
+      const dl = await downloadsP; if (!dl) { toast("Export isn't available in this view."); return; }
+      try { await dl.save({ filename: fname, data: zip }); } catch (err) { toast(err && err.code === "declined" ? "Export canceled." : "Export failed."); return; }
+    }
+    seedPacks = null;
+    toast("Saved " + fname + ". Copy its seeds folder into your site's driftfield folder, replacing seeds.json.");
+  });
+  Lib.on(() => { if (!$("libPanel").hidden && lmTab === "seeds") renderMySeeds(); });
   async function renderSeeds() {
     const box = $("seedList"); if ($("libPanel").hidden || lmTab !== "seeds") return;
+    renderMySeeds();
     if (!seedPacks) { box.innerHTML = '<p class="faint lmempty">Loading seed packs</p>'; await loadSeedList(); if (lmTab !== "seeds") return; }
     box.innerHTML = "";
     if (!seedPacks.length) { const p = document.createElement("p"); p.className = "faint lmempty"; p.textContent = "No seed packs yet."; box.appendChild(p); return; }
