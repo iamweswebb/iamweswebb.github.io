@@ -1494,6 +1494,51 @@ const vrHudCanvas=document.createElement('canvas');vrHudCanvas.width=512;vrHudCa
 const vrHudCtx=vrHudCanvas.getContext('2d');const vrHudTex=new THREE.CanvasTexture(vrHudCanvas);vrHudTex.encoding=THREE.sRGBEncoding;
 const vrHud=new THREE.Mesh(new THREE.PlaneGeometry(.56,.22),new THREE.MeshBasicMaterial({map:vrHudTex,transparent:true,depthTest:false,depthWrite:false,toneMapped:false,fog:false}));
 vrHud.position.set(0,-.36,-.95);vrHud.rotation.x=-.38;vrHud.renderOrder=999;vrHud.visible=false;rig.add(vrHud);
+/* VR hands-on controls: squeeze the right grip to hold a flight stick, the left grip to hold the throttle lever */
+const xrGrips=[0,1].map(i=>{const g=renderer.xr.getControllerGrip(i);g.userData.hand=null;
+  g.addEventListener('connected',e=>{g.userData.hand=e.data&&e.data.handedness});g.addEventListener('disconnected',()=>{g.userData.hand=null});rig.add(g);return g});
+const gripOf=h=>xrGrips.find(g=>g.userData.hand===h);
+const STICK_RANGE=.08,STICK_LEN=.24,LEVER_RANGE=.16,TWIST_RANGE=.55,TWIST_DEAD=.1;
+const vrMat=new THREE.MeshStandardMaterial({color:0x1d2a35,roughness:.6,metalness:.2});
+const vrKnobMat=new THREE.MeshStandardMaterial({color:0xff6a3d,roughness:.5});
+function makeHandle(len){const g=new THREE.Group();
+  const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.011,.014,len,12),vrMat);shaft.position.y=len/2;
+  const knob=new THREE.Mesh(new THREE.SphereGeometry(.026,16,12),vrKnobMat);knob.position.y=len;
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(.05,.06,.018,20),vrMat);
+  g.add(shaft,knob,base);g.visible=false;rig.add(g);return g}
+const vrStickMesh=makeHandle(STICK_LEN),vrLeverMesh=makeHandle(.16);
+const vrStick={held:false,p0:new THREE.Vector3(),yawInv:new THREE.Quaternion(),tw0:0};
+const vrLever={held:false,z0:0,t0:0,yawInv:new THREE.Quaternion(),lastStep:0};
+const hv1=new THREE.Vector3(),hv2=new THREE.Vector3(),hq=new THREE.Quaternion();
+function buzzHand(src,v,ms){const h=src.gamepad&&src.gamepad.hapticActuators&&src.gamepad.hapticActuators[0];if(h&&h.pulse)try{h.pulse(v,ms)}catch(e){}}
+function headYawInv(out){const f=hv2.set(0,0,-1).applyQuaternion(camera.quaternion);return out.setFromAxisAngle(AY,Math.atan2(-f.x,-f.z)).invert()}
+function ctlYaw(g){const f=hv2.set(0,0,-1).applyQuaternion(g.quaternion);return Math.atan2(-f.x,-f.z)}
+function localDelta(g,p0,yawInv){return hv1.copy(g.position).sub(p0).applyQuaternion(yawInv)}
+function stickHold(src,g,grabbed,acc){
+  if(grabbed){vrStick.held=true;vrStick.p0.copy(g.position);headYawInv(vrStick.yawInv);vrStick.tw0=ctlYaw(g);buzzHand(src,.4,40)}
+  const d=localDelta(g,vrStick.p0,vrStick.yawInv);
+  const sx=clamp(d.x/STICK_RANGE,-1,1),sy=clamp(-d.z/STICK_RANGE,-1,1);
+  acc.roll+=sx;acc.pitch+=sy;
+  let tw=ctlYaw(g)-vrStick.tw0;tw=Math.atan2(Math.sin(tw),Math.cos(tw));
+  if(Math.abs(tw)>TWIST_DEAD)acc.yaw+=clamp(-(tw-Math.sign(tw)*TWIST_DEAD)/(TWIST_RANGE-TWIST_DEAD),-1,1);
+  /* draw the stick: base under the grab point, leaning toward the hand */
+  const m=vrStickMesh;m.visible=true;
+  m.position.copy(vrStick.p0).y-=STICK_LEN;
+  const lean=hv1.set(sx*STICK_RANGE,STICK_LEN,-sy*STICK_RANGE).applyQuaternion(hq.copy(vrStick.yawInv).invert()).normalize();
+  m.quaternion.setFromUnitVectors(AY,lean);
+}
+function stickRelease(){vrStick.held=false;vrStickMesh.visible=false}
+function leverHold(src,g,grabbed){
+  if(grabbed){vrLever.held=true;headYawInv(vrLever.yawInv);vrLever.z0=hv1.copy(g.position).applyQuaternion(vrLever.yawInv).z;vrLever.t0=P.thr;vrLever.lastStep=Math.round(P.thr*10);buzzHand(src,.4,40);
+    vrLeverMesh.position.copy(g.position).y-=.16}
+  const z=hv1.copy(g.position).applyQuaternion(vrLever.yawInv).z;
+  P.thr=clamp(vrLever.t0+(vrLever.z0-z)/LEVER_RANGE,0,1);
+  const step=Math.round(P.thr*10);if(step!==vrLever.lastStep){vrLever.lastStep=step;buzzHand(src,step===0||step===10?.6:.15,step===0||step===10?50:12)}
+  const m=vrLeverMesh;m.visible=true;
+  const lean=hv1.set(0,.16,-(P.thr-.5)*LEVER_RANGE*1.2).applyQuaternion(hq.copy(vrLever.yawInv).invert()).normalize();
+  m.quaternion.setFromUnitVectors(AY,lean);
+}
+function leverRelease(){vrLever.held=false;vrLeverMesh.visible=false}
 let vrMsg=null,vrHudT=0,vrHudKey='';
 function drawVrHud(){
   const alt=Math.max(0,Math.round(P.pos.y)),spd=Math.round(P.speed*3.6),thr=Math.round(P.thr*100);
@@ -1516,9 +1561,12 @@ function readXR(acc){
   for(const src of xrSession.inputSources){const gp=src.gamepad;if(!gp)continue;const hand=src.handedness;
     const sx=gp.axes[2]||0,sy=gp.axes[3]||0,b=i=>gp.buttons[i]&&(gp.buttons[i].pressed||gp.buttons[i].value>.5);
     const prev=xrPrev[hand]||[];const edge=i=>b(i)&&!prev[i];
-    if(hand==='right'){acc.roll+=dz(sx);acc.pitch+=-dz(sy);if(b(0))acc.fire=true;
+    const g=gripOf(hand),grip=b(1)&&g&&g.visible;
+    if(hand==='right'){if(grip)stickHold(src,g,!vrStick.held,acc);else if(vrStick.held)stickRelease();
+      acc.roll+=dz(sx);acc.pitch+=-dz(sy);if(b(0))acc.fire=true;
       if(edge(4)&&state==='fly')toggleSmoke();if(edge(5))vrRecenterT=.01}
-    else if(hand==='left'){acc.thrD+=-dz(sy)*1.3;acc.yaw+=dz(sx);
+    else if(hand==='left'){if(grip)leverHold(src,g,!vrLever.held);else if(vrLever.held)leverRelease();
+      acc.thrD+=-dz(sy)*1.3;acc.yaw+=dz(sx);
       if(edge(4)){vrView=vrView==='cockpit'?'chase':'cockpit';camPos.copy(P.pos);vrRecenterT=.01}
       if(edge(5))vrRecenterT=.01}
     xrPrev[hand]=gp.buttons.map(x=>x.pressed||x.value>.5)}
@@ -1556,9 +1604,10 @@ async function enterVR(){
   xrOn=true;vrView='cockpit';seatOff.set(0,0,0);vrRecenterT=.6;
   vrQualPrev=save.quality;if(save.quality==='high'){Q=QUAL.balanced;SEG=Q.seg;ST=CH/SEG;fcache.clear();sun.shadow.mapSize.set(1024,1024);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null}}
   startFlight();$('touchUI').hidden=true;$('hud').hidden=true;vrHud.visible=true;
+  vrMsg={main:'Grab the stick',sub:'Right grip flies · left grip throttle',t:clock+6};
   renderer.setAnimationLoop(frame);
   session.addEventListener('end',()=>{
-    xrOn=false;xrSession=null;renderer.setAnimationLoop(null);renderer.xr.enabled=false;vrHud.visible=false;
+    xrOn=false;xrSession=null;renderer.setAnimationLoop(null);renderer.xr.enabled=false;vrHud.visible=false;stickRelease();leverRelease();
     rig.position.set(0,0,0);rig.quaternion.identity();pilotGroup.visible=true;if(scarfMesh)scarfMesh.visible=true;
     if(vrQualPrev)setQuality(vrQualPrev);
     resize();$('hud').hidden=false;last=performance.now();requestAnimationFrame(frame);
