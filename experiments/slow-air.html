@@ -1133,7 +1133,7 @@ function readInput(dt){
   if(k('shift'))thrD+=1;if(k('control')||k('z'))thrD-=1;
   if(touch.stickId!==null){roll+=touch.dx;pitch+=-touch.dy}
   if(touch.fire)fire=true;
-  const gp=activePad();
+  const gp=xrOn?null:activePad();
   if(gp){
     const dz=v=>Math.abs(v)<.14?0:(v-Math.sign(v)*.14)/.86;
     roll+=dz(gp.axes[0]||0);pitch+=-dz(gp.axes[1]||0);
@@ -1498,7 +1498,7 @@ vrHud.position.set(0,-.36,-.95);vrHud.rotation.x=-.38;vrHud.renderOrder=999;vrHu
 const xrGrips=[0,1].map(i=>{const g=renderer.xr.getControllerGrip(i);g.userData.hand=null;
   g.addEventListener('connected',e=>{g.userData.hand=e.data&&e.data.handedness});g.addEventListener('disconnected',()=>{g.userData.hand=null});rig.add(g);return g});
 const gripOf=h=>xrGrips.find(g=>g.userData.hand===h);
-const STICK_RANGE=.08,STICK_LEN=.24,LEVER_RANGE=.16,TWIST_RANGE=.55,TWIST_DEAD=.1;
+const STICK_TILT=.42,STICK_DEAD=.05,STICK_LEN=.24,LEVER_RANGE=.16,TWIST_RANGE=.55,TWIST_DEAD=.1;
 const vrMat=new THREE.MeshStandardMaterial({color:0x1d2a35,roughness:.6,metalness:.2});
 const vrKnobMat=new THREE.MeshStandardMaterial({color:0xff6a3d,roughness:.5});
 function makeHandle(len){const g=new THREE.Group();
@@ -1507,24 +1507,28 @@ function makeHandle(len){const g=new THREE.Group();
   const base=new THREE.Mesh(new THREE.CylinderGeometry(.05,.06,.018,20),vrMat);
   g.add(shaft,knob,base);g.visible=false;rig.add(g);return g}
 const vrStickMesh=makeHandle(STICK_LEN),vrLeverMesh=makeHandle(.16);
-const vrStick={held:false,p0:new THREE.Vector3(),yawInv:new THREE.Quaternion(),tw0:0};
+const vrStick={held:false,p0:new THREE.Vector3(),q0inv:new THREE.Quaternion(),yawInv:new THREE.Quaternion()};
 const vrLever={held:false,z0:0,t0:0,yawInv:new THREE.Quaternion(),lastStep:0};
 const hv1=new THREE.Vector3(),hv2=new THREE.Vector3(),hq=new THREE.Quaternion();
 function buzzHand(src,v,ms){const h=src.gamepad&&src.gamepad.hapticActuators&&src.gamepad.hapticActuators[0];if(h&&h.pulse)try{h.pulse(v,ms)}catch(e){}}
 function headYawInv(out){const f=hv2.set(0,0,-1).applyQuaternion(camera.quaternion);return out.setFromAxisAngle(AY,Math.atan2(-f.x,-f.z)).invert()}
 function ctlYaw(g){const f=hv2.set(0,0,-1).applyQuaternion(g.quaternion);return Math.atan2(-f.x,-f.z)}
 function localDelta(g,p0,yawInv){return hv1.copy(g.position).sub(p0).applyQuaternion(yawInv)}
+const sdz=(v,d)=>Math.abs(v)<d?0:(v-Math.sign(v)*d);
 function stickHold(src,g,grabbed,acc){
-  if(grabbed){vrStick.held=true;vrStick.p0.copy(g.position);headYawInv(vrStick.yawInv);vrStick.tw0=ctlYaw(g);buzzHand(src,.4,40)}
-  const d=localDelta(g,vrStick.p0,vrStick.yawInv);
-  const sx=clamp(d.x/STICK_RANGE,-1,1),sy=clamp(-d.z/STICK_RANGE,-1,1);
-  acc.roll+=sx;acc.pitch+=sy;
-  let tw=ctlYaw(g)-vrStick.tw0;tw=Math.atan2(Math.sin(tw),Math.cos(tw));
-  if(Math.abs(tw)>TWIST_DEAD)acc.yaw+=clamp(-(tw-Math.sign(tw)*TWIST_DEAD)/(TWIST_RANGE-TWIST_DEAD),-1,1);
-  /* draw the stick: base under the grab point, leaning toward the hand */
+  if(grabbed){vrStick.held=true;vrStick.p0.copy(g.position);vrStick.q0inv.copy(g.quaternion).invert();headYawInv(vrStick.yawInv);buzzHand(src,.4,40)}
+  /* rotation since the grab, as an axis-angle vector in the grab-time facing frame */
+  hq.copy(g.quaternion).multiply(vrStick.q0inv);if(hq.w<0){hq.x=-hq.x;hq.y=-hq.y;hq.z=-hq.z;hq.w=-hq.w}
+  const ang=2*Math.acos(clamp(hq.w,-1,1)),sn=Math.sqrt(Math.max(1-hq.w*hq.w,1e-9));
+  const rv=hv1.set(hq.x/sn*ang,hq.y/sn*ang,hq.z/sn*ang).applyQuaternion(vrStick.yawInv);
+  const sy=clamp(sdz(-rv.x,STICK_DEAD)/(STICK_TILT-STICK_DEAD),-1,1);   /* tilt forward: push */
+  const sx=clamp(sdz(-rv.z,STICK_DEAD)/(STICK_TILT-STICK_DEAD),-1,1);   /* tilt right: roll right */
+  const tw=sdz(-rv.y,TWIST_DEAD)/(TWIST_RANGE-TWIST_DEAD);               /* twist right: rudder right */
+  acc.roll+=sx;acc.pitch+=sy;acc.yaw+=clamp(tw,-1,1);
+  /* draw the stick: base fixed under the grab point, leaning the way the wrist tilts */
   const m=vrStickMesh;m.visible=true;
   m.position.copy(vrStick.p0).y-=STICK_LEN;
-  const lean=hv1.set(sx*STICK_RANGE,STICK_LEN,-sy*STICK_RANGE).applyQuaternion(hq.copy(vrStick.yawInv).invert()).normalize();
+  const lean=hv2.set(sx*.35,1,-sy*.35).applyQuaternion(hq.copy(vrStick.yawInv).invert()).normalize();
   m.quaternion.setFromUnitVectors(AY,lean);
 }
 function stickRelease(){vrStick.held=false;vrStickMesh.visible=false}
